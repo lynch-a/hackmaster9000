@@ -1,0 +1,40 @@
+<div id="accordion">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">
+        <button class="btn btn-link" id="<%= tool_name%>-help-heading" data-toggle="collapse" data-target="#<%= tool_name %>-help" aria-expanded="false" aria-controls="<%= tool_name %>-help">
+          Metasploit Help (Click to Expand)
+        </button>
+      </h5>
+    </div>
+
+    <div id="<%= tool_name %>-help" class="collapse" data-toggle="collapse" aria-labelledby="<%= tool_name %>-help-heading" data-parent="#accordion">
+      <div class="card-body bg-light">
+        <pre style="margin-bottom:0;">Metasploit</pre>
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+
+<div class="container no-gutters">
+  <form id="<%= tool_name %>-options">
+    <div class="row">
+      <div class='col-sm-6'>    
+        <%= erb :'tools/tool_helpers/_checkbox', locals: {
+                  tool_name: tool_name,
+                  label: "Start msfrpcd",
+                  field_name: "start-msfrpcd",
+                  field_value: "",
+                }
+        %>
+      </div>
+      
+      <div class='col-sm-6'>
+
+      </div>
+    </div>
+  </form>
+  <hr>
+  <%= erb :'partials/_tool_runner', layout: false, locals: {tool_name: "crtsh"} %>
+</div>

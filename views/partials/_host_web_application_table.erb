@@ -1,0 +1,37 @@
+<%
+def risk_to_color(risk)
+  if risk == 0 || risk == nil
+    return "secondary"
+  elsif risk == 1
+    return "info"
+  elsif risk == 2
+    return "warning"
+  elsif risk == 3
+    return "danger"
+  else
+    return ""
+  end
+end
+%>
+
+<% if (web_applications.size > 0) %>
+  <h4>Web Applications</h4>
+  <table class="table table-sm table-condensed table-striped table-bordered no-select" style="">            
+    <tr class="thead-dark">
+      <th>At</th>
+      <th>Description</th>
+    </tr>
+    <% web_applications.each do |web_application| %>
+      <tr class="web-application-host<%= web_application.id %> table-<%= risk_to_color(web_application.risk) %>">
+        <td>
+          <a href="#web-applications-<%= web_application.id%>" class="hash-nav">
+          <%= "#{web_application.scheme}://#{(web_application.dns_record.dns_name == "") ? "#{web_application.dns_record.record_value}" : "#{web_application.dns_record.dns_name}"}:#{web_application.port}" %>
+          </a>
+        </td>
+        <td>
+          <%= web_application.description %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

@@ -1,0 +1,11 @@
+Host:
+<% HostScript.where(host_id: host.id).each do |script| %>
+<%="#{script.script_id} = #{script.script_output}\n"%>
+<% end %>
+
+Services:
+<% host.services.each do |service| %>
+<% ServiceScript.where(service_id: service.id).each do |script| %>
+<%= "#{service.port_number} | #{script.script_id} = #{script.script_output}\n" %>
+<% end %>
+<% end %>

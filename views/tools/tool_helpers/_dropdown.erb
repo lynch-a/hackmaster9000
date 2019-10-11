@@ -1,0 +1,8 @@
+<div class='form-group'>
+  <label for="<%= tool_name %>-<%= field_name %>"><%= label %></label>
+  <select class="form-control form-control-sm" id="<%= tool_name %>-<%= field_name %>" name="<%= tool_name %>-<%= field_name %>">
+  	<% options.each_with_index do |option, i| %>
+  		<option <%= (i == selected_index) ? "selected" : "" %> value="<%= option[0] %>"><%= option[1] %></option>
+  	<% end %>
+  </select>
+</div>

@@ -1,0 +1,4 @@
+<% web_application.pages.each do |page| %>
+  <%= erb :'partials/_page', layout: false, locals: { page: page } %>
+  <br/>
+<% end %>

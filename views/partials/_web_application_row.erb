@@ -1,0 +1,21 @@
+<%
+def risk_to_color(risk)
+  if risk == 0 || risk == nil
+    return "secondary"
+  elsif risk == 1
+    return "info"
+  elsif risk == 2
+    return "warning"
+  elsif risk == 3
+  	return "danger"
+  else
+    return ""
+  end
+end
+%>
+
+<tr class="web-application-row-<%= web_application.id %> table-<%= risk_to_color(web_application.risk) %>">
+  <td class="web-application">
+    <%= erb :'partials/_web_application', layout: false, locals: { web_application: web_application} %>
+  </td>
+</tr>

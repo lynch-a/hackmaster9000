@@ -1,0 +1,163 @@
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" href="#tab-help" data-toggle="tab">Directory</a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link " href="#tab-nmap" data-toggle="tab">nmap</a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-zmap" data-toggle="tab">zmap</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-dirsearch" data-toggle="tab">dirsearch</a>
+  </li>
+  <!--
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-subbrute" data-toggle="tab">subbrute</a>
+  </li>
+  -->
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-dnscan" data-toggle="tab">dnscan</a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-web-screenshot" data-toggle="tab">web-screenshot</a>
+  </li>
+  
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-crtsh" data-toggle="tab">crt.sh</a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-xtreme-scraper" data-toggle="tab">xtrm-scraper</a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-top-minecraft" data-toggle="tab">top-minecraft</a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-wpscan" data-toggle="tab">wpscan</a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-bounty-targets-data" data-toggle="tab">bounty-targets-data</a>
+  </li>
+
+  
+  <!--
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-eyewitness" data-toggle="tab">eyewitness</a>
+  </li>
+  -->
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-sqlmap" data-toggle="tab">sqlmap</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-wfuzz" data-toggle="tab">wfuzz</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-pwn-vnc" data-toggle="tab">pwnVNC</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-breach-compilation" data-toggle="tab">breach-compilation</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-hashcat" data-toggle="tab">hashcat</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-rip-git" data-toggle="tab">rip-git</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-metasploit" data-toggle="tab">metasploit</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#tab-gitgot" data-toggle="tab">GitGot</a>
+  </li>
+</ul>
+
+<div class="tab-content clearfix">
+  <div class="tab-pane active" id="tab-help">
+    <%= erb :'tools/_help' %>
+  </div>
+
+  <div class="tab-pane" id="tab-nmap">
+    <%= erb :'tools/nmap', locals: {tool_name: "nmap"} %>
+  </div>
+  <div class="tab-pane" id="tab-zmap">
+    <%= erb :'tools/_zmap', locals: {tool_name: "zmap"} %>
+  </div>
+  <div class="tab-pane" id="tab-dirsearch">
+    <%= erb :'tools/dirsearch', locals: {tool_name: "dirsearch"} %>
+  </div>
+  <div class="tab-pane" id="tab-subbrute">
+    <%= erb :'tools/subbrute', locals: {tool_name: "subbrute"}  %>
+  </div>
+  
+  <div class="tab-pane" id="tab-dnscan">
+    <%= erb :'tools/_dnscan', locals: {tool_name: "dnscan"} %>
+  </div>
+
+  <div class="tab-pane" id="tab-web-screenshot">
+    <%= erb :'tools/_web_screenshot', locals: {tool_name: "web-screenshot"} %>
+  </div>
+
+  <div class="tab-pane" id="tab-crtsh">
+    <%= erb :'tools/_crtsh', locals: {tool_name: "crtsh"} %>
+  </div>
+
+  <div class="tab-pane" id="tab-xtreme-scraper">
+    <%= erb :'tools/_xtreme_scraper', locals: {tool_name: "xtreme-scraper"} %>
+  </div>
+
+  <div class="tab-pane" id="tab-top-minecraft">
+    <%= erb :'tools/_top_minecraft', locals: {tool_name: "top-minecraft"} %>
+  </div>
+
+  <div class="tab-pane" id="tab-eyewitness">
+
+  </div>
+
+  <div class="tab-pane" id="tab-sqlmap">
+    <%= erb :'tools/_sqlmap', locals: {tool_name: "sqlmap"} %>
+  </div>
+
+  <div class="tab-pane" id="tab-wfuzz">
+    <%= erb :'tools/_wfuzz', locals: {tool_name: "wfuzz"} %>
+  </div>
+
+
+  <div class="tab-pane" id="tab-pwn-vnc">
+    <%= erb :'tools/_pwn_vnc', locals: {tool_name: "pwn-vnc"} %>
+  </div>
+
+  <div class="tab-pane" id="tab-wpscan">
+    <%= erb :'tools/_wpscan', locals: {tool_name: "wpscan"} %>
+  </div>
+
+  <div class="tab-pane" id="tab-breach-compilation">
+    <%= erb :'tools/breach-compilation', locals: {tool_name: "breach-compilation"} %>
+  </div>
+  
+  <div class="tab-pane" id="tab-hashcat">
+    <%= erb :'tools/hashcat', locals: {tool_name: "hashcat"} %>
+  </div>
+
+  <div class="tab-pane" id="tab-bounty-targets-data">
+    <%= erb :'tools/_bounty_targets_data', locals: {tool_name: "bounty-targets-data"} %>
+  </div>
+
+  <div class="tab-pane" id="tab-rip-git">
+    <%= erb :'tools/_rip_git', locals: {tool_name: "rip-git"} %>
+  </div>
+
+  <div class="tab-pane" id="tab-metasploit">
+    <%= erb :'tools/_metasploit', locals: {tool_name: "metasploit"} %>
+  </div>
+
+  <div class="tab-pane" id="tab-gitgot">
+    <%= erb :'tools/_gitgot', locals: {tool_name: "gitgot"} %>
+  </div>
+</div>

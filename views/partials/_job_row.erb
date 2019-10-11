@@ -1,0 +1,53 @@
+<div class="card table-primary" id="<%= job.id %>">
+  <div class="card-header align-items-center no-select" >
+    <button href="javascript:void(0);" class="btn btn-sm btn-link hash-nav job-expand-button" data-toggle="collapse" data-target="#job-<%= job.id %>" aria-expanded="false" aria-controls="job-<%= job.id %>">
+      Inspect
+    </button>
+
+    <% if job.job_data.length > 50 %>
+      <%= h job.job_data[0..50] %>...
+    <% else %>
+    <%= h job.job_data %>
+    <% end %>
+
+    <div class="float-right">
+      <%= job.status.upcase! %>
+
+      <% if job.last_run == 0 %>
+
+      <% else %>
+        Last run: <%= time_ago_in_words(job.last_run) %>
+      <% end %>
+    </div>
+  </div>
+
+
+  <div id="job-<%= job.id %>" class="collapse" aria-labelledby="job-heading-<%= job.id %>">
+    <div class="well">
+      <div class="col-lg-12">
+        <% if job.run_every == 0 %>
+          <p>Job will run: once.</p>
+        <% else %>
+          <p>Job will run every: <%= h job.run_every %> minutes</p>
+        <% end %>
+        <p> Full job data:</p>
+        <pre><%= job.job_data %></pre>
+      </div>
+    </div>
+  </div>
+
+ <!--
+  <td>
+    <%= h job.job_type %>
+  </td>
+  <td>
+    <%= h job.job_data %>
+  </td>
+  <td>
+    <%= h job.run_every %>
+  </td>
+  <td>
+    <%= h job.status %>
+  </td>
+-->
+</div>

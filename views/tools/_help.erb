@@ -1,0 +1,123 @@
+<%
+
+def hash_to_html(hash)
+  list = "<div class='list-group list-group-root well'>"
+
+  hash.each do |key, value|
+    list = list + "<div class='list-group align-items-center'>#{key.to_s}<div class='list-group' style='width:100%'>"
+    
+    value.each do |key2, val2|
+      list = list + "<div class='list-group-item'>#{key2.to_s}<div class='list-group'>"
+
+      val2.each do |name, tooltip|
+        list = list + '<a href="#tab-'+name.to_s+'" class="list-group-item hash-nav">' +
+                        '<div data-toggle="tooltip" title="'+tooltip+'">' +
+                        name.to_s + '</div>' +
+                      '</a>'
+      end
+      list = list + "</div></div>"
+    end
+    list = list + "</div></div>"
+  end
+
+  list = list + "</div>"
+
+
+  return list
+end
+
+domain_tools = {
+  "Domain Recon": {
+    "Subdomain Enumeration": {
+      "dnscan": "Brute Force Subdomains",
+      "crtsh": "Scrape the crt.sh certificate store for subdomains",
+      "rnnsub": "Recurrent Neural Network to generate plausible subdomains to bruteforce. (it's not as good as it sounds)"
+    },
+    "Path Enumeration": {
+      "dirsearch": "Brute force directory paths efficiently with HEAD requests",
+    },
+    "Screenshot Utilities": {
+      "web-screenshot": "PhantomJS headless browser to take screenshots of web pages."
+      #"screenshot2": "Puppeteer headless browser to take screenshots of web pages quickly."
+    },
+    "Scrapers": {
+      "xtreme-scraper": "Scrape the xtreme-top-100 private server toplist website and import found websites into hm9k",
+      "top-minecraft": "Scrape the topminecraftservers.org website and import found websites into hm9k",
+      "bounty-targets-data": "Import all known bug bounty targets from the bounty-targets-data github repo."
+    }
+  }
+}
+
+web_application_tools = {
+  "Web Application Recon": {
+    "Screenshot": {
+      "web-screenshot": "PhantomJS headless browser to take screenshots of web pages."
+    },
+    "Path Enumeration": {
+      "dirsearch": "Brute force directory paths efficiently with HEAD requests",
+    }
+  },
+
+  "<br/>Web Application Attacks": {
+    "Database": {
+      "sqlmap": "Test and exploit SQL Injection flaws",
+    },
+    "Parameters": {
+      "wfuzz": "Fuzz web parameters",
+    }
+  }
+}
+
+host_tools = {
+  "Host Recon": {
+    "Enumeration": {
+      "nmap": "Network map!",
+      "zmap": "Efficiently scan wide patches of the internet for an open port"
+    }
+  },
+  "<br/>Host Attacks": {
+    "VNC": {
+      "pwn-vnc": "Determine if a target has an unauthenticated VNC service listening on a given port."
+    }
+  }
+}
+
+password_tools = {
+  "Passwords": {
+    "Brute Forcing": {
+      "hashcat": "GPU powered password brute forcer",
+    },
+    "Dumps": {
+      "breach-compilation": "Database of valid plaintext credentials leaked by many high profile over time",
+    }
+  }
+}
+
+%>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="text-center" style="padding-top:20px;">
+      <h2>First Visit?<h2>
+      <p><a href="javascript:void(0);" class="btn btn-lg btn-primary start-tour-button"> Take a tour</a></p>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md">
+    <%= hash_to_html(domain_tools) %>
+  </div>
+
+  <div class="col-md">
+    <%= hash_to_html(web_application_tools) %>
+  </div>
+
+  <div class="col-md">
+    <%= hash_to_html(host_tools) %>
+  </div>
+
+  <div class="col-md">
+    <%= hash_to_html(password_tools) %>
+  </div>
+</div>

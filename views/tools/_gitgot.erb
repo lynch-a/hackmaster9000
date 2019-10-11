@@ -1,0 +1,102 @@
+<div id="accordion">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">
+        <button class="btn btn-link" id="<%= tool_name%>-help-heading" data-toggle="collapse" data-target="#<%= tool_name %>-help" aria-expanded="false" aria-controls="<%= tool_name %>-help">
+          GitGot Help
+        </button>
+      </h5>
+    </div>
+
+    <div id="<%= tool_name %>-help" class="collapse" data-toggle="collapse" aria-labelledby="<%= tool_name %>-help-heading" data-parent="#accordion">
+      <div class="card-body bg-light">
+        <pre style="margin-bottom:0;"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+
+<div class="container no-gutters">
+  <div class="row">
+    <div class='col-sm-6'>    
+      <%= erb :'tools/tool_helpers/_text_input', locals: {
+                tool_name: tool_name,
+                label: "Search Term",
+                field_name: "search",
+                field_value: "",
+                placeholder: "cats (required)"
+              }
+      %>
+    </div>
+    <div class='col-sm-6'>
+      <%= erb :'tools/tool_helpers/_text_input', locals: {
+                tool_name: tool_name,
+                label: "Organization",
+                field_name: "organization",
+                field_value: "",
+                placeholder: "Optional"
+              }
+      %>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class='col-sm-6'>
+      <% regexes = find_wordlists("/home/alex/git/GitGot/checks/**/*") %>
+
+      <%= erb :'tools/tool_helpers/_dropdown_optional', locals: {
+              checked: true,
+              tool_name: tool_name,
+              label: "Select Regex List",
+              field_name: "regexlist",
+              options: regexes,
+              selected_index: 0
+          }
+        %>
+    </div>
+
+    <div class='col-sm-6'>
+      <% states = find_wordlists("/home/alex/git/GitGot/states/**/*") %>
+
+      <%= erb :'tools/tool_helpers/_dropdown_optional', locals: {
+              checked: false,
+              tool_name: tool_name,
+              label: "Use log state for blacklist",
+              field_name: "state",
+              options: states,
+              selected_index: 0
+          }
+        %>
+    </div>
+  </div>
+
+  <%= erb :'partials/_tool_runner', layout: false, locals: {scheduling: false, tool_name: "gitgot"} %>
+
+  <div class="row">
+    <button style="margin:10px;" class="btn btn-sm btn-primary gitgot-prev">Prev File</button>
+    <button style="margin:10px;" class="btn btn-sm btn-primary gitgot-next">Next File</button>
+    
+    <div style="padding:10px;">Ignore Similar...</div>
+    
+    <button style="margin:10px;" class="btn btn-sm btn-primary gitgot-ignore-contents">Contents</button>
+    <button style="margin:10px;" class="btn btn-sm btn-primary gitgot-ignore-user">User</button>
+    <button style="margin:10px;" class="btn btn-sm btn-primary gitgot-ignore-repo">Repo</button>
+    <button style="margin:10px;" class="btn btn-sm btn-primary gitgot-ignore-filename">Filename</button> 
+  </div>
+
+  <div class="row">
+    <button style="margin:10px;" class="btn btn-sm btn-primary gitgot-add-result">Add To Log</button>
+    <button style="margin:10px;" class="btn btn-sm btn-primary gitgot-save">Save State</button>
+  </div>
+
+  <div class="form-inline">
+      <input class="form-control mr-1 input-sm gitgot-search-value">
+      <button class="btn btn-primary btn-sm gitgot-search">Search In File</button>
+  </div>
+
+  <div class="row">
+    <button style="margin:10px;" class="btn btn-sm btn-primary gitgot-print">Print File</button>
+  </div>
+</div>

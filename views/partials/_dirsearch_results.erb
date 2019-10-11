@@ -1,0 +1,52 @@
+<%
+# find all of the dirsearch scans across all associated dns records 
+%>
+
+<%
+def response_to_color(response)
+  if response == "200"
+    return "success"
+  elsif response == "301" or response == "302"
+    return "warning"
+  elsif response == "500" or response == "403" or response == "400"
+    return "danger"
+  else
+    return "none"
+  end
+end
+%>
+
+
+<%
+dirsearch_scans = DirsearchScan.where(web_application_id: web_application.id)
+%>
+
+<% if dirsearch_scans.size > 0 %>
+  <h5>Dirsearch Results</h5>
+  <table style="width:100%" class="table fixed-width-table dirsearch-table">
+    <thead>
+      <tr>
+        <th>URL</th>
+        <th>Code</th>
+        <th>Size</th>
+        <!-- <th>Redirect</th> -->
+      </tr>
+    </thead>
+
+      <tbody>
+        <% seen = [] %>
+        <% dirsearch_scans.each do |scan| %>
+          <% scan.dirsearch_results.order(:status).each do |entry| %>
+            <% next if entry.path == "" or seen.include? entry.path %>
+            <% seen << entry.path %>
+            <tr class="bg-<%= response_to_color(entry.status) %>">
+              <td style="word-break: break-word;"><%= "#{web_application.scheme}://#{web_application.dns_record.dns_name}/#{entry.path}" %></td>
+            	<td><%= "#{entry.status}" %></td>
+            	<td><%= "#{entry.content_length}" %></td>
+            	<!-- <td><%= "#{entry.redirect}" %></td> -->
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+<% end %>

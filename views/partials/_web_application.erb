@@ -1,0 +1,134 @@
+<% full_url = "#{web_application.scheme}://#{(web_application.dns_record.dns_name == "") ? "#{web_application.dns_record.record_value}" : "#{web_application.dns_record.dns_name}"}:#{web_application.port}" %>
+
+<%
+counts = {}
+
+dirsearch_scans = DirsearchScan.where(web_application_id: web_application.id)
+dirsearch_scans.each do |scan|
+  current_counts = DirsearchResult.where(dirsearch_scan_id: scan.id).group(:status).count
+  counts = counts.merge(current_counts)
+end
+%>
+
+
+<div class="card no-select" target="<%= full_url %>" domain="<%= web_application.dns_record.dns_name %>">
+  <div class="card-header table-<%= risk_to_color(web_application.risk) %>" id="web-application-heading-<%= web_application.id %>">
+    <a href="" class="hide-web-application" web_app_id="<%= web_application.id %>">
+      <span class="fas fa-trash"></span>
+    </a>
+    <button href="javascript:void(0);" class="btn btn-sm btn-link hash-nav web-application-expand-button" data-toggle="collapse" data-target="#web-application-<%= web_application.id %>" aria-expanded="false" aria-controls="web-application-<%= web_application.id %>">
+      Details
+    </button>
+
+    <!-- the card header display title -->
+    <%= full_url %>
+
+    <% if counts.size > 0 %>
+      <a href="#">
+        <span class="fas fa-list" title="Has dirsearch results"></span>
+      </a><small>(<%= counts.sort.to_s %>)</small>
+    <% end %>
+  </div>
+
+  <div id="web-application-<%= web_application.id %>" class="collapse" aria-labelledby="web-application-heading-<%= web_application.id %>">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="#web-application-<%= web_application.id %>-meta" data-toggle="tab">Meta</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#web-application-<%= web_application.id %>-map" data-toggle="tab">Sitemap</a>
+      </li>
+    </ul>
+
+    <!-- meta -->
+    <div class="tab-content">
+      <div class="tab-pane active" id="web-application-<%= web_application.id %>-meta">
+        <div class="col-lg-12">
+          <select class="form-control web-application-set-risk" name="web-application-set-risk" web-application-id="<%= web_application.id %>">
+            <option  <%= web_application.risk == 0 || web_application.risk == nil ? "selected" : "" %> value="0">Unreviewed</option>
+            <option  <%= web_application.risk == 1 ? "selected" : "" %> value="1">Low</option>
+            <option  <%= web_application.risk == 2 ? "selected" : "" %> value="2">Medium</option>
+            <option  <%= web_application.risk == 3 ? "selected" : "" %> value="3">High</option>
+          </select>
+          <br/>
+
+
+          <div class="justify-content-center custom-pic-header" style="border-style:solid;border-width:2px;">
+            <% if web_application.dns_record.dns_name == "" %>
+              <img class="card-img" onerror="this.style.display='none';" src="/ss/<%= "#{web_application.scheme}#{web_application.dns_record.record_value}#{web_application.port}" %>-ss.png" >
+            <% else %>
+              <img class="card-img" onerror="this.style.display='none';" src="/ss/<%= "#{web_application.scheme}#{web_application.dns_record.dns_name}#{web_application.port}" %>-ss.png" >
+            <% end %>
+          </div>
+          <br/>
+
+          <form class="web-application-comment" data-web-application-id="<%= web_application.id%>">
+            <div class="form-group">
+              <textarea class="form-control" name="web-application-comment" rows="5" placeholder="Notes"><%= web_application.description %></textarea>
+              <button type="btn" class="web-application-comment btn btn-primary" data-web-application-id="<%=  web_application.id %>">Save</button>
+            </div>
+          </form>
+
+          <% if web_application.dns_record.dns_name != "" or web_application.dns_record.dns_name == nil %>
+
+              <h5>Domain Name</h5>
+              <table class="table table-hover table-condensed table-bordered no-select">
+                <tbody>
+                  <tr>
+                    <td class="no-select table-<%= risk_to_color(web_application.dns_record.risk) %> text-center web-application-domain-<%= web_application.dns_record.id %>">
+                      <a href="#domains-<%= web_application.dns_record.id %>" class="hash-nav">
+                        <%= web_application.dns_record.dns_name %>
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+          <% else %>
+            <h5>Host</h5>
+
+            <table class="table table-hover table-condensed table-bordered">
+              <tbody>
+                <tr>
+                  <td class="no-select table-<%= risk_to_color(web_application.dns_record.risk) %> text-center web-application-host-<%= web_application.dns_record.id %> no-select">
+                    <a href="#hosts-<%= Host.where(ip: web_application.dns_record.record_value).first.id %>" class="hash-nav">
+                      <%= web_application.dns_record.record_value %>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+          <% end %>
+
+          <%= erb :'partials/_wpscan_results', :locals => { :web_application => web_application } %>
+
+          <%= erb :'partials/_dirsearch_results', :locals => { :web_application => web_application } %>
+
+          <h4>Feed</h4>
+
+          <% feed_items = FeedItem.where(data_type: "web_application", data_id: web_application.id) %>
+          <% feed_items.each do |feed_item| %>
+              <pre><%= feed_item.value %></pre>
+          <% end %>
+        </div>
+      </div>
+      <div class="tab-pane" id="web-application-<%= web_application.id %>-map">
+
+
+        <div class="col-lg-12">
+          <h5>Pages</h5>
+          <div class="form-group">
+            <h5>Import page</h5>
+            <textarea class="form-control parse-http-request-textarea-<%= web_application.id %>" rows="5" placeholder="Raw HTTP request data"></textarea>
+            <button class="btn btn-block btn-danger parse-http-request-button" web-app-id="<%= web_application.id %>">Import Request</button>
+          </div>
+
+          <div id="page-accordion" class="container page-summary">
+            <%= erb :'partials/_page_summary', layout: false, locals: {web_application: web_application} %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

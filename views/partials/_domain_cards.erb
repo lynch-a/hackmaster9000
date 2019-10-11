@@ -1,0 +1,38 @@
+<% # Business logic in the view? Oh no! This actually makes everything way easier.
+
+  total_count = Domain.where(project_id: @project.id).count
+
+  domains = nil
+
+  if (@search.length > 1)
+    domains = Domain.where([" LIKE ?", "%#{@search}%"])
+    .basic_search(project_id: @project.id)
+    .offset(start).limit(length).order(id: :desc)
+
+  else
+    dns_records = Domain.where(project_id: @project.id).offset(@start).limit(@length).order(id: :desc)
+  end
+
+  # quick helper method
+  def risk_to_color(risk)
+    if risk == 0 || risk == nil
+      return "secondary"
+    elsif risk == 1
+      return "info"
+    elsif risk == 2
+      return "warning"
+    elsif risk == 3
+      return "danger"
+    else
+      return ""
+    end
+  end
+%>
+
+<% domains.each do |domain| %>
+  <tr class="domain-row-<%= domain.id %> table-<%= risk_to_color(domain.risk) %>">
+    <td class="domain">
+      <%= erb :'partials/_domain', layout: false, locals: { domain: domain} %>
+    </td>
+  </tr>
+<% end %>

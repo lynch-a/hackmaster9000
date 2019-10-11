@@ -1,0 +1,34 @@
+<h4>Services</h4>
+
+<table class="table table-sm table-condensed table-striped table-bordered no-select" style="">       
+  <tr class="thead-dark">
+    <th>Port</th>
+    <th>Description</th>
+  </tr>
+    
+  <% host.services.each do |service| %>
+    <% # check service risk
+      risk_str = "secondary"
+      if service.risk == 0
+        risk_str = "secondary"
+      elsif service.risk == 1
+        risk_str = "info"
+      elsif service.risk == 2
+        risk_str = "warning"
+      elsif service.risk == 3
+        risk_str = "danger"
+      end
+    %>
+
+    <tr class="table-<%= risk_str %>">
+      <td>
+        <%= service.port_number %>
+      </td>
+
+      <td>
+        <%= service.service_name %>
+      </td>
+    </tr>
+
+  <% end %>
+</table>

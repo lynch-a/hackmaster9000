@@ -1,0 +1,280 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/105/three.js"></script>
+<script src="threejs/EffectComposer.js"></script>
+<script src="threejs/RenderPass.js"></script>
+<script src="threejs/ShaderPass.js"></script>
+<script src="threejs/CopyShader.js"></script>
+<script src="threejs/LuminosityHighPassShader.js"></script>
+<script src="threejs/UnrealBloomPass.js"></script>
+<script src='threejs/lines/LineSegmentsGeometry.js'></script>
+<script src='threejs/lines/LineGeometry.js'></script>
+<script src='threejs/lines/WireframeGeometry2.js'></script>
+<script src='threejs/lines/LineMaterial.js'></script>
+
+<script src='threejs/lines/LineSegments2.js'></script>
+<script src='threejs/lines/Line2.js'></script>
+<script src='threejs/lines/Wireframe.js'></script>
+<script src='threejs/loaders/OBJLoader.js'></script>
+<script src='threejs/controls/TransformControls.js'></script>
+<script>
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+	var params = {
+		exposure: 1,
+		bloomStrength: 1.5,
+		bloomThreshold: 0,
+		bloomRadius: 0
+		};
+
+  var renderer = new THREE.WebGLRenderer({antialias:true});
+	renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.toneMapping = THREE.ReinhardToneMapping;
+
+	var renderScene = new THREE.RenderPass(scene, camera);
+	var bloomPass = new THREE.UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
+			bloomPass.threshold = params.bloomThreshold;
+			bloomPass.strength = params.bloomStrength;
+			bloomPass.radius = params.bloomRadius;	
+
+	var composer = new THREE.EffectComposer(renderer);
+	composer.addPass(renderScene);
+	composer.addPass(bloomPass);
+
+  var node = document.body.appendChild( renderer.domElement );
+  node.style.position = 'absolute';
+  node.style.top = '0px';
+  node.style.zIndex = -100;
+
+  //var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+  var buffer_geometry = new THREE.IcosahedronBufferGeometry( 1, 0 );
+  var wireframe_geometry = new THREE.WireframeGeometry2(buffer_geometry);
+  //var cube = new THREE.Mesh( geometry, material );
+  var mat = new THREE.LineBasicMaterial( { color: 0x00ffff, linewidth: 2 } );
+  var line_material = new THREE.LineMaterial( { color: 0x00ffff, linewidth: 3 } );
+	
+	var wireframe = new THREE.Wireframe(wireframe_geometry, line_material);
+	wireframe.computeLineDistances();
+
+  //var cube = new THREE.LineSegments(wireframe, mat);
+  //scene.add( cube );
+  wireframe.position.y = 2.2;
+  wireframe.position.x = 3.2;
+  scene.add( wireframe );
+
+  //control = new THREE.TransformControls( camera, renderer.domElement );
+  //control.addEventListener( 'change', animate );
+  //control.attach(wireframe);
+  //scene.add(control);
+
+  var size = 10;
+  var divisions = 10;
+
+  // Add grids
+  var size = 10;
+  var divisions = 10;
+  var gridHelper = new THREE.GridHelper(size, divisions, 0xff00ff, 0xff00ff);
+  var gridHelper2 = new THREE.GridHelper(size, divisions, 0xff00ff, 0xff00ff);
+
+  var grid_material = new THREE.LineBasicMaterial({ color: 0xff00ff, linewidth: 4 });
+
+  gridHelper.material = grid_material;
+  gridHelper2.material = grid_material;
+  
+	gridHelper2.rotation.x = 0;
+	gridHelper2.position.y = 5;
+
+  scene.add(gridHelper);
+	scene.add(gridHelper2);
+
+  camera.position.z = 5;
+  camera.position.y = 2;
+
+  //var tree_material = new THREE.LineBasicMaterial({ color: 0x00ff00, linewidth: 4 });
+  var tree_material = new THREE.MeshBasicMaterial({ color: 0x00ff00});
+
+	var palm_tree;
+
+	function loadModel() {
+		object.traverse( function ( child ) {
+			if ( child.isMesh ){
+				child.material = tree_material;
+				child.material.wireframe = true;
+			}
+		} );
+		//object.position.y = - 95;
+		object.scale.x = .02;
+		object.scale.y = .02;
+		object.scale.z = .02;
+		object.position.x = -2.9;
+		object.position.y = .1;
+		object.position.z = .1;
+		scene.add( object );
+		palm_tree = object;
+	}
+
+	var manager = new THREE.LoadingManager( loadModel );
+	manager.onProgress = function ( item, loaded, total ) {
+					console.log( item, loaded, total );
+	};
+
+	function onProgress( xhr ) {
+				if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( 'model ' + Math.round( percentComplete, 2 ) + '% downloaded' );
+					}
+	}
+
+	function onError() {}
+	var loader = new THREE.OBJLoader( manager );
+	loader.load( 'threejs/models/palm_tree_02.obj', function ( obj ) {
+				object = obj;
+		}, onProgress, onError );
+
+	
+
+/*
+	var text_mesh;
+  var loader = new THREE.FontLoader();
+  loader.load('helvetiker_regular.typeface.json', function(font) {
+    console.log("hello loaded");
+    var title = "hm9k";
+    var shapes = font.generateShapes(title, .4);
+    var text_geometry = new THREE.ShapeBufferGeometry(shapes);
+    text_geometry.computeBoundingBox();
+
+		var xmid = - 0.5 * (text_geometry.boundingBox.max.x - text_geometry.boundingBox.min.x);
+		text_geometry.translate(xmid, 0, 0);
+
+		var matLite = new THREE.MeshBasicMaterial( {
+						color: 0x00FFFF,
+						transparent: true,
+						opacity: 1.0,
+						side: THREE.DoubleSide
+			} );
+
+    text_mesh = new THREE.Mesh(text_geometry, matLite);
+		text_mesh.position.y = 4.999;
+		text_mesh.position.z = 0.3;
+		text_mesh.rotation.x = 90*(3.14/180);
+    //scene.add(text_mesh);
+  });
+*/
+  var tree_crazy = Math.random();
+
+  var animate = function () {
+    requestAnimationFrame( animate );
+
+    wireframe.rotation.x += 0.001;
+    wireframe.rotation.y += 0.001;
+
+		if (palm_tree)
+    {
+      if (tree_crazy < .1)
+      {
+        palm_tree.rotation.y += Math.random();
+        palm_tree.rotation.z += Math.random();
+        palm_tree.rotation.x += Math.random();
+      }
+      else
+      {
+        palm_tree.rotation.y += 0.01;
+      }
+    }
+
+		line_material.resolution.set(window.innerWidth, window.innerHeight);
+		renderer.clearDepth();
+
+    //renderer.render( scene, camera );
+		composer.render();
+  };
+
+	function onWindowResize() {
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+		renderer.setSize( window.innerWidth, window.innerHeight );
+	}
+	window.addEventListener( 'resize', onWindowResize, false );
+
+  var rayCaster = new THREE.Raycaster();
+  function onClick(event) {
+    //mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    //mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+  }
+  //document.addEventListener( 'click', onClick, false );
+
+
+  animate();
+</script>
+
+<style>
+   #login-title {
+      font-style: oblique;
+      padding: 10px;
+      margin: 10px;
+      text-shadow: 0px 0px 5px cyan;
+      font-family: "Lucida Console", Monaco, monospace;
+      color: cyan;
+   }
+   
+   #username, #password {
+			border: 2px solid cyan;
+			background: none;
+			font-family: "Lucida Console", Monaco, monospace;
+			color: cyan;
+      box-shadow: 5px 5px 5px cyan;
+	 }
+
+	 #login-submit {
+			background: none;
+      color: hotpink;
+			font-family: "Lucida Console", Monaco, monospace;              
+			border: 2px solid hotpink;
+      text-shadow: 0px 0px 5px hotpink;
+			box-shadow: 5px 5px 5px hotpink;
+   }
+
+	 #login-submit:hover {
+			background: hotpink;
+      color: #FFF;
+			box-shadow: 2px 2px 5px hotpink;
+  }
+   .form-signin {
+      display: inline-block;
+      background: #111;
+      opacity: 0.8;
+      padding: 20px;
+      border-radius: 5px;
+      border: 2px solid cyan;
+      box-shadow: 0px 0px 5px cyan;
+   }
+
+   .login-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .vertical-center {
+     -ms-transform: translateY(40vh);
+     transform: translateY(40vh);
+   }
+</style>
+
+<div class="login-container vertical-center" >
+  <form action="/login" method="POST">
+    <a id="login-title">hackmaster9000</a>
+
+    <div class="form-group">
+      <input type="text" name="username" id="username" class="form-control" placeholder="Username" required autofocus ></input>
+    </div>
+
+    <div class="form-group">
+      <input type="password" name="password" id="password" class="form-control" placeholder="Password" required></input>
+    </div>
+
+    <button id="login-submit" class="btn btn-lg btn-danger btn-block" type="submit">LOG IN</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,140 @@
+<div id="accordion">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">
+        <button class="btn btn-link" id="<%= tool_name%>-help-heading" data-toggle="collapse" data-target="#<%= tool_name %>-help" aria-expanded="false" aria-controls="<%= tool_name %>-help">
+          Dirsearch Help
+        </button>
+      </h5>
+    </div>
+
+    <div id="<%= tool_name %>-help" class="collapse" data-toggle="collapse" aria-labelledby="<%= tool_name %>-help-heading" data-parent="#accordion">
+      <div class="card-body bg-light">
+        <pre style="margin-bottom:0;">Dirsearch is a subdirectory brute forcing tool.
+
+Given a target like: https://google.com
+It will check the status code and content length of paths like:
+- https://google.com/path1
+- https://google.com/path2
+- https://google.com/path...
+
+Results show up in the web applications view.
+</pre>
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+
+<div class="container no-gutters">
+  <div class="row">
+    <div class='col-sm-6'>    
+      <%= erb :'tools/tool_helpers/_text_input', locals: {
+                tool_name: tool_name,
+                label: "Target",
+                field_name: "target",
+                field_value: "",
+                placeholder: "Target URL"
+              }
+      %>
+    </div>
+    <div class='col-sm-6'>
+      <%= erb :'tools/tool_helpers/_text_input', locals: {
+                tool_name: tool_name,
+                label: "Target Extensions",
+                field_name: "target-extensions",
+                field_value: "",
+                placeholder: ""
+              }
+      %>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class='col-sm-6'>
+      <% wordlists = find_wordlists("/usr/share/wordlists/web-paths/**/*") %>
+
+      <%= erb :'tools/tool_helpers/_dropdown_optional', locals: {
+              checked: false,
+              tool_name: tool_name,
+              label: "Select Wordlist",
+              field_name: "wordlist",
+              options: wordlists,
+              selected_index: 0
+          }
+        %>
+    </div>
+
+    <div class='col-sm-6'>
+      <%= erb :'tools/tool_helpers/_dropdown_optional', locals: {
+        checked: false,
+              tool_name: tool_name,
+              label: "Select User Agent",
+              field_name: "useragent",
+              options: [
+                ["None", "Default"]
+              ],
+              selected_index: 0
+          }
+        %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class='col-sm-6'>
+    <%= erb :'tools/tool_helpers/_text_input_optional', locals: {
+            tool_name: tool_name,
+            label: "Threadcount",
+            field_name: "thread-count",
+            field_value: "1",
+            checked: true,
+            placeholder: ""
+        }
+    %>
+    </div>
+    <div class="col-sm-6">
+      <%= erb :'tools/tool_helpers/_text_input_optional', locals: {
+              tool_name: tool_name,
+              label: "Delay",
+              field_name: "delay",
+              field_value: "",
+              checked: false,
+              placeholder: "delay in seconds"
+          }
+      %>  
+    </div>
+  </div>
+
+  <div class="row">
+    <div class='col-sm-6'>    
+      <%= erb :'tools/tool_helpers/_checkbox', locals: {
+            tool_name: tool_name,
+            label: "Follow Redirects",
+            field_name: "follow-redirects"
+          }
+      %>
+
+      <%= erb :'tools/tool_helpers/_checkbox', locals: {
+            tool_name: tool_name,
+            label: "Recursive",
+            field_name: "recursive"
+          }
+      %>
+
+      <%= erb :'tools/tool_helpers/_checkbox', locals: {
+            tool_name: tool_name,
+            label: "Random user agents",
+            field_name: "random-agents"
+          }
+      %>
+    </div>
+    <div class='col-sm-6'>
+
+    </div>
+  </div>
+
+  <hr>
+  <%= erb :'partials/_tool_runner', layout: false, locals: {tool_name: "dirsearch"} %>
+
+</div>

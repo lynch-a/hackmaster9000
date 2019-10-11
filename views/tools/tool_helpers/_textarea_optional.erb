@@ -1,0 +1,8 @@
+<div class="form-group">
+  <div class="form-check">
+    <input type="checkbox" <%= (checked == true) ? "checked" : "" %> class="form-check-input" id="<%= tool_name %>-toggle-<%= field_name %>" name="<%= tool_name %>-toggle-<%= field_name %>"/>
+    <label class="form-check-label" for="<%= tool_name %>-<%= field_name %>-toggle"><%= label %></label>
+  </div>
+
+  <textarea class="form-control" placeholder="<%= placeholder %>" rows="5" id="<%= tool_name %>-<%= field_name %>" name="<%= tool_name %>-<%= field_name %>"></textarea>
+</div>

@@ -1,0 +1,73 @@
+<%= erb :'partials/_config_saver', layout: false, locals: {tool_name: "sqlmap"} %>
+
+<div class="container no-gutters">
+  <form id="sqlmap-options" onsubmit="return false">
+    <div class="row">
+      <div class='col-sm-6'>    
+        <div class='form-group'>
+          <label for="sqlmap-target">Target</label>
+          <input class="form-control form-control-sm" id="sqlmap-target" placeholder="Target URL" required="true" type="text" />
+        </div>
+      </div>
+      <div class='col-sm-6'>
+        <div class='form-group'>
+          <label for="sqlmap-method">Method</label>
+          <select class="form-control form-control-sm" id="sqlmap-method" name="sqlmap-method">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class='col-sm-6'>
+        <div class='form-group'>
+          <label for="sqlmap-level">Level</label>
+          <select class="form-control form-control-sm" id="sqlmap-level" name="sqlmap-level">
+            <option selected value="1">1 (Fewest tests)</option>
+            <option value="2">2 (+Cookies tested)</option>
+            <option value="3">3 (+User-agent/Referer tested)</option>
+            <option value="4">4</option>
+            <option value="5">5 (All tests)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class='col-sm-6'>    
+        <div class='form-group'>
+          <div class='form-group'>
+            <label for="sqlmap-risk">Risk</label>
+            <select class="form-control form-control-sm" id="sqlmap-risk" name="sqlmap-risk">
+              <option selected value="1">1 (innocuous)</option>
+              <option value="2">2 (+ time-based)</option>
+              <option value="3">3 (+ OR based)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class='col-sm-6'>    
+        <div class='form-group'>
+          <div class='form-group'>
+            <label for="sqlmap-params">Test Parameters</label>
+            <input class="form-control form-control-sm" id="sqlmap-params-included" placeholder="param1,param2,param3" type="text" name="sqlmap-params-included"/>
+          </div>
+        </div>
+      </div>
+      <div class='col-sm-6'>
+        <div class='form-group'>
+          <label for="sqlmap-cookies">Cookies</label>
+          <input class="form-control form-control-sm" id="sqlmap-cookies" placeholder="PHPSESSID=abcdef0123; COOKIE2=qwerty" type="text" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="btn btn-danger form-control" id="sqlmap-run">Run</button>
+    </div>
+  </form>
+</div>

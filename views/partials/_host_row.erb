@@ -1,0 +1,21 @@
+<%
+def risk_to_color(risk)
+  if risk == 0 || risk == nil
+    return "secondary"
+  elsif risk == 1
+    return "info"
+  elsif risk == 2
+    return "warning"
+  elsif risk == 3
+  	return "danger"
+  else
+    return ""
+  end
+end
+%>
+
+<tr class="host-row-<%= host.id %> table-<%= risk_to_color(host.risk) %>">
+  <td class="host">
+    <%= erb :'partials/_host', layout: false, locals: { host: host } %>
+  </td>
+</tr>

@@ -1,0 +1,36 @@
+<div id="accordion">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">
+        <button class="btn btn-sm btn-link" id="<%= tool_name%>-help-heading" data-toggle="collapse" data-target="#<%= tool_name %>-help" aria-expanded="false" aria-controls="<%= tool_name %>-help">
+          bounty-target-data Help
+        </button>
+      </h5>
+    </div>
+
+  <div id="<%= tool_name %>-help" class="collapse" data-toggle="collapse" aria-labelledby="<%= tool_name %>-help-heading" data-parent="#accordion">
+      <div class="card-body bg-light">
+        <pre style="margin-bottom:0;">Automatically imports the latest data from the bounty-targets-data github repo as domains in hm9k.
+
+https://github.com/arkadiyt/bounty-targets-data</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container no-gutters">
+  <div class="row">
+    <div class='col-sm-6'>
+      <%= erb :'tools/tool_helpers/_text_input', locals: {
+                tool_name: tool_name,
+                label: "Output File Name",
+                field_name: "output",
+                field_value: "btd-domains.txt",
+                placeholder: ""
+              }
+      %>
+    </div>
+  </div>
+  <hr>
+  <%= erb :'partials/_tool_runner', layout: false, locals: {tool_name: tool_name} %>
+</div>

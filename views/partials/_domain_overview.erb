@@ -1,0 +1,45 @@
+<%
+def risk_to_color(risk)
+  if risk == 0
+    return "success"
+  elsif risk == 1
+    return "warning"
+  elsif risk == 2
+    return "danger"
+  else
+    return "dark"
+  end
+end
+%>
+
+<% records = DnsRecord.unique_hostnames(@project.id) %>
+<div class="container">
+  <h4>Actions</h4>
+  <div class="row">
+    <div class='col-sm-6'>    
+      <button class="btn hosts-to-nmap">Send to nmap</button>
+    </div>
+    <div class='col-sm-6'>
+      
+    </div>
+  </div>
+</div>
+
+
+<div class="col-sm-2">
+  <ul class="nav nav-pills flex-column app-list">
+    <% records.each do |dns_record| %>
+      <li class="nav-item" domain-id="<%= dns_record.id %>">
+        <a class="nav-link" href="#domains-<%= dns_record.id %>" data-toggle="pill"><%= dns_record.dns_name %></a>
+      </li>
+    <% end %>
+  </ul>
+</div>
+
+<div class="col col-md-10">
+  <div class="tab-content app-content" style="width:100%;">
+    <% records.each do |dns_record| %>
+      <%= erb :'partials/_domain', layout: false, locals: {dns_record: dns_record} %>
+    <% end %>
+  </div>
+</div>

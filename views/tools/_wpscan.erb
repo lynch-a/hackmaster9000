@@ -1,0 +1,83 @@
+<div id="accordion">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">
+        <button class="btn btn-link" id="<%= tool_name%>-help-heading" data-toggle="collapse" data-target="#<%= tool_name %>-help" aria-expanded="false" aria-controls="<%= tool_name %>-help">
+          wpscan Help
+        </button>
+      </h5>
+    </div>
+
+  <div id="<%= tool_name %>-help" class="collapse" data-toggle="collapse" aria-labelledby="<%= tool_name %>-help-heading" data-parent="#accordion">
+      <div class="card-body bg-light">
+        <pre style="margin-bottom:0;">wpscan can scan a wordpress instance for insecure versions, plugins, themes, etc.
+
+Files named "wpscan-*.???" in the default working directory will be automatically imported into the interface.
+</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= erb :'partials/_config_saver', layout: false, locals: {tool_name: tool_name} %>
+
+<hr>
+
+<div class="container no-gutters">
+  <div class="row">
+    <div class='col-sm-6'>
+      <%= erb :'tools/tool_helpers/_text_input', locals: {
+                tool_name: tool_name,
+                label: "Target",
+                field_name: "target",
+                field_value: "",
+                placeholder: "http://wordpress.local"
+              }
+      %>
+    </div>
+  </div>
+
+  <form id="<%= tool_name %>-options">
+    <div class="row">
+      <div class='col-sm-6'>
+        <%= erb :'tools/tool_helpers/_checkbox', locals: {
+                tool_name: tool_name,
+                label: "Stealthy (random user agent, passive detection only)",
+                field_name: "stealthy",
+                checked: true
+            }
+        %>
+
+        <%= erb :'tools/tool_helpers/_checkbox', locals: {
+                tool_name: tool_name,
+                label: "Enumerate All Plugins",
+                field_name: "enumerate-ap"
+            }
+        %>
+        <%= erb :'tools/tool_helpers/_checkbox', locals: {
+                tool_name: tool_name,
+                label: "Enumerate Users",
+                field_name: "enumerate-users"
+            }
+        %>
+
+        <%= erb :'tools/tool_helpers/_checkbox', locals: {
+                tool_name: tool_name,
+                label: "Enumerate Vulnerable Themes",
+                field_name: "enumerate-vt",
+                checked: true
+            }
+        %>
+        <%= erb :'tools/tool_helpers/_checkbox', locals: {
+                tool_name: tool_name,
+                label: "Enumerate Vulnerable Plugins",
+                field_name: "enumerate-vp",
+                checked: true
+            }
+        %>
+      </div>
+    </div>
+  </form>
+  <hr>
+  <%= erb :'partials/_tool_runner', layout: false, locals: {tool_name: "wpscan"} %>
+</div>

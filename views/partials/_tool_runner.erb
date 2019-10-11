@@ -1,0 +1,56 @@
+<div class="row">
+  <div class="col" >
+    <% if !defined?(scheduling) or scheduling != false %>
+
+      <div class="form-row align-items-center">
+        <div class="col-auto">
+          <%= erb :'tools/tool_helpers/_checkbox', locals: {
+                  tool_name: tool_name,
+                  label: "Run every",
+                  field_name: "run-every-toggle"
+              }
+          %>
+
+
+        </div>
+        <div class="col-auto">
+          <input type="text" class="form-control mb-2" id="<%= tool_name %>-run-every">
+        </div>
+        <div class="col-auto">
+          <label class="form-label">
+            minutes
+          </label>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+          <% if !defined?(scheduling) or scheduling != false %>
+
+          <%= erb :'tools/tool_helpers/_checkbox', locals: {
+            tool_name: tool_name,
+            label: "Run in background",
+            field_name: "run-in-background"
+          }
+          %>
+          <% end %>
+
+
+          <%= erb :'tools/tool_helpers/_checkbox', locals: {
+            tool_name: tool_name,
+            label: "Dump command to terminal without running it",
+            field_name: "dry-run"
+            }
+          %>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <button type="submit" class="btn btn-danger form-control" id="<%= tool_name %>-run">Run</button>
+</div>

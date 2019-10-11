@@ -1,0 +1,66 @@
+<%
+def risk_to_color(risk)
+  if risk == 0 || risk == nil
+    return "secondary"
+  elsif risk == 1
+    return "info"
+  elsif risk == 2
+    return "warning"
+  elsif risk == 3
+        return "danger"
+  else
+    return ""
+  end
+end
+%>
+
+
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" href="#tab-web-application-summary" data-toggle="tab">Detailed View</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link hash-nav" href="#web-applications-ss" data-toggle="tab">Screenshot View</a>
+  </li>
+</ul>
+
+<div class="tab-content clearfix">
+  <div class="tab-pane active" id="tab-web-application-summary">
+    <div class="row no-gutters">
+      <div class="col-lg-12">
+        <table id="web-application-table" width="100%" cellspacing="0" class="table fixed-width-table selectable nowrap">
+          <thead style="width:100%">
+            <tr>
+              <th>App</th>
+            </tr>
+          </thead>
+          <!-- ? -->
+          <tbody class="selectable" update-url="/projects/<%= @project.id %>/web_applications/">
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="web-applications-ss">
+    <div class="row no-gutters">
+        <div class="row">
+          <% @web_applications.each do |web_application|  %>
+            <div class="card" style="border:none; margin: 5px;"> <!-- just a card with an img -->
+              <a href="#web-applications-<%= web_application.id %>" class="hash-nav">
+                <% if web_application.dns_record.dns_name == "" %>
+                <div class="card-header table-<%= risk_to_color(web_application.risk) %>"><%= web_application.dns_record.record_value %></div>
+                <img class="card-img screenshot-small" style="" onerror="this.style.display='none';" src="/ss/<%= "#{web_application.scheme}#{web_application.dns_record.record_value}#{web_application.port}" %>-ss.png">
+
+                <% else %>
+                <div class="card-header"><%= web_application.dns_record.dns_name.last(35) %></div>
+                <img class="card-img screenshot-small" style="" onerror="this.style.display='none';" src="/ss/<%= "#{web_application.scheme}#{web_application.dns_record.dns_name}#{web_application.port}" %>-ss.png">
+                <% end %>
+              </a>
+            </div>
+          <% end %>
+        </div>
+    </div>
+  </div>
+</div>

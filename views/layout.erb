@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>h m 9 k</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+
+    <!--
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    -->
+
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" rel="stylesheet" integrity="sha384-w+8Gqjk9Cuo6XH9HKHG5t5I1VR4YBNdPt/29vwgfZR485eoEJZ8rJRbm3TR32P6k" crossorigin="anonymous">
+
+
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/css/hopscotch.css"></link>
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script src="/hterm_all.js"></script>
+
+    <script src="/socket.io.js"></script>
+
+    <script src="/ws_events_dispatcher.js"></script>
+    <script src="/bootstrap-notify.min.js"></script>
+
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/b-1.5.6/sc-2.0.0/datatables.min.js"></script>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!-- goldenlayout - MIT -->
+    <script type="text/javascript" src="/goldenlayout/goldenlayout.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/goldenlayout/goldenlayout-base.css" />
+    <link type="text/css" rel="stylesheet" href="/goldenlayout/goldenlayout-dark-theme.css" />
+
+
+    <style>
+      /* selectable stuff - jqueryui*/
+      .selectable .ui-selecting { background: #FECA40; }
+      .selectable .ui-selected {
+        background: #FECA40;
+      }
+
+      input, textarea {
+          margin: 0;
+          font-family: monospace;
+      }
+      /*.selectable td { margin: 3px; padding: 0.4em; font-size: 1.4em; height: 18px; } - ugly */
+
+      .fixed-width-table {
+        table-layout: fixed;
+        word-wrap:break-word;
+      }
+
+      .container-fluid {
+        /*padding: 0;*/
+      }
+
+      :root {
+        --bio-exorcist: #046A7F;    /* blue */
+        --dantes-inferno: #d56f33;  /* orange */
+        --lydia: #D53E33;           /* red */
+        --widow-black: #222;
+        --showtime: #7133d5;        /* purple */
+        --beetlejuice: #8cfb62; /* green */
+      }
+
+      /* dark */
+      .table-secondary, .btn-secondary {
+        background-color: var(--widow-black);
+      }
+
+      .btn-success {
+        background-color: var(--showtime);
+      }
+
+      .btn-primary {
+        background-color: var(--showtime);
+      }
+
+      .btn:hover {
+        background-color: var(--dantes-inferno);
+      }
+
+      .table-primary {
+        background-color: var(--showtime);
+      }
+
+      /* blue */
+      .table-info, .btn-info {
+        background-color: var(--bio-exorcist);
+      }
+
+      /* orange */
+      .table-warning, .btn-warning {
+        background-color: var(--dantes-inferno);
+      }
+
+      /* red */
+      .table-danger, .btn-danger {
+        background-color: var(--lydia);
+      }
+
+      .terminal-nav-link {
+        background-color: black;
+      }
+
+      .nav-link.active {
+        background-color: var(--showtime);
+      }
+
+
+      .btn-link {
+        color: darkgray;
+      }
+
+      .page-link {
+        background-color: var(--showtime);
+      }
+
+      .page-item.active .page-link {
+        background-color: #8cfb62;
+      }
+
+      .page-item:hover .page-link {
+        background-color: #8cfb62;
+      }
+
+      a.nav-link.active.show {
+        background-color: var(--showtime);
+      }
+
+      a, .btn-link {
+        color: #8cfb62;
+        font-weight: bold;
+        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+      }
+
+      a:hover, .btn-link:hover {
+        color: var(--showtime);
+        font-weight: bold;
+        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+      }
+
+      pre {
+         overflow-x: auto;
+         white-space: pre-wrap;
+         white-space: -moz-pre-wrap;
+         white-space: -pre-wrap;
+         white-space: -o-pre-wrap;
+         word-wrap: break-word;
+      }
+
+      .custom-pic-header{
+        height:200px;
+        overflow-y:scroll;
+        width:100%;
+      }
+
+      .screenshot-small {
+        height:180px;
+        overflow-y:scroll;
+        width:320px;
+      }
+
+      table.dataTable tbody td {
+        padding-left:10px;
+        padding-bottom:2px;
+        padding-top:2px;
+        padding-right:2px;
+      }
+      
+      /* data tables style */
+      .dataTables_length {
+        color: white !important;
+      }
+      .dataTables_info {
+        color: white !important;
+      }
+      .dataTables_filter {
+        width: 100%;
+        color: white !important;
+      }
+      .dataTables_filter label {
+        width: 100% !important;
+      }
+      .dataTables_filter input {
+        width: 100% !important;
+      }
+    </style>
+  </head>
+  
+    <body>
+      <%= yield %>
+    </body>
+</html>

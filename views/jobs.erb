@@ -1,0 +1,14 @@
+<div class="row no-gutters">
+  <table id="job-table" width="100%" class="table table-success fixed-width-table selectable nowrap">
+    <thead>
+      <tr class="thead-dark">
+        <th>Job Type</th>
+        <th>Job Data</th>
+        <th>Run Every</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody class="selectable" update-url="/projects/<%= @project.id %>/jobs/">
+    </tbody>
+  </table>
+</div>

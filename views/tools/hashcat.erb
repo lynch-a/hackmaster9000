@@ -1,0 +1,314 @@
+<div class="container no-gutters">
+  <div class="row">
+    <div class='col-sm-6'>    
+      <div class='form-group'>
+        <label for="breach-compilation-target">Hash</label>
+        <input class="form-control form-control-sm" id="hashcat-target-hash" name="hashcat-target-hash" placeholder="Hash" required="true" type="text" />
+      </div>
+    </div>
+    <div class='col-sm-6'>
+      <div class='form-group'>
+        <label for="hashcat-hash-mode">Hash Mode</label>
+        <select class="form-control form-control-sm" id="hashcat-hash-mode">
+          <option value='900'>MD4</option>
+          <option value='0'>MD5</option>
+          <option value='5100'>HalfMD5</option>
+          <option value='100'>SHA1</option>
+          <option value='1300'>SHA-224</option>
+          <option value='1400'>SHA-256</option>
+          <option value='10800'>SHA-384</option>
+          <option value='1700'>SHA-512</option>
+          <option value='5000'>SHA-3(Keccak)</option>
+          <option value='600'>BLAKE2b-512</option>
+          <option value='10100'>SipHash</option>
+          <option value='6000'>RIPEMD-160</option>
+          <option value='6100'>Whirlpool</option>
+          <option value='6900'>GOSTR34.11-94</option>
+          <option value='11700'>GOSTR34.11-2012(Streebog)256-bit</option>
+          <option value='11800'>GOSTR34.11-2012(Streebog)512-bit</option>
+          <option value='10'>md5($pass.$salt)</option>
+          <option value='20'>md5($salt.$pass)</option>
+          <option value='30'>md5(utf16le($pass).$salt)</option>
+          <option value='40'>md5($salt.utf16le($pass))</option>
+          <option value='3800'>md5($salt.$pass.$salt)</option>
+          <option value='3710'>md5($salt.md5($pass))</option>
+          <option value='4010'>md5($salt.md5($salt.$pass))</option>
+          <option value='4110'>md5($salt.md5($pass.$salt))</option>
+          <option value='2600'>md5(md5($pass))</option>
+          <option value='3910'>md5(md5($pass).md5($salt))</option>
+          <option value='4300'>md5(strtoupper(md5($pass)))</option>
+          <option value='4400'>md5(sha1($pass))</option>
+          <option value='110'>sha1($pass.$salt)</option>
+          <option value='120'>sha1($salt.$pass)</option>
+          <option value='130'>sha1(utf16le($pass).$salt)</option>
+          <option value='140'>sha1($salt.utf16le($pass))</option>
+          <option value='4500'>sha1(sha1($pass))</option>
+          <option value='4520'>sha1($salt.sha1($pass))</option>
+          <option value='4700'>sha1(md5($pass))</option>
+          <option value='4900'>sha1($salt.$pass.$salt)</option>
+          <option value='14400'>sha1(CX)</option>
+          <option value='1410'>sha256($pass.$salt)</option>
+          <option value='1420'>sha256($salt.$pass)</option>
+          <option value='1430'>sha256(utf16le($pass).$salt)</option>
+          <option value='1440'>sha256($salt.utf16le($pass))</option>
+          <option value='1710'>sha512($pass.$salt)</option>
+          <option value='1720'>sha512($salt.$pass)</option>
+          <option value='1730'>sha512(utf16le($pass).$salt)</option>
+          <option value='1740'>sha512($salt.utf16le($pass))</option>
+          <option value='50'>HMAC-MD5(key=$pass)</option>
+          <option value='60'>HMAC-MD5(key=$salt)</option>
+          <option value='150'>HMAC-SHA1(key=$pass)</option>
+          <option value='160'>HMAC-SHA1(key=$salt)</option>
+          <option value='1450'>HMAC-SHA256(key=$pass)</option>
+          <option value='1460'>HMAC-SHA256(key=$salt)</option>
+          <option value='1750'>HMAC-SHA512(key=$pass)</option>
+          <option value='1760'>HMAC-SHA512(key=$salt)</option>
+          <option value='14000'>DES(PT=$salt,key=$pass)</option>
+          <option value='14100'>3DES(PT=$salt,key=$pass)</option>
+          <option value='14900'>Skip32(PT=$salt,key=$pass)</option>
+          <option value='15400'>ChaCha20</option>
+          <option value='400'>phpass</option>
+          <option value='8900'>scrypt</option>
+          <option value='11900'>PBKDF2-HMAC-MD5</option>
+          <option value='12000'>PBKDF2-HMAC-SHA1</option>
+          <option value='10900'>PBKDF2-HMAC-SHA256</option>
+          <option value='12100'>PBKDF2-HMAC-SHA512</option>
+          <option value='23'>Skype</option>
+          <option value='2500'>WPA-EAPOL-PBKDF2</option>
+          <option value='2501'>WPA-EAPOL-PMK</option>
+          <option value='16800'>WPA-PMKID-PBKDF2</option>
+          <option value='16801'>WPA-PMKID-PMK</option>
+          <option value='4800'>iSCSICHAPauthentication,MD5(CHAP)</option>
+          <option value='5300'>IKE-PSKMD5</option>
+          <option value='5400'>IKE-PSKSHA1</option>
+          <option value='5500'>NetNTLMv1</option>
+          <option value='5500'>NetNTLMv1+ESS</option>
+          <option value='5600'>NetNTLMv2</option>
+          <option value='7300'>IPMI2RAKPHMAC-SHA1</option>
+          <option value='7500'>Kerberos5AS-REQPre-Authetype23</option>
+          <option value='8300'>DNSSEC(NSEC3)</option>
+          <option value='10200'>CRAM-MD5</option>
+          <option value='11100'>PostgreSQLCRAM(MD5)</option>
+          <option value='11200'>MySQLCRAM(SHA1)</option>
+          <option value='11400'>SIPdigestauthentication(MD5)</option>
+          <option value='13100'>Kerberos5TGS-REPetype23</option>
+          <option value='16100'>TACACS+</option>
+          <option value='16500'>JWT(JSONWebToken)</option>
+          <option value='121'>SMF(SimpleMachinesForum)>v1.1</option>
+          <option value='400'>phpBB3(MD5)</option>
+          <option value='2611'>vBulletin<v3.8.5</option>
+          <option value='2711'>vBulletin>=v3.8.5</option>
+          <option value='2811'>MyBB1.2+</option>
+          <option value='2811'>IPB2+(InvisionPowerBoard)</option>
+          <option value='8400'>WBB3(WoltlabBurningBoard)</option>
+          <option value='11'>Joomla<2.5.18</option>
+          <option value='400'>Joomla>=2.5.18(MD5)</option>
+          <option value='400'>WordPress(MD5)</option>
+          <option value='2612'>PHPS</option>
+          <option value='7900'>Drupal7</option>
+          <option value='21'>osCommerce</option>
+          <option value='21'>xt:Commerce</option>
+          <option value='11000'>PrestaShop</option>
+          <option value='124'>Django(SHA-1)</option>
+          <option value='10000'>Django(PBKDF2-SHA256)</option>
+          <option value='16000'>Tripcode</option>
+          <option value='3711'>MediaWikiBtype</option>
+          <option value='13900'>OpenCart</option>
+          <option value='4521'>Redmine</option>
+          <option value='4522'>PunBB</option>
+          <option value='12001'>Atlassian(PBKDF2-HMAC-SHA1)</option>
+          <option value='12'>PostgreSQL</option>
+          <option value='131'>MSSQL(2000)</option>
+          <option value='132'>MSSQL(2005)</option>
+          <option value='1731'>MSSQL(2012,2014)</option>
+          <option value='200'>MySQL323</option>
+          <option value='300'>MySQL4.1/MySQL5</option>
+          <option value='3100'>OracleH:Type(Oracle7+)</option>
+          <option value='112'>OracleS:Type(Oracle11+)</option>
+          <option value='12300'>OracleT:Type(Oracle12+)</option>
+          <option value='8000'>SybaseASE</option>
+          <option value='141'>Episerver6.x<.NET4</option>
+          <option value='1441'>Episerver6.x>=.NET4</option>
+          <option value='1600'>Apache$apr1$MD5,md5apr1,MD5(APR)</option>
+          <option value='12600'>ColdFusion10+</option>
+          <option value='1421'>hMailServer</option>
+          <option value='101'>nsldap,SHA-1(Base64),NetscapeLDAPSHA</option>
+          <option value='111'>nsldaps,SSHA-1(Base64),NetscapeLDAPSSHA</option>
+          <option value='1411'>SSHA-256(Base64),LDAP{SSHA256}</option>
+          <option value='1711'>SSHA-512(Base64),LDAP{SSHA512}</option>
+          <option value='16400'>CRAM-MD5Dovecot</option>
+          <option value='15000'>FileZillaServer>=0.9.55</option>
+          <option value='11500'>CRC32</option>
+          <option value='3000'>LM</option>
+          <option value='1000'>NTLM</option>
+          <option value='1100'>DomainCachedCredentials(DCC),MSCache</option>
+          <option value='2100'>DomainCachedCredentials2(DCC2),MSCache2</option>
+          <option value='15300'>DPAPImasterkeyfilev1</option>
+          <option value='15900'>DPAPImasterkeyfilev2</option>
+          <option value='12800'>MS-AzureSyncPBKDF2-HMAC-SHA256</option>
+          <option value='1500'>descrypt,DES(Unix),TraditionalDES</option>
+          <option value='12400'>BSDiCrypt,ExtendedDES</option>
+          <option value='500'>md5crypt,MD5(Unix),Cisco-IOS$1$(MD5)</option>
+          <option value='3200'>bcrypt$2*$,Blowfish(Unix)</option>
+          <option value='7400'>sha256crypt$5$,SHA256(Unix)</option>
+          <option value='1800'>sha512crypt$6$,SHA512(Unix)</option>
+          <option value='122'>macOSv10.4,MacOSv10.5,MacOSv10.6</option>
+          <option value='1722'>macOSv10.7</option>
+          <option value='7100'>macOSv10.8+(PBKDF2-SHA512)</option>
+          <option value='6300'>AIX{smd5}</option>
+          <option value='6700'>AIX{ssha1}</option>
+          <option value='6400'>AIX{ssha256}</option>
+          <option value='6500'>AIX{ssha512}</option>
+          <option value='2400'>Cisco-PIXMD5</option>
+          <option value='2410'>Cisco-ASAMD5</option>
+          <option value='500'>Cisco-IOS$1$(MD5)</option>
+          <option value='5700'>Cisco-IOStype4(SHA256)</option>
+          <option value='9200'>Cisco-IOS$8$(PBKDF2-SHA256)</option>
+          <option value='9300'>Cisco-IOS$9$(scrypt)</option>
+          <option value='22'>JuniperNetScreen/SSG(ScreenOS)</option>
+          <option value='501'>JuniperIVE</option>
+          <option value='15100'>Juniper/NetBSDsha1crypt</option>
+          <option value='7000'>FortiGate(FortiOS)</option>
+          <option value='5800'>SamsungAndroidPassword/PIN</option>
+          <option value='13800'>WindowsPhone8+PIN/password</option>
+          <option value='8100'>CitrixNetScaler</option>
+          <option value='8500'>RACF</option>
+          <option value='7200'>GRUB2</option>
+          <option value='9900'>Radmin2</option>
+          <option value='125'>ArubaOS</option>
+          <option value='7700'>SAPCODVNB(BCODE)</option>
+          <option value='7701'>SAPCODVNB(BCODE)viaRFC_READ_TABLE</option>
+          <option value='7800'>SAPCODVNF/G(PASSCODE)</option>
+          <option value='7801'>SAPCODVNF/G(PASSCODE)viaRFC_READ_TABLE</option>
+          <option value='10300'>SAPCODVNH(PWDSALTEDHASH)iSSHA-1</option>
+          <option value='8600'>LotusNotes/Domino5</option>
+          <option value='8700'>LotusNotes/Domino6</option>
+          <option value='9100'>LotusNotes/Domino8</option>
+          <option value='133'>PeopleSoft</option>
+          <option value='13500'>PeopleSoftPS_TOKEN</option>
+          <option value='11600'>7-Zip</option>
+          <option value='12500'>RAR3-hp</option>
+          <option value='13000'>RAR5</option>
+          <option value='13200'>AxCrypt</option>
+          <option value='13300'>AxCryptin-memorySHA1</option>
+          <option value='13600'>WinZip</option>
+          <option value='14700'>iTunesbackup<10.0</option>
+          <option value='14800'>iTunesbackup>=10.0</option>
+          <option value='62XY'>TrueCrypt</option>
+          <option value='X'>1=PBKDF2-HMAC-RIPEMD160</option>
+          <option value='X'>2=PBKDF2-HMAC-SHA512</option>
+          <option value='X'>3=PBKDF2-HMAC-Whirlpool</option>
+          <option value='X'>4=PBKDF2-HMAC-RIPEMD160+boot-mode</option>
+          <option value='Y'>1=XTS512bitpureAES</option>
+          <option value='Y'>1=XTS512bitpureSerpent</option>
+          <option value='Y'>1=XTS512bitpureTwofish</option>
+          <option value='Y'>2=XTS1024bitpureAES</option>
+          <option value='Y'>2=XTS1024bitpureSerpent</option>
+          <option value='Y'>2=XTS1024bitpureTwofish</option>
+          <option value='Y'>2=XTS1024bitcascadedAES-Twofish</option>
+          <option value='Y'>2=XTS1024bitcascadedSerpent-AES</option>
+          <option value='Y'>2=XTS1024bitcascadedTwofish-Serpent</option>
+          <option value='Y'>3=XTS1536bitall</option>
+          <option value='8800'>AndroidFDE<=4.3</option>
+          <option value='12900'>AndroidFDE(SamsungDEK)</option>
+          <option value='12200'>eCryptfs</option>
+          <option value='137XY'>VeraCrypt</option>
+          <option value='X'>1=PBKDF2-HMAC-RIPEMD160</option>
+          <option value='X'>2=PBKDF2-HMAC-SHA512</option>
+          <option value='X'>3=PBKDF2-HMAC-Whirlpool</option>
+          <option value='X'>4=PBKDF2-HMAC-RIPEMD160+boot-mode</option>
+          <option value='X'>5=PBKDF2-HMAC-SHA256</option>
+          <option value='X'>6=PBKDF2-HMAC-SHA256+boot-mode</option>
+          <option value='Y'>1=XTS512bitpureAES</option>
+          <option value='Y'>1=XTS512bitpureSerpent</option>
+          <option value='Y'>1=XTS512bitpureTwofish</option>
+          <option value='Y'>2=XTS1024bitpureAES</option>
+          <option value='Y'>2=XTS1024bitpureSerpent</option>
+          <option value='Y'>2=XTS1024bitpureTwofish</option>
+          <option value='Y'>2=XTS1024bitcascadedAES-Twofish</option>
+          <option value='Y'>2=XTS1024bitcascadedSerpent-AES</option>
+          <option value='Y'>2=XTS1024bitcascadedTwofish-Serpent</option>
+          <option value='Y'>3=XTS1536bitall</option>
+          <option value='14600'>LUKS</option>
+          <option value='16700'>FileVault2</option>
+          <option value='9700'>MSOffice<=2003$0/$1,MD5+RC4</option>
+          <option value='9710'>MSOffice<=2003$0/$1,MD5+RC4,collider#1</option>
+          <option value='9720'>MSOffice<=2003$0/$1,MD5+RC4,collider#2</option>
+          <option value='9800'>MSOffice<=2003$3/$4,SHA1+RC4</option>
+          <option value='9810'>MSOffice<=2003$3,SHA1+RC4,collider#1</option>
+          <option value='9820'>MSOffice<=2003$3,SHA1+RC4,collider#2</option>
+          <option value='9400'>MSOffice2007</option>
+          <option value='9500'>MSOffice2010</option>
+          <option value='9600'>MSOffice2013</option>
+          <option value='10400'>PDF1.1-1.3(Acrobat2-4)</option>
+          <option value='10410'>PDF1.1-1.3(Acrobat2-4),collider#1</option>
+          <option value='10420'>PDF1.1-1.3(Acrobat2-4),collider#2</option>
+          <option value='10500'>PDF1.4-1.6(Acrobat5-8)</option>
+          <option value='10600'>PDF1.7Level3(Acrobat9)</option>
+          <option value='10700'>PDF1.7Level8(Acrobat10-11)</option>
+          <option value='16200'>AppleSecureNotes</option>
+          <option value='9000'>PasswordSafev2</option>
+          <option value='22'>JuniperNetScreen/SSG(ScreenOS)</option>
+          <option value='5200'>PasswordSafev3</option>
+          <option value='6800'>LastPass+LastPasssniffed</option>
+          <option value='6600'>1Password,agilekeychain</option>
+          <option value='8200'>1Password,cloudkeychain</option>
+          <option value='11300'>Bitcoin/Litecoinwallet.dat</option>
+          <option value='12700'>Blockchain,MyWallet</option>
+          <option value='15200'>Blockchain,MyWallet,V2</option>
+          <option value='16600'>ElectrumWallet(Salt-Type1-3)</option>
+          <option value='13400'>KeePass1(AES/Twofish)andKeePass2(AES)</option>
+          <option value='15500'>JKSJavaKeyStorePrivateKeys(SHA1)</option>
+          <option value='15600'>EthereumWallet,PBKDF2-HMAC-SHA256</option>
+          <option value='15700'>EthereumWallet,SCRYPT</option>
+          <option value='16300'>EthereumPre-SaleWallet,PBKDF2-HMAC-SHA256</option>
+          <option value='16900'>AnsibleVault</option>
+          <option value='99999'>Plaintext</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class='col-sm-6'>    
+      <div class='form-group'>
+        <label for="hashcat-attack-mode">Attack Mode</label>
+        <select class="form-control form-control-sm" id="hashcat-attack-mode">
+          <option value="0">Straight</option>
+          <option value="1">Combination</option>
+          <option value="2">Toggle Case</option>
+          <option value="3">Brute Force</option>
+          <option value="4">Permutation</option>
+          <option value="5">Table Lookup</option>
+        </select>
+      </div>
+    </div>
+    <div class='col-sm-6'>
+     <% wordlists = find_wordlists("/usr/share/wordlists/password-wordlists/**/*") %>
+
+     <%= erb :'tools/tool_helpers/_dropdown_optional', locals: {
+             checked: true,
+             tool_name: tool_name,
+             label: "Select Wordlist",
+             field_name: "wordlist",
+             options: wordlists,
+             selected_index: 0
+         }
+       %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class='col-sm-6'>    
+      <div class='form-group'>
+        <label for="hashcat-attack-mode">Rule File</label>
+        <select class="form-control form-control-sm" id="hashcat-rule-file">
+          <option selected value="">Don't use rules</option>
+          <option value="/hashcat-4.2.1/rules/dive.rule">dive.rule</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn btn-danger form-control" id="hashcat-run">Crack</button>
+</div>

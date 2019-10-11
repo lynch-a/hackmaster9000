@@ -1,0 +1,27 @@
+<div class="container no-gutters" style="margin-top:10px;">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="form-inline">
+        <div class="form-group">
+          <select class="form-control form-control-sm load-saved-config" tool-name="<%= tool_name %>">
+            <option value="None">Load Configuration</option>
+            <% ToolConfiguration.where(tool_name: tool_name).each do |config| %>
+              <option value="<%= config.id %>"><%= config.name %></option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6">
+      <div class="form-inline">
+        <div class="form-group">
+          <div class="float-right">
+            <input class="form-control form-control-sm" type="text" id="<%= tool_name %>-config-name" placeholder="Configuration Name">
+            <button class="btn btn-sm btn-primary save-tool-config" tool-name="<%= tool_name %>">Save Configuration</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<div class="card border-dark mb-3" style="margin-right:5px;" page-path="<%= h page.path %>" app-id="<%= page.web_application.id %>">
+	<div class="card-header">
+    <a data-toggle="collapse" href="#page-collapse-<%= page.id %>" aria-expanded="false" data-target="#page-collapse-<%= page.id %>" aria-controls="page-collapse-<%= page.id %>">
+      <%= h page.path %>
+    </a>
+  </div>
+
+  <!-- <img class="card-img-top" src="" alt=""> -->
+  <div id="page-collapse-<%= h page.id %>" class="collapse" data-parent="#page-accordion">
+    <div class="card-body">
+      <p class="card-text"><%= h page.description %></p>
+      <% if page.inputs.count() > 0 %>
+        <h5>Parameters</h5>
+
+        <ul class="list-group list-group-flush">
+          <% page.inputs.each do |input| %>
+            <li class="list-group-item" checked id="<%= h input.id %>" name="<%= h input.name %>" required="false" type="checkbox" >
+              <input class="page-param" checked id="<%= h input.id %>" name="<%= h input.name %>" required="false" type="checkbox" />
+              [<%= h input.http_method %>] <%= h input.name %>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <% if page.headers.count() > 0 %>
+        <br/>
+        <h5>Headers</h5>
+
+        <ul class="list-group list-group-flush">
+          <% page.headers.each do |header| %>
+            <li class="list-group-item" class="app-header" checked required="false" >
+              <input class="page-header" header-name="<%= h header.name %>" header-value="<%= h header.value %>" checked id="<%= h header.id %>" required="false" type="checkbox" />
+              <%= h header.name %>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <br/>
+      <h5>Actions</h5>
+      <%
+      if (page.web_application.dns_record.dns_name == "")
+        target = "#{page.web_application.scheme}://#{page.web_application.dns_record.record_value}:#{page.web_application.port}#{page.path}"
+      else
+        target = "#{page.web_application.scheme}://#{page.web_application.dns_record.dns_name}:#{page.web_application.port}#{page.path}"
+      end
+      %>
+
+      <button class="btn btn-sm page-to-sqlmap" target='<%= h target %>'>Send to sqlmap</button>
+
+      <button class="btn btn-sm page-to-wfuzz" target='<%= h target %>'>Send to wfuzz</button>
+
+    </div>
+  </div>
+</div>

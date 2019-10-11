@@ -1,0 +1,51 @@
+<div class="container">
+  <% if @nmap_files.length == 0 and @dirsearch_files.length == 0 and @subbrute_files.length == 0 %>
+    <p>No files found! Any files in the root of the project folder (the default folder a terminal spawns in) will show up here. You might have to refresh.</p>
+  <% else %>
+    <p>I found these scans in the "scans/parsed" folder folder for this project:</p>
+    <br/>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Filename</th>
+          <th scope="col">Tool</th>
+          <th scope="col">Actions</th>
+          <th scope="col"></th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @nmap_files.each do |f| %>
+          <tr>
+            <td class="nmap-scan-filename"><%= f %></td>
+            <td>nmap</td>
+            <td><button class="btn btn-sm nmap-scan-parse">Parse Scan</button></td>
+            <td><button class="btn btn-sm nmap-scan-view">View Scan</button></td>
+            <td><button class="btn btn-sm nmap-scan-download">Download Scan</button></td>
+          </tr>
+        <% end %>
+        
+        <% @dirsearch_files.each do |f| %>
+          <tr>
+            <td class="dirsearch-scan-filename"><%= f %></td>
+            <td>dirsearch</td>
+            <td><button class="btn btn-sm dirsearch-scan-parse">Parse Scan</button></td>
+            <td><button class="btn btn-sm dirsearch-scan-view">View Scan</button></td>
+            <td><button class="btn btn-sm dirsearch-scan-download">Download Scan</button></td>
+          </tr>
+        <% end %>
+
+        <% @subbrute_files.each do |f| %>
+          <tr>
+            <td class="subbrute-scan-filename"><%= f %></td>
+            <td>subbrute</td>
+            <td><button class="btn btn-sm subbrute-scan-parse">Parse Scan</button></td>
+            <td><button class="btn btn-sm subbrute-scan-view">View Scan</button></td>
+            <td><button class="btn btn-sm subbrute-scan-download">Download Scan</button></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+  <button class="btn btn-primary" id="manage-scans">Manage Scans <small>(opens ranger)</small></button>
+</div>

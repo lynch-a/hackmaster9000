@@ -1,0 +1,93 @@
+<% web_applications = WebApplication.where(project_id: @project.id, dns_record_id: dns_record.id, hidden: false) %>
+<% matching_hosts = Host.by_dns(@project, dns_record.dns_name) %>
+
+
+<div class="card no-select" target="<%= dns_record.dns_name %>">
+  <div class="card-header align-items-center no-select table-<%= risk_to_color(dns_record.risk) %>" id="domain-heading-<%= dns_record.id %>">
+      <button href="javascript:void(0);" class="btn btn-sm btn-link hash-nav domain-expand-button" data-toggle="collapse" data-target="#domain-<%= dns_record.id %>" aria-expanded="false" aria-controls="domain-<%= dns_record.id %>">
+        Details
+      </button>
+      <%= dns_record.dns_name %>
+
+      <% if web_applications.count > 0 %>
+      <a href="#">
+        <span class="fas fa-atlas" title="Has web application(s)"></span>
+      </a>
+      <% end %>
+
+      <div class="float-right">
+        <% if matching_hosts.count >= 1 %>
+          <a href="#hosts-<%= matching_hosts.first.id %>" class="hash-nav">
+            <%= matching_hosts.first.ip %>
+          </a>
+        <% end %>
+
+        <% if matching_hosts.count > 1 %>
+          and <%= matching_hosts.count-1 %> more
+        <% end %>
+      </div>
+  </div>
+
+  <div id="domain-<%= dns_record.id %>" class="collapse" aria-labelledby="domain-heading-<%= dns_record.id %>" hostname="<%= dns_record.dns_name %>">
+    <div class="well">
+      <div class="col-lg-12">
+        <select class="form-control domain-set-risk" name="domain-set-risk" domain-id="<%= dns_record.id %>">
+          <option  <%= dns_record.risk == 0 || dns_record.risk == nil ? "selected" : "" %> value="0">Unreviewed</option>
+          <option  <%= dns_record.risk == 1 ? "selected" : "" %> value="1">Low</option>
+          <option  <%= dns_record.risk == 2 ? "selected" : "" %> value="2">Medium</option>
+          <option  <%= dns_record.risk == 3 ? "selected" : "" %> value="3">High</option>
+        </select>
+        <br/>
+        <form class="domain-comment" data-domain-id="<%= dns_record.id%>">
+          <div class="form-group">
+            <textarea class="form-control" name="domain-comment" rows="5" placeholder="Notes"><%= dns_record.note %></textarea>
+            <button type="submit" class="add-domain-comment btn btn-primary">Save</button>
+          </div>
+        </form>
+
+        <% if matching_hosts.size > 0 %>
+          <h5>Hosts</h5>
+          <table class="table table-dark table-hover table-condensed table-bordered">
+            <thead>
+              <tr>
+
+              </tr>
+            </thead>
+
+            <tbody>
+              <% matching_hosts.each_slice(4).to_a.each do |host_slice| %>
+                <tr>
+                  <% host_slice.each do |known_host| %>
+                    <td class="domain-host-<%= known_host.id %> text-center table-<%= risk_to_color(known_host.risk) %>">
+                      <a href="#hosts-<%= known_host.id %>" class="hash-nav"><%= known_host.ip %></a></br>
+                    </td>
+                   <% end %>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p>No host data was found that matches this domain. Consider running an nmap.</p>
+        <% end %>
+        
+        <%= erb :'partials/_domain_app_summary', locals: {web_applications: web_applications }%> 
+
+        <div class="container">
+          <div class="row">
+            <div class='col-sm-3'>
+              <div class='form-group'>
+                <label for="domain-send-to">Send to...</label>
+                <select class="form-control form-control-sm domain-send-to" name="domain-send-to" data-domain="<%= dns_record.dns_name %>">
+                  <option value="None">Tool</option>
+                  <option value="nmap">nmap</option>
+                  <option value="dirsearch">dirsearch</option>
+                  <option value="dnscan">dnscan</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div> <!-- detail well -->
+      </div>
+    </div>
+  </div>
+</div>

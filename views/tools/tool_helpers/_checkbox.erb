@@ -1,0 +1,13 @@
+<%
+
+=begin
+	
+	
+=end
+
+%>
+
+<div class="form-check">
+  <input class="form-check-input" <%= (defined?(checked)) ? "checked" : "" %> id="<%= tool_name %>-<%= field_name %>" name="<%= tool_name %>-<%= field_name %>" required="false" type="checkbox" />
+  <label class="form-check-label" for="<%= tool_name %>-<%= field_name %>"><%= label %></label>
+</div>

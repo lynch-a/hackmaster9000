@@ -1,0 +1,19 @@
+<div class='form-inline form-group'>
+	<% if (optional == true) %>
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" id="<%= tool_name %>-toggle-<%= dropdown_field_name %>" name="<%= tool_name %>-toggle-<%= dropdown_field_name %>"/>
+      <label class="form-check-label" for="<%= tool_name %>-toggle-<%= dropdown_field_name %>"><%= dropdown_label %></label>
+    </div>
+  <% else %>
+    <label class="form-check-label" for="<%= tool_name %>-toggle-<%= dropdown_label %>"><%= dropdown_label %></label>
+  <% end %>
+
+  <select class="form-control form-control-sm" id="<%= tool_name %>-<%= dropdown_field_name %>" name="<%= tool_name %>-<%= dropdown_field_name %>">
+    <% options.each_with_index do |option, i| %>
+      <option <%= (i == selected_index) ? "selected" : "" %> value="<%= option[0] %>"><%= option[1] %></option>
+    <% end %>
+  </select>
+
+  <label for="<%= tool_name %>-<%= input_name %>"><%= input_label %></label>
+  <input class="form-control form-control-sm" id="<%= tool_name %>-<%= input_name %>" placeholder="<%= input_placeholder %>" value="<%= input_value %>" type="text" />
+</div>

@@ -1,0 +1,12 @@
+<div class='form-group'>
+  <div class="form-check">
+    <input type="checkbox" <%= (checked == true) ? "checked" : "" %> class="form-check-input" id="<%= tool_name %>-toggle-<%= field_name %>" name="<%= tool_name %>-toggle-<%= field_name %>"/>
+    <label class="form-check-label" for="<%= tool_name %>-toggle-<%= field_name %>"><%= label %></label>
+  </div>
+    
+  <select class="form-control form-control-sm" id="<%= tool_name %>-<%= field_name %>" name="<%= tool_name %>-<%= field_name %>">
+    <% options.each_with_index do |option, i| %>
+      <option <%= (i == selected_index) ? "selected" : "" %> value="<%= option[0] %>"><%= option[1] %></option>
+    <% end %>
+  </select>
+</div>

@@ -1,0 +1,130 @@
+<div class="container-fluid">
+
+  <script src="/hm9k.js"></script>
+
+  <div class="row">
+    <!-- Navigation Buttons -->
+    <div class="col-flex">
+        <ul class="nav nav-pills flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="#project" data-toggle="pill">Project: <%= h @project.name %></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="#tools" data-toggle="pill">Tools</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#jobs" data-toggle="pill">Jobs</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#triggers" data-toggle="pill">Triggers</a>
+          </li>
+          <!--
+          <li class="nav-item">
+            <a class="nav-link" href="#files" data-toggle="pill">Files</a>
+          </li>
+          -->
+          <li class="nav-item">
+            <a class="nav-link" href="#hosts" data-toggle="pill">Hosts</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#domains" data-toggle="pill">Domains</a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" href="#web-applications" data-toggle="pill">Web Applications</a>
+          </li>
+
+          <!--
+          <li>
+            <a class="nav-link" href="#findings" data-toggle="pill">Findings</a>
+          </li>
+          -->
+        </ul>
+    </div>
+
+    <%
+    # badly placed helper method for tools to find wordlists
+    def find_wordlists(path)
+      results = []
+      file_paths = Dir[path]
+      file_names = Dir[path].map{|filename| File.basename(filename)}
+      puts file_paths
+      puts file_names
+
+      file_paths.each_with_index do |file_path, i|
+        results << [ file_paths[i], file_names[i] ]
+      end
+      
+      return results
+    end
+    %>
+
+    <!-- Content -->
+    <div class="col" >
+      <div class="tab-content flex-column">
+        <div class="tab-pane" id="project">
+          <p><a href="/projects"><- Back to projects page</a></p>
+          <br/>
+          <p><a href="/login"><- Back to login page</a></p>
+          <br/>
+          <p>Logged in as: <%= h @user.username %></p>
+          <button class="btn btn-danger clear-data">Clear all data</button></br>
+        </div>
+
+        <div class="tab-pane active" id="tools">
+              <%= erb :'tools' %>
+        </div>
+
+        <div class="tab-pane" id="jobs">
+          <%= erb :'jobs' %>
+        </div>
+
+        <div class="tab-pane" id="triggers">
+          <%= erb :'triggers' %>
+        </div>
+
+        <div class="tab-pane" id="domains">
+          <%= erb :'domains' %>
+        </div>
+
+        <div class="tab-pane" id="hosts">
+          <%= erb :'hosts' %>
+        </div>
+
+        <div class="tab-pane" id="web-applications">
+          <%= erb :'web_applications' %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="credential-div-please-dont-xss-me" terminal-token="<%= @user.session_key %>" project-id="<%= @project.uuid %>"></div>
+
+
+  <div class="footer fixed-bottom wrapper" style="height:40%;margin-bottom:65px;">
+    <div class="col-flex">
+      <a class="new-terminal-button" style="font-size:14px;" href="#" onclick="return false;">&nbsp;[new terminal]</a>
+      <a class="maximize-terminals-button" style="font-size:14px;" href="#" onclick="return false;">&nbsp;[maximize]</a>
+      <a class="minimize-terminals-button" style="font-size:14px;" href="#" onclick="return false;">&nbsp;[minimize]</a>
+    </div>
+
+    <div id="terminal-container">
+        <ul class="nav nav-tabs terminal-tabs-go-here">
+          <!-- terminal tab navigation -->
+          <!-- JS will add an <li class="nav-item"> here to make a new clickable tab for a given terminal -->
+        </ul>
+
+        <div class="tab-content clearfix terminals-go-here">
+          <!-- content of terminal tabs -->
+          <!-- JS will insert a <div class="tab-pane active hm9k-term" tid=""> here and initialize it to a terminal -->
+        </div>
+    </div> <!-- end row -->
+  </div>
+</div>
+
+<div class="row" style="margin-bottom:900px;">
+
+</div>
+
+ <script src="/hopscotch.js"></script>
