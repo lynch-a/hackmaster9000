@@ -9,7 +9,7 @@ It primarily helps with some recon tasks at the moment (subdomain scanning / nma
 
 What it looks like
 ==
-![image](https://i.imgur.com/iDBGK53.png)
+![image](https://i.imgur.com/vDUNsDy.png)
 
 ![image](https://i.imgur.com/T2h038b.png)
 
