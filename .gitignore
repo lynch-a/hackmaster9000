@@ -4,3 +4,4 @@ custom_tools/node_modules/*
 custom_tools/node_modules/
 db_password.txt
 hackjob_secret.txt
+config.rb
