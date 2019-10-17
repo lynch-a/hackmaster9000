@@ -3,6 +3,8 @@ require 'bcrypt'
 require 'securerandom'
 require 'textacular'
 
+require './config.rb'
+
 ActiveRecord::Base.extend(Textacular)
 
 ActiveRecord::Base.establish_connection(

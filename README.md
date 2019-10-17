@@ -15,13 +15,17 @@ What it looks like
 
 ![image](https://i.imgur.com/lQY9uvt.png)
 
-![image](https://i.imgur.com/DA0ndEN.png)
+![image](https://i.imgur.com/QnJIqX5.png)
 
 ![image](https://i.imgur.com/YcwEA8g.png)
 
 
 Get it running
 ==
+
+Docker
+==
+
 
 Kali Linux (2019.2)
 ==
@@ -65,6 +69,9 @@ sudo ln -s /usr/share/dirsearch/dirsearch.py /usr/bin/dirsearch
 cd /usr/share
 git clone https://github.com/BishopFox/GitGot.git
 sudo ln -s /usr/share/GitGot/gitgot.py /usr/bin/gitgot
+
+# install sslscan
+sudo apt-get install sslscan
 
 # install some node things for the screenshot utility
 cd /usr/share/hackmaster9000/custom_tools
@@ -116,8 +123,8 @@ curl https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/
 gzip -d rockyou.txt.gz
 
 # copy some of the dnscan subdomains to the kali wordlist folder - they're nice too!
-cp ~/git/dirsearch/db/dicc.txt /usr/share/wordlists/dirsearch-default.txt
-cp ~/git/dnscan/subdomains-*.txt /usr/share/wordlists/subdomains/
+cp /usr/share/dirsearch/db/dicc.txt /usr/share/wordlists/dirsearch-default.txt
+cp /usr/share/dnscan/subdomains-*.txt /usr/share/wordlists/subdomains/
 
 cd /usr/share/hackmaster9000
 service postgresql start
