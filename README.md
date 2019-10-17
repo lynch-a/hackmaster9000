@@ -58,7 +58,7 @@ bundle install
 
 # install dnscan
 cd /usr/share
-git clone https://github.com/dbsec/dnscan.git
+git clone https://github.com/rbsec/dnscan.git
 cd dnscan
 pip install -r requirements.txt
 sudo ln -s /usr/share/dnscan/dnscan.py /usr/bin/dnscan
