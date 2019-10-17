@@ -1,5 +1,7 @@
 hm9k-projects/*
+!hm9k-projects/.gitkeep 
 public/ss/*
+!public/ss/.gitkeep 
 custom_tools/node_modules/*
 custom_tools/node_modules/
 db_password.txt

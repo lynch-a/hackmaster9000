@@ -30,9 +30,8 @@ Docker
 Kali Linux (2019.2)
 ==
 ```
-### don't try to just copy and paste this entire install script, run each little block of commands individually to catch errors :)
-# plus, you will need to manually type some things to configure the postgre database and your user account. just read, it won't take long!
 
+#### General kali VM stuff (skippable if you're already setup)
 
 # My freshly-downloaded VM of Kali came without repos in the sources.lst, so:
 echo "deb http://http.kali.org/kali kali-rolling main non-free contrib" >> /etc/apt/sources.lst
@@ -40,11 +39,15 @@ echo "deb-src http://http.kali.org/kali kali-rolling main non-free contrib" >> /
 
 apt-get update
 
-# dependencies for included tools and stuff
-apt-get install -y nodejs postgresql postgresql-contrib libpq-dev imagemagick phantomjs ruby ruby-dev libgmp-dev build-essential libsqlite3-dev openjdk-8-jdk patch zlib1g-dev liblzma-dev
-
 #vmware tools, if used
 apt-get install -y open-vm-tools-desktop fuse
+
+
+#### Setup dependencies, install tools, install hm9k, setup directories, etc
+
+# dependencies
+apt-get install -y nodejs postgresql postgresql-contrib libpq-dev imagemagick phantomjs ruby ruby-dev libgmp-dev build-essential libsqlite3-dev openjdk-8-jdk patch zlib1g-dev liblzma-dev
+
 
 # install hm9k
 cd /usr/share/
@@ -73,7 +76,7 @@ sudo ln -s /usr/share/GitGot/gitgot.py /usr/bin/gitgot
 # install sslscan
 sudo apt-get install sslscan
 
-# install some node things for the screenshot utility
+# install some node dependencies for the screenshot utility - you might need to "npm init" in the custom_tools dir first
 cd /usr/share/hackmaster9000/custom_tools
 npm install puppeteer why-is-node-running generic-pool
 
@@ -122,6 +125,8 @@ curl https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/
 # unzip rockyou, it's nice to have around
 gzip -d rockyou.txt.gz
 
+mkdir /usr/share/wordlists/subdomains
+
 # copy some of the dnscan subdomains to the kali wordlist folder - they're nice too!
 cp /usr/share/dirsearch/db/dicc.txt /usr/share/wordlists/dirsearch-default.txt
 cp /usr/share/dnscan/subdomains-*.txt /usr/share/wordlists/subdomains/
@@ -152,8 +157,7 @@ screen -S hm9k
 cd ~/git/hackmaster9000/
 ruby main.rb
 
-# type this on your keyboard to create a new screen session
-ctrl+a c
+ctrl+a c # type this on your keyboard to create a new screen session
 
 # now follow the same for the below
 cd ~/git/hackmaster9000/
@@ -177,7 +181,7 @@ And if you log back in to a server running hm9k and wish to get back into the sc
 screen -r hm9k
 ```
 
-But all you need to do is run the 4 commands above however you want.
+But all you really need to do is run the 4 services above however you want.
 
 Then login at:
 
@@ -211,7 +215,7 @@ irb(main):003:0> User.create!(username: "YourUsername", password: "SomeSecurePas
 You can use `irb` with `require './db.rb'` to accomplish whatever you want with the database.
 
 
-Components
+Component Description
 ==
 OUTDATED BUT STILL INFORMATIONALLY RELEVANT
 
@@ -531,7 +535,7 @@ Other Stuff
 tested on:
 * ruby 2.4.1
 * ruby 2.5.1
-* Screenshot2 custom tool runs with node 10+
+* screenshot2.js custom tool runs with node 10+
 
 
 You can edit the following line in your .bashrc (it's line #46 in my .bashrc) to force color if it's not working out of the box:
