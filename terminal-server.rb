@@ -401,7 +401,7 @@ EM.run do
                     puts "killing cmd: #{db_job.job_data} status of job:  #{db_job.status}"
                     db_job.save
                     if (@terminals[terminal.get_tid()])
-                      @terminals[terminal.get_tid()].close()
+                      #@terminals[terminal.get_tid()].close()
                       @terminals[terminal.get_tid()] = nil
                       # tell the api server to update the db...? nah just do it here, users can't share terminals yet #todo
                       term = Terminal.where(tid: terminal.get_tid()).first
