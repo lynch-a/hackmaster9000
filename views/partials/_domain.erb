@@ -1,93 +1,58 @@
-<% web_applications = WebApplication.where(project_id: @project.id, dns_record_id: dns_record.id, hidden: false) %>
-<% matching_hosts = Host.by_dns(@project, dns_record.dns_name) %>
+<%
+  # incoming domains are TLD's
+  subdomain_count = Domain.where(["domain_name LIKE ?", "%.#{domain.domain_name}"]).count
+%>
 
-
-<div class="card no-select" target="<%= dns_record.dns_name %>">
-  <div class="card-header align-items-center no-select table-<%= risk_to_color(dns_record.risk) %>" id="domain-heading-<%= dns_record.id %>">
-      <button href="javascript:void(0);" class="btn btn-sm btn-link hash-nav domain-expand-button" data-toggle="collapse" data-target="#domain-<%= dns_record.id %>" aria-expanded="false" aria-controls="domain-<%= dns_record.id %>">
-        Details
+<div class="card no-select" target="<%= domain.domain_name %>">
+  <div class="card-header align-items-center no-select table-<%= risk_to_color(domain.risk) %>" id="domain-heading-<%= domain.id %>">
+      <button href="javascript:void(0);" class="btn btn-link hash-nav domain-expand-button" data-toggle="collapse" data-target="#domain-<%= domain.id %>" aria-expanded="false" aria-controls="domain-<%= domain.id %>">
+        <%= domain.domain_name %>
       </button>
-      <%= dns_record.dns_name %>
-
-      <% if web_applications.count > 0 %>
-      <a href="#">
-        <span class="fas fa-atlas" title="Has web application(s)"></span>
-      </a>
+      <% if subdomain_count > 0 %>
+        <a href="#domain-search|.<%= domain.domain_name %>" class="hash-nav"><span class="badge badge-secondary"><%= subdomain_count %> subdomain(s)</span></a>
+      <% else %>
+        <% if !domain.tld %>
+          <a href="#domain-search|<%= domain.domain_name %>" class="hash-nav"><span class="badge badge-secondary">Filter</span></a>
+        <% end %>
       <% end %>
-
-      <div class="float-right">
-        <% if matching_hosts.count >= 1 %>
-          <a href="#hosts-<%= matching_hosts.first.id %>" class="hash-nav">
-            <%= matching_hosts.first.ip %>
-          </a>
-        <% end %>
-
-        <% if matching_hosts.count > 1 %>
-          and <%= matching_hosts.count-1 %> more
-        <% end %>
-      </div>
+      <button href="#" class="btn btn-link hash-nav float-right">
+        Show DNS Records
+      </button>
   </div>
 
-  <div id="domain-<%= dns_record.id %>" class="collapse" aria-labelledby="domain-heading-<%= dns_record.id %>" hostname="<%= dns_record.dns_name %>">
-    <div class="well">
-      <div class="col-lg-12">
-        <select class="form-control domain-set-risk" name="domain-set-risk" domain-id="<%= dns_record.id %>">
-          <option  <%= dns_record.risk == 0 || dns_record.risk == nil ? "selected" : "" %> value="0">Unreviewed</option>
-          <option  <%= dns_record.risk == 1 ? "selected" : "" %> value="1">Low</option>
-          <option  <%= dns_record.risk == 2 ? "selected" : "" %> value="2">Medium</option>
-          <option  <%= dns_record.risk == 3 ? "selected" : "" %> value="3">High</option>
-        </select>
-        <br/>
-        <form class="domain-comment" data-domain-id="<%= dns_record.id%>">
-          <div class="form-group">
-            <textarea class="form-control" name="domain-comment" rows="5" placeholder="Notes"><%= dns_record.note %></textarea>
-            <button type="submit" class="add-domain-comment btn btn-primary">Save</button>
-          </div>
-        </form>
-
-        <% if matching_hosts.size > 0 %>
-          <h5>Hosts</h5>
-          <table class="table table-dark table-hover table-condensed table-bordered">
-            <thead>
-              <tr>
-
-              </tr>
-            </thead>
-
-            <tbody>
-              <% matching_hosts.each_slice(4).to_a.each do |host_slice| %>
-                <tr>
-                  <% host_slice.each do |known_host| %>
-                    <td class="domain-host-<%= known_host.id %> text-center table-<%= risk_to_color(known_host.risk) %>">
-                      <a href="#hosts-<%= known_host.id %>" class="hash-nav"><%= known_host.ip %></a></br>
-                    </td>
-                   <% end %>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        <% else %>
-          <p>No host data was found that matches this domain. Consider running an nmap.</p>
-        <% end %>
+  <div id="domain-<%= domain.id %>" class="collapse" aria-labelledby="domain-heading-<%= domain.id %>" hostname="<%= domain.domain_name %>">
+    <div class="col">
+      <%
+        # in a view? shoot me
         
-        <%= erb :'partials/_domain_app_summary', locals: {web_applications: web_applications }%> 
+        require './plugins/Hm9kPlugin.rb'
 
-        <div class="container">
-          <div class="row">
-            <div class='col-sm-3'>
-              <div class='form-group'>
-                <label for="domain-send-to">Send to...</label>
-                <select class="form-control form-control-sm domain-send-to" name="domain-send-to" data-domain="<%= dns_record.dns_name %>">
-                  <option value="None">Tool</option>
-                  <option value="nmap">nmap</option>
-                  <option value="dirsearch">dirsearch</option>
-                  <option value="dnscan">dnscan</option>
-                </select>
+        Dir["./plugins/*/plugin.rb"].each { |f| require f }
+        Hm9kPlugin.register_plugins
+        # plugins will populate HTML for nav-tabs (required to make tab switching work)
+      %>
+      <% Hm9kPlugin.plugins.each_with_index do |plugin, i| %>
+        <% next if !plugin.visualize_in_domains? %>
+        <div class="card border-light no-select">
+          <div class="card-header table-secondary">
+            <button href="javascript:void(0);" class="btn btn-primary hash-nav" type="button" data-toggle="collapse" data-target="#plugin-<%= "#{domain.id}-#{i}" %>" aria-expanded="false" aria-controls="plugin-<%= "#{domain.id}-#{i}" %>">
+                  <%= plugin.name %> Event Details
+            </button>
+
+            <button href="javascript:void(0);" class="btn btn-danger float-right" type="btn">
+                  Launch <%= plugin.name %> 
+            </button>
+          </div>
+
+          <div id="plugin-<%= "#{domain.id}-#{i}" %>" class="collapse">
+            <div class="row">
+              <div class="col">
+                <%= erb :"../plugins/#{plugin.name}/#{plugin.domain_feed_partial}", locals: {tool_name: plugin.name, domain: domain} %>
               </div>
             </div>
           </div>
-        </div> <!-- detail well -->
-      </div>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

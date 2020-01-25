@@ -1,3 +1,48 @@
+function send_to_active_terminal(cmd) {
+    var active_term = $("#terminal-container").find(".hm9k-term.active").first();
+
+    if ($(active_term).length) {
+      var tid = active_term.attr("id");
+      console.log("sending binary for tool:  tid: " + tid + " | cmd: " + cmd);
+      terminal_server.send_binary("s:"+tid+":"+cmd);
+    } else {
+      terminal_server.send('new_terminal', null);
+    }
+}
+
+function schedule_or_run(tool_name, cmd) {
+  var run_in_background = $("#"+tool_name+"-run-in-background").prop("checked");
+  var dry_run = $("#"+tool_name+"-dry-run").prop("checked");
+
+  var run_every_mins = 0;
+
+  var run_every_toggle = $("#"+tool_name+"-run-every-toggle").prop("checked");
+  if (run_every_toggle) {
+    var run_every_mins_input = $("#"+tool_name+"-run-every").val();
+    if (run_every_mins_input.length > 0) {
+      run_every_mins = run_every_mins_input
+    }
+  }
+
+  // what to do when it's backgrounded or scheduled
+  if (run_in_background || run_every_mins > 0) {
+    create_job(cmd, run_every_mins, run_in_background);
+  } else {
+    // experiment: run everything as a job
+    // create_job(cmd, run_every_mins, false);
+    // conclusion: DUMB
+
+    if (dry_run) {
+      send_to_active_terminal(cmd); // run in foreground
+    } else {
+      send_to_active_terminal(cmd + "\n");
+    } 
+  }
+}
+
+// SETUP TERMINAL SERVER CONNECTION
+var terminal_server = new TerminalEventsDispatcher("ws://"+window.location.hostname+":8081");
+
 $(document).ready(function() {
   console.log("ready!");
 
@@ -493,9 +538,6 @@ $(document).ready(function() {
       });
   });
 
-  // SETUP TERMINAL SERVER CONNECTION
-  var terminal_server = new TerminalEventsDispatcher("ws://"+window.location.hostname+":8081");
-
   terminal_server.bind('open', function(data) {
     // auth should be the first thing that the socket does when it opens
     console.log("should have sent auth data?");
@@ -630,17 +672,7 @@ $(document).ready(function() {
   });
 
 
-  function send_to_active_terminal(cmd) {
-      var active_term = $("#terminal-container").find(".hm9k-term.active").first();
-
-      if ($(active_term).length) {
-        var tid = active_term.attr("id");
-        console.log("sending binary for tool:  tid: " + tid + " | cmd: " + cmd);
-        terminal_server.send_binary("s:"+tid+":"+cmd);
-      } else {
-        terminal_server.send('new_terminal', null);
-      }
-  }
+  
 
   function generate_wfuzz_command() {
     var cmd = "wfuzz -v -c --interact";
@@ -759,134 +791,41 @@ $(document).ready(function() {
 
 /////////////////////////// gitgot -v
 
-function generate_gitgot_command() {
-  var cmd = "gitgot";
+  function generate_gitgot_command() {
+    var cmd = "gitgot";
 
-  var organization_exists = false;
-  var organization = $("#gitgot-organization").val();
+    var organization_exists = false;
+    var organization = $("#gitgot-organization").val();
 
-  if (organization != "") {
-    organization_exists = true;
-  }
-
-  var search = $("#gitgot-search").val();
-  if (search != "") {
-    if (organization_exists) {
-      cmd += " -q 'org:" + organization + " " + search + "'";
-    } else {
-      cmd += " -q '" + search + "'";
-    }
-  }
-
-  if ($("#gitgot-toggle-regexlist").prop("checked")) {
-    var regex_list = $("#gitgot-regexlist").val();
-    cmd += " -f " + regex_list;
-  }
-
-  if ($("#gitgot-toggle-state").prop("checked")) {
-    var state = $("#gitgot-state").val();
-    cmd += " -r " + state;
-  }
-
-  return cmd;
-}
-
-$("#gitgot-run").click(function() {
-  var cmd = generate_gitgot_command();
-  schedule_or_run("gitgot", cmd);
-});
-
-//////////////////////// dirsearch -v
-
-
-  function generate_dirsearch_command() {
-    var cmd = "dirsearch";
-
-    var target = $("#dirsearch-target").val();
-    if (target != "") {
-      cmd += " -u '" + target + "'";
-    }
-    var target_extensions = $("#dirsearch-target-extensions").val();
-    if (target_extensions != "") {
-      cmd += " -e '" + target_extensions + "'";
-    } else {
-      cmd += " -e ''";
+    if (organization != "") {
+      organization_exists = true;
     }
 
-    if ($("#dirsearch-toggle-thread-count").prop("checked")) {
-      cmd += " -t" + $("#dirsearch-thread-count").val();
-    }
-
-    if ($("#dirsearch-toggle-delay").prop("checked")) {
-      var delay = $("#dirsearch-delay").val();
-      if (delay != "") {
-          cmd += " -s " + delay;
+    var search = $("#gitgot-search").val();
+    if (search != "") {
+      if (organization_exists) {
+        cmd += " -q 'org:" + organization + " " + search + "'";
+      } else {
+        cmd += " -q '" + search + "'";
       }
     }
 
-    var hostname_requests = $("#dirsearch-hostname-request:checked").length > 0
-    if (hostname_requests) {
-      cmd += " -b";
+    if ($("#gitgot-toggle-regexlist").prop("checked")) {
+      var regex_list = $("#gitgot-regexlist").val();
+      cmd += " -f " + regex_list;
     }
 
-    if ($("#dirsearch-recursive").prop("checked")) {
-      cmd += " -r";
+    if ($("#gitgot-toggle-state").prop("checked")) {
+      var state = $("#gitgot-state").val();
+      cmd += " -r " + state;
     }
-
-    if ($("#dirsearch-follow-redirects").prop("checked")) {
-      cmd += " --follow-redirects";
-    }
-
-    if ($("#dirsearch-random-agents").prop("checked")) {
-      cmd += " --random-agents";
-    }
-
-    var output_name = "dirsearch-"+Math.random().toString(36).substring(7);
-    if (output_name != "") {
-      cmd += " --simple-report=dirsearch-"+output_name+".html";
-      cmd += " --json-report=dirsearch-"+output_name+".json";
-      cmd += " --plain-text-report=dirsearch-"+output_name+".txt";
-    }
-
-    var wordlist = $("#dirsearch-toggle-wordlist").prop('checked');
-    if (wordlist) {
-      cmd += " -w " + $("#dirsearch-wordlist").val();
-    }
-
     return cmd;
   }
 
-  $("#dirsearch-run").click(function() {
-    
-    //// hooooolll up'
-    // before dirsearch is run, we want so support multiple targets
-    // we save and split the target list by " "
-    // for each target, we set the target box
-    // and schedule_or_run
-    var target = $("#dirsearch-target").val().trim();
-
-    var targets = target.split(" ");
-    if (targets.length > 1) {
-      // definitely run as BG job. EDIT: maybe no
-      //$("#dirsearch-run-in-background").prop('checked', true);
-
-      for(var i = 0; i < targets.length; i++) {
-        $("#dirsearch-target").val(targets[i]);
-        if ($("#dirsearch-target").val().length > 1) { // ignore empty target problems
-          var cmd = generate_dirsearch_command();
-          schedule_or_run("dirsearch", cmd);
-        }
-      }
-      
-      $("#dirsearch-target").val(target)
-    } else {
-      var cmd = generate_dirsearch_command();
-      schedule_or_run("dirsearch", cmd);
-    }
+  $("#gitgot-run").click(function() {
+    var cmd = generate_gitgot_command();
+    schedule_or_run("gitgot", cmd);
   });
-
-
-  ///////
 
 
   function generate_pwn_vnc_command() {
@@ -953,89 +892,11 @@ $("#gitgot-run").click(function() {
     schedule_or_run("rip-git", cmd);
   });
 
-  /////
-
-  function generate_dnscan_command() {
-    var cmd = "dnscan";
-
-    cmd += " -o dnscan-"+Math.random().toString(36).substring(7)+".txt";
-    
-
-    var target = $("#dnscan-target").val();
-    if (target != "") {
-        cmd += " -d "+target;
-    }
-
-    if ($("#dnscan-toggle-wordlist").prop("checked")) {
-      cmd += " -w " + $("#dnscan-wordlist").val();
-    }
-
-    if ($("#dnscan-toggle-threads").prop("checked")) {
-      cmd += " -t" + $("#dnscan-threads").val();
-    }
-
-    if ($("#dnscan-recursive").prop("checked")) {
-      cmd += " -r";
-    }
-
-    return cmd;
-  }
-
-  $("#dnscan-run").click(function() {
-    var target = $("#dnscan-target").val().trim();
-
-    var targets = target.split(" ")
-    if (targets.length > 1) {
-      // definitely run as BG job. EDIT: maybe no
-      //$("#dirsearch-run-in-background").prop('checked', true);
-
-      for(var i = 0; i < targets.length; i++) {
-        $("#dnscan-target").val(targets[i]);
-        if ($("#dnscan-target").val().length > 1) { // ignore empty target problems
-          var cmd = generate_dnscan_command();
-          schedule_or_run("dnscan", cmd);
-        }
-      }
-    } else {
-      var cmd = generate_dnscan_command();
-      //send_to_active_terminal(cmd + "\n");
-      schedule_or_run("dnscan", cmd);
-    }
-  });
-
-
-  /////
-
-  function generate_zmap_command() {
-    var cmd = "sudo zmap";
-
-    cmd += " -B " + $("#zmap-bandwidth").val();
-    cmd += " -p " + $("#zmap-port").val();
-    cmd += " -N " + $("#zmap-max-results").val();
-    cmd += " -n " + $("#zmap-max-targets").val();
-
-    var output_name = "zmap-"+Math.random().toString(36).substring(7)+".csv"
-    cmd += " -o " + output_name;
-
-    cmd += " -f \"" + $("#zmap-output-format").val() + "\"";
-
-    return cmd;
-  }
-
-  $("#zmap-run").click(function() {
-    var cmd = generate_zmap_command();
-    schedule_or_run("zmap", cmd);
-  });
-
-  /////
   function generate_web_screenshot_command() {
     var cmd = "screenshot2";
     //var cmd = "web-screenshot";
-
-    var output_name = "web-application-"+Math.random().toString(36).substring(7)+".txt"
-    cmd += " " + output_name;
     
-    var target = $("#web-screenshot-target").val();
+    var target = $("#screenshot2-target").val();
     if (target != "") {
         cmd += " "+target;
     }
@@ -1043,7 +904,7 @@ $("#gitgot-run").click(function() {
     return cmd;
   }
 
-  $("#web-screenshot-run").click(function() {
+  $("#screenshot2-run").click(function() {
     var cmd = generate_web_screenshot_command();
     schedule_or_run("web-screenshot", cmd);
   });
@@ -1093,126 +954,6 @@ $("#gitgot-run").click(function() {
 
     api_server.send('add-job', add_job_event_data);
   }
-
-  function schedule_or_run(tool_name, cmd) {
-    var run_in_background = $("#"+tool_name+"-run-in-background").prop("checked");
-    var dry_run = $("#"+tool_name+"-dry-run").prop("checked");
-
-    var run_every_mins = 0;
-
-    var run_every_toggle = $("#"+tool_name+"-run-every-toggle").prop("checked");
-    if (run_every_toggle) {
-      var run_every_mins_input = $("#"+tool_name+"-run-every").val();
-      if (run_every_mins_input.length > 0) {
-        run_every_mins = run_every_mins_input
-      }
-    }
-
-    // what to do when it's backgrounded or scheduled
-    if (run_in_background || run_every_mins > 0) {
-      create_job(cmd, run_every_mins, run_in_background);
-    } else {
-      // experiment: run everything as a job
-      // create_job(cmd, run_every_mins, false);
-      // conclusion: DUMB
-
-      if (dry_run) {
-        send_to_active_terminal(cmd); // run in foreground
-      } else {
-        send_to_active_terminal(cmd + "\n");
-      } 
-    }
-  }
-
-  function generate_nmap_command() {
-    var cmd = "nmap -v";
-
-    cmd += " -oA nmap-"+Math.random().toString(36).substring(7);
-
-
-    if ($("#nmap-toggle-top-ports").prop("checked")) {
-      var top_ports = $("#nmap-top-ports").val();
-      if (top_ports != "") {
-          cmd += " --top-ports " + top_ports;
-      }
-    }
-
-    if ($("#nmap-toggle-port-range").prop("checked")) {
-      var port_range = $("#nmap-port-range").val();
-      if (port_range != "") {
-          cmd += " -p " + port_range;
-      }
-    }
-
-    var timing = $("#nmap-timing").val();
-    if (timing != "") {
-        cmd += " -T" + timing;
-    }
-
-    if ($("#nmap-toggle-scripts").prop("checked")) {
-      var scripts = $("#nmap-scripts").val();
-      if (scripts != "") {
-          cmd += " --script " + scripts;
-      }
-
-      var script_args = $("#nmap-script-args").val();
-      if (script_args != "") {
-          cmd += " --script-args '" + scripts + "'";
-      }
-    }
-
-    var os_detection = $("#nmap-os-detection:checked").length > 0
-    if (os_detection) {
-        cmd += " -O";
-    }
-
-    var dns_resolution = $("#nmap-no-dns-resolution:checked").prop("checked");
-    if (dns_resolution) {
-        cmd += " -n";
-    }
-
-    var os_detection = $("#nmap-os-detection:checked").length > 0
-    if (os_detection) {
-        cmd += " -O";
-    }
-
-    var version_detection = $("#nmap-version-detection:checked").length > 0
-    if (version_detection) {
-        cmd += " -sV";
-    }
-
-    var open_ports_only = $("#nmap-open-ports-only:checked").length > 0
-    if (open_ports_only) {
-        cmd += " --open";
-    }
-
-    var ping_unresponsive = $("#nmap-ping-unresponsive:checked").length > 0
-    if (ping_unresponsive) {
-        cmd += " -Pn";
-    }
-
-    var common_scripts = $("#nmap-common-scripts:checked").length > 0
-    if (common_scripts) {
-        cmd += " --sC";
-    }
-
-    var no_ports = $("#nmap-no-ports:checked").prop("checked");
-    if (no_ports) {
-        cmd += " -sn";
-    }
-
-    var target = $("#nmap-target").val();
-    if (target != "") {
-        cmd += " " + target;
-    }
-
-    return cmd;
-  }
-
-  $("#nmap-run").click(function() {
-      var cmd = generate_nmap_command();
-      schedule_or_run("nmap", cmd);
-  });
 
   function generate_wpscan_command() {
     var cmd = "wpscan";
@@ -1499,6 +1240,10 @@ $("#gitgot-run").click(function() {
     lengthChange:   true,
     processing: true,
     serverSide: true,
+    "oLanguage": {
+      "sLengthMenu": "_MENU_",
+      "sSearch": ""
+    },
     "ajax":{
       url : current_page_no_hash()+"/domains", // json datasource
       type: "POST",
@@ -1563,9 +1308,9 @@ $("#gitgot-run").click(function() {
             }
           },
           {
-            text: 'web-screenshot', action: function() {
+            text: 'screenshot2', action: function() {
               $('.nav-pills a[href="#tools"]').tab('show');
-              $('.nav-tabs a[href="#tab-web-screenshot"]').tab('show');
+              $('.nav-tabs a[href="#tab-screenshot2"]').tab('show');
 
               var targets = "";
 
@@ -1573,15 +1318,14 @@ $("#gitgot-run").click(function() {
                 targets += $(this).find(".card").attr("target") + " ";
               });
 
-              $("#web-screenshot-target").val(targets.trim());
+              $("#screenshot2-target").val(targets.trim());
             }
           }
         ]
       }
     ],
     initComplete: function () {
-      domain_dtable.buttons().container()
-          .appendTo( $('#domain-table_wrapper .col-md-6:eq(0)') );
+      domain_dtable.buttons().container().appendTo( $('#domain-table_wrapper .row:eq(0)') );
     }
   });
 
@@ -1590,11 +1334,15 @@ $("#gitgot-run").click(function() {
     fnDrawCallback: function() {
       $("#host-table thead").remove();
     },
-    lengthMenu: [ [10, 50, 100, -1], [10, 50, 100, "All"] ],
     deferRender:    false,
     autoWidth:      false,  
     processing: true,
     serverSide: true,
+    searching: true,
+    "oLanguage": {
+      "sLengthMenu": "_MENU_",
+      "sSearch": ""
+    },
     "ajax": {
       url: current_page_no_hash()+"/hosts", // json datasource
       type: "POST",
@@ -1628,12 +1376,12 @@ $("#gitgot-run").click(function() {
       },
       {
         extend: 'collection',
-        text: 'Send to',
+        text: 'Launch with selected...',
         buttons: [
           {
             text: 'nmap', action: function() {
-              $('.nav-pills a[href="#tools"]').tab('show');
-              $('.nav-tabs a[href="#tab-nmap"]').tab('show');
+              $('.nav-link[href="#tools"]').tab('show');
+              $('.nav-link[href="#tab-nmap"]').tab('show');
 
               var targets = "";
 
@@ -1659,9 +1407,11 @@ $("#gitgot-run").click(function() {
             }
           },
           {
-            text: 'web-screenshot', action: function() {
-              $('.nav-pills a[href="#tools"]').tab('show');
-              $('.nav-tabs a[href="#tab-web-screenshot"]').tab('show');
+            text: 'screenshot2', action: function() {
+              //$('.nav-pills a[href="#tools"]').tab('show');
+              $('.nav-link[href="#tools"]').tab('show');
+              $('.nav-link[href="#tab-screenshot2"]').tab('show');
+              //$('.nav-tabs a[href="#tab-screenshot2"]').tab('show');
 
               var targets = "";
 
@@ -1669,17 +1419,124 @@ $("#gitgot-run").click(function() {
                 targets += $(this).find(".card").attr("target") + " ";
               });
 
-              $("#web-screenshot-target").val(targets.trim());
+              console.log(targets);
+
+              $("#screenshot2-target").val(targets.trim());
             }
           }
         ]
       }
     ],
     initComplete: function () {
-      host_dtable.buttons().container()
-          .appendTo( $('#host-table_wrapper .col-md-6:eq(0)') );
+      host_dtable.buttons().container().appendTo( $('#host-table_wrapper .row:eq(0)') );
     }
   });
+
+/////// DNS Record TABLE BELOW
+var dns_record_dtable = $('#dns-record-table').DataTable( {
+  fnDrawCallback: function() {
+    $("#domain-table thead").remove();
+  },
+  deferRender:    false,
+  autoWidth:      false,  
+  processing: true,
+  serverSide: true,
+  searching: true,
+  "oLanguage": {
+    "sLengthMenu": "_MENU_",
+    "sSearch": ""
+  },
+  "language": {
+    "searchPlaceholder": "Filter by domain name"
+  },
+  "ajax": {
+    url: current_page_no_hash()+"/domains", // json datasource
+    type: "POST",
+    error: function() {
+      console.log("Host datatable failed to load");
+    }
+  },
+  paging: true,
+  columns: [
+    { "data": "card", className: "domain" }
+  ],
+  buttons: [
+    {
+      text: 'Select all',
+      action: function () {
+        //SelectSelectableElement($("#domain-table"), $("td"));
+        $("#domain-table").find("td").each(function(index) {
+          $(this).addClass("ui-selected");
+          $("#domain-table").data("ui-selectable")._mouseStop(null);
+        });
+      }
+    },
+    {
+      text: 'Unselect all',
+      action: function () {
+        $("#domain-table").find("td").each(function(index) {
+          $(this).removeClass("ui-selected");
+          $("#domain-table").data("ui-selectable")._mouseStop(null);
+        });
+      }
+    },
+    {
+      extend: 'collection',
+      text: 'Launch with selected...',
+      buttons: [
+        {
+          text: 'nmap', action: function() {
+            $('.nav-link[href="#tools"]').tab('show');
+            $('.nav-link[href="#tab-nmap"]').tab('show');
+
+            var targets = "";
+
+            $(".host.ui-selected").each(function() {
+              targets += $(this).find(".card").attr("target") + " ";
+            });
+
+            $("#nmap-target").val(targets.trim());
+          }
+        },
+        {
+          text: 'pwnVNC', action: function() {
+            $('.nav-pills a[href="#tools"]').tab('show');
+            $('.nav-tabs a[href="#tab-pwn-vnc"]').tab('show');
+
+            var targets = "";
+
+            $(".host.ui-selected").each(function() {
+              targets += $(this).find(".card").attr("target") + " ";
+            });
+
+            $("#pwn-vnc-target").val(targets.trim());
+          }
+        },
+        {
+          text: 'screenshot2', action: function() {
+            //$('.nav-pills a[href="#tools"]').tab('show');
+            $('.nav-link[href="#tools"]').tab('show');
+            $('.nav-link[href="#tab-screenshot2"]').tab('show');
+            //$('.nav-tabs a[href="#tab-screenshot2"]').tab('show');
+
+            var targets = "";
+
+            $(".host.ui-selected").each(function() {
+              targets += $(this).find(".card").attr("target") + " ";
+            });
+
+            console.log(targets);
+
+            $("#screenshot2-target").val(targets.trim());
+          }
+        }
+      ]
+    }
+  ],
+  initComplete: function () {
+
+  }
+});
 
    /////// WEB APP TABLE BELOW
   var web_application_dtable = $('#web-application-table').DataTable( {
@@ -1763,25 +1620,25 @@ $("#gitgot-run").click(function() {
             }
           },
           {
-            text: 'web-screenshot', action: function() {
+            text: 'screenshot2', action: function() {
               $('.nav-pills a[href="#tools"]').tab('show');
-              $('.nav-tabs a[href="#tab-web-screenshot"]').tab('show');
+              $('.nav-tabs a[href="#tab-screenshot2"]').tab('show');
 
               var targets = "";
 
-              $(".web-application.ui-selected").each(function() {
-                targets += $(this).find(".card").attr("domain") + " ";
+              $(".domain.ui-selected").each(function() {
+                targets += $(this).find(".card").attr("target") + " ";
               });
 
-              $("#web-screenshot-target").val(targets.trim());
+              $("#screenshot2-target").val(targets.trim());
             }
           }
         ]
       }
     ],
     initComplete: function () {
-      web_application_dtable.buttons().container()
-          .appendTo( $('#web-application-table_wrapper .col-md-6:eq(0)') );
+      web_application_dtable.buttons().container().appendTo( $('#web_application-table_wrapper .row') );
+
     }
   });
 
@@ -1924,7 +1781,7 @@ var job_dtable = $('#job-table').DataTable( {
   });
 
 
-  $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+  $('a[class^="nav-link"]').on('shown.bs.tab', function (e) {
     var hash = $(e.target).attr('href');
 
     if (history.pushState) {
@@ -1947,12 +1804,19 @@ var job_dtable = $('#job-table').DataTable( {
   // function that can be called to navigate by hash
   function hashNavigate() {
     var hash = window.location.hash;
+    console.log("hasnav hit: " + hash);
 
-    // todo: there's a JS error on tabs related to consoles, this is kind of a bandaid
-    //if (hash.startsWith("tab-"))
-     // return;
+    if ($("#navbarSupportedContent").hasClass("show")) {
+      $("#navbar-toggler").click();
+    }
+    
+    if (hash == "#tools") {
+      console.log("hash:" + hash);
+      // go back to directory tab
+      $('.nav-link[href="#tools"]').tab('show');
+      $('.nav-link[href="#tab-help"]').tab('show');
 
-    if (hash.startsWith("#web-applications-")) {
+    } else if (hash.startsWith("#web-applications-")) {
       var split = hash.split("-");
 
       if (split.length > 1) {
@@ -2036,9 +1900,30 @@ var job_dtable = $('#job-table').DataTable( {
 
         //location.hash = hash;
       }
+    } else if (hash.startsWith("#domain-search|")) {
+      var split = hash.split("|");
+
+      if (split.length > 1) {
+        // open domain tab
+        $('.nav-link[href="#domains"]').tab('show');
+        // scroll to specific domain
+        var domain_search = split[1];
+
+        var table = $('#domain-table').last().DataTable();
+        table.search(domain_search).draw();
+        $(row).parent().find(".collapse").collapse("show");
+        window.scrollTo(0,0);
+
+        //location.hash = hash;
+      }
     } else { //catch-all to navigate by left-tab
       $('.nav-link[href="' + hash + '"]').tab('show');
       $("html, body").animate({ scrollTop: 0 }, "slow");
+
+      //if ($("#navbarSupportedContent").hasClass("show")) {
+      //  $('.navbar-toggler').click();
+      //}
+
       location.hash = hash;
     }
 

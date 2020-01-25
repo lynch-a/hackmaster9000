@@ -1,46 +1,50 @@
 <% 
-dns_records = DnsRecord.where(project_id: @project.id, record_type: ["A"], record_value: host.ip, hidden: false).where.not(dns_name: "")
+#dns_records = DnsRecord.where(project_id: @project.id, record_type: ["A"], record_value: host.ip, hidden: false)
 
-web_applications = []
+#web_applications = []
 
 # count webapps
-dns_records.each do |dns_record|
-  web_apps = WebApplication.where(project_id: @project.id, dns_record_id: dns_record.id, hidden: false)
-  if (web_apps.count > 0)
-    web_applications = web_applications + web_apps
+#dns_records.each do |dns_record|
+#  web_apps = WebApplication.where(project_id: @project.id, dns_record_id: dns_record.id, hidden: #false)
+#  if (web_apps.count > 0)
+#    web_applications = web_applications + web_apps
+#  end
+#end
+%>
+
+<% 
+  dns_records = DnsRecord.where(project_id: @project.id, record_type: ["A"], record_value: host.ip, hidden: false)
+
+  # generate links to all of the domains by searching through DNS records. slow? meh
+  related_domains = []
+  DnsRecord.where(record_value: host.ip).each do |record|
+    found_domain = Domain.where(project_id: @project.id, domain_name: record.record_key).first
+    if (found_domain)
+      related_domains << found_domain
+    end
   end
-end
+
+  web_applications = []
+
+  # count webapps
+  dns_records.each do |dns_record|
+    web_apps = WebApplication.where(project_id: @project.id, host_id: host.id, hidden: false)
+    if (web_apps.count > 0)
+      web_applications = web_applications + web_apps
+    end
+  end
 %>
 
 <div class="card no-select" target="<%= host.ip %>">
-  <div class="card-header align-items-center table-<%= risk_to_color(host.risk) %>" id="host-heading-<%= host.id %>">
+  <div class="card-header table-<%= risk_to_color(host.risk) %>" id="host-heading-<%= host.id %>">
     <a href="" class="hide-host" host_id="<%= host.id %>">
       <span class="fas fa-trash"></span>
     </a>
 
     <button href="javascript:void(0);" class="hash-nav btn btn-sm btn-link host-expand-button" type="button" data-toggle="collapse" data-target="#host-<%= host.id %>" aria-expanded="false" aria-controls="host-<%= host.id %>">
-          Details
+          <%= host.ip %>
     </button>
 
-    <!-- card header info -->
-    <%= host.ip %>
-
-    <%
-    flag_vnc = false
-    host.services.each do |service|
-      next if flag_vnc == true
-
-      if FeedItem.where(data_id: host.id, header: "pwnVNC").count > 0
-        flag_vnc = true
-      end
-    end
-    %>
-
-    <% if flag_vnc %>
-      <a href="#">
-        <span class="fas fa-chalkboard-teacher"></span>
-      </a>
-    <% end %>
 
     <% if web_applications.size > 0 %>
       <a href="#">
@@ -59,79 +63,121 @@ end
     <%= services_str %>  
 
     <div class="float-right">
-      <% if dns_records.count >= 1 %>
-        <a href="#domains-<%= dns_records.first.id %>" class="hash-nav">
-          <%= dns_records.first.dns_name %>
+      <button class="btn">
+      <% if related_domains.count >= 1 %>
+        <a href="#domains-<%= related_domains.first.id %>" class="hash-nav">
+          <%= related_domains.first.domain_name %>
         </a>
       <% end %>
 
-      <% if dns_records.count > 1 %>
-        and <%= dns_records.count-1 %> more
+      <% if related_domains.count > 1 %>
+        and <%= related_domains.count-1 %> more
       <% end %>
+    </button>
     </div>
   </div>
 
   <div id="host-<%= host.id %>" class="collapse" aria-labelledby="host-heading-<%= host.id %>" ip="<%= host.ip %>">
-    <div class="well">
-      <div class="col-lg-12">
-        <select class="form-control host-set-risk" name="host-set-risk" host-id="<%= host.id %>">
-          <option  <%= host.risk == 0 || host.risk == nil ? "selected" : "" %> value="0">Unreviewed</option>
-          <option  <%= host.risk == 1 ? "selected" : "" %> value="1">Low</option>
-          <option  <%= host.risk == 2 ? "selected" : "" %> value="2">Medium</option>
-          <option  <%= host.risk == 3 ? "selected" : "" %> value="3">High</option>
-        </select>
-        
-        <br/>
+    <div class="col">
+      <!--
+      <select class="form-control host-set-risk" name="host-set-risk" host-id="<%= host.id %>">
+        <option  <%= host.risk == 0 || host.risk == nil ? "selected" : "" %> value="0">Unreviewed</option>
+        <option  <%= host.risk == 1 ? "selected" : "" %> value="1">Low</option>
+        <option  <%= host.risk == 2 ? "selected" : "" %> value="2">Medium</option>
+        <option  <%= host.risk == 3 ? "selected" : "" %> value="3">High</option>
+      </select>
+      -->
 
-        <form class="host-comment" data-host-id="<%= host.id%>">
-          <div class="form-group">
-            <textarea class="form-control" name="host-comment" rows="5" placeholder="Notes"><%= host.note %></textarea>
-            <button class="add-host-comment btn btn-success">Save</button>
-          </div>
-        </form>
-
-        <!-- show matching dns records -->
-        <h4>Domain Names</h4>
-        <table class="table table-hover table-condensed table-bordered">
-          <thead>
-            <tr>
-              
-            </tr>
-          </thead>
-          <tbody>
-            <% dns_records.each_slice(3).to_a.each do |dns_record_slice| %>
-              <tr>
-                <% dns_record_slice.each do |dns_record| %>
-                  <td class="table-<%= risk_to_color(dns_record.risk) %> text-center host-domain-<%= dns_record.id %>">
-                    <a href="#domains-<%= dns_record.id %>" class="hash-nav">
-                      <%= dns_record.dns_name %>
-                    </a>
-                    </br>
-                  </td>
-                <% end %>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-        
-        <div class="host-web-application-table" host-id="<%= host.id %>">
-          <%= erb :'partials/_host_web_application_table', layout: false, :locals => { web_applications: web_applications } %>
-        </div>
-
-        <div class="service-table" host-id="<%= host.id %>">
-          <%= erb :'partials/_service_table', layout: false, :locals => { host: host } %>
-        </div>
-
-        <h4>Feed</h4>
-
-        <% feed_items = FeedItem.where(data_type: "host", data_id: host.id) %>
-        <% feed_items.each do |feed_item| %>
-            <pre><%= feed_item.value %></pre>
-        <% end %>
-
-        <h5>Script Output</h5>
-        <pre><%= erb :'partials/_script_summary', layout: false, :locals => { host: host } %></pre>
+      <!-- show matching dns records -->
+      <div class="text-center">
+        <h4>Discovered Domains</h4>
       </div>
+      <% # erb :'partials/_hm9k_table', layout: true, :locals => {from_type: 'host', target_type: 'domain', desired_key: "record_key", data: dns_records}
+      %>
+
+      <table class="table table-hover table-condensed table-bordered">
+        <thead>
+          <tr>
+            
+          </tr>
+        </thead>
+        <tbody>
+          <% related_domains.each_slice(2).each do |domain_slice| %>
+            <tr>
+              <% domain_slice.each do |domain| %>
+                <td class="table-<%= risk_to_color(domain.risk) %> text-center host-domain-<%= domain.id %>">
+                  <a href="#domains-<%= domain.id %>" class="hash-nav">
+                    <%= domain.domain_name %>
+                  </a>
+                  </br>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      
+      <div class="host-web-application-table" host-id="<%= host.id %>">
+        <%= erb :'partials/_host_web_application_table', layout: false, :locals => { web_applications: web_applications } %>
+      </div>
+
+      <div class="text-center">
+        <h4>Discovered Services</h4>
+      </div>
+
+      <table class="table table-hover table-condensed table-bordered">
+        <thead>
+          <tr>
+            
+          </tr>
+        </thead>
+        <tbody>
+          <% host.services.each_slice(1).to_a.each do |service_slice| %>
+            <tr>
+              <% service_slice.each do |service| %>
+                <td class="table-<%= risk_to_color(service.risk) %> text-center">
+                  <a href="#services-<%= service.id %>" class="hash-nav">
+                    <%= service.port_number %> | 
+                    <%= service.service_name %>
+                  </a>
+                  </br>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     </div>
+    <%
+      # in a view? shoot me
+      
+      require './plugins/Hm9kPlugin.rb'
+
+      Dir["./plugins/*/plugin.rb"].each { |f| require f }
+      Hm9kPlugin.register_plugins
+      # plugins will populate HTML for nav-tabs (required to make tab switching work)
+    %>
+    <% Hm9kPlugin.plugins.each_with_index do |plugin, i| %>
+      <% next if !plugin.visualize_in_hosts? %>
+      <div class="card border-light no-select">
+        <div class="card-header table-secondary">
+          <button href="javascript:void(0);" class="btn btn-primary hash-nav" type="button" data-toggle="collapse" data-target="#plugin-<%= "#{host.id}-#{i}" %>" aria-expanded="false" aria-controls="plugin-<%= "#{host.id}-#{i}" %>">
+                <%= plugin.name %> Event Details
+          </button>
+
+          <button href="javascript:void(0);" class="btn btn-danger float-right" type="btn">
+                Launch <%= plugin.name %> 
+          </button>
+        </div>
+
+        <div id="plugin-<%= "#{host.id}-#{i}" %>" class="collapse">
+          <div class="row">
+            <div class="col">
+              <%= erb :"../plugins/#{plugin.name}/#{plugin.host_feed_partial}", locals: {tool_name: plugin.name, host: host} %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>

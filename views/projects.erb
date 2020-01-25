@@ -1,28 +1,14 @@
 <div class="container">
 	<div class="row">
-		<div class="col col-sm-3">
-			<h4>Your Projects:</h4>
-			<ul class="list-group">
-				<% @projects.each do |p| %>
-					<a href="/projects/<%= p.id %>">
-						<li class="list-group-item">
-							<%= h p.name %>
-						</li>
-					</a>
-				<% end %>
-			</ul>
+		<div class="col">
+      <div class="input-group">
+        <input id="new-project-name" class="form-control input-sm" placeholder="New Project Name">
+        <span class="input-group-btn">
+              <button id="project-create" class="btn btn-primary" type="button">Create</button>
+          </span>
+      </div> 
 
-			<br/>
-			<div class="input-group">
-				<input id="new-project-name" class="form-control input-sm" placeholder="Project Name">
-				<span class="input-group-btn">
-	        		<button id="project-create" class="btn btn-default" type="button">Create</button>
-	   			</span>
-   			</div>
-		</div>
-
-		<div class="col col-sm-3">
-			<h4>All Projects:</h4>
+			<div class="h4 text-center">All Projects</div>
 			<ul class="list-group">
 				<% @all_projects.each do |p| %>
 					<a href="/projects/<%= p.id %>"><li class="list-group-item"><%= h p.name %></li></a>
@@ -32,14 +18,15 @@
 	</div>
 </div>
 
+
 <script>
-$("#project-create").click(function() {
-	if ($("#new-project-name").val().length > 2) {
-	    $.post("/projects/new", {
-	    	project_name: $("#new-project-name").val()
-	    }, function(data) {
-	        location.reload();
-	    });
-	}
-});
+  $("#project-create").click(function() {
+    if ($("#new-project-name").val().length > 2) {
+      $.post("/projects/new", {
+        project_name: $("#new-project-name").val()
+      }, function(data) {
+        location.reload();
+      });
+    }
+  });
 </script>

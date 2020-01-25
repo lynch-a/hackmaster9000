@@ -1,10 +1,22 @@
 hack faster with hackmaster9000
 ==
 
-A framework to help run terminal based tools and visualizing/using the resulting data. It's unique because the web UI provides you a real server-side terminal. It's also collaborative with real-time updates to all users, for the most part.
+A workflow-agnostic collaborative penetration testing platform
 
-It primarily helps with some recon tasks at the moment (subdomain scanning / nmap / taking screenshots / dirsearch / etc). It will be improved in the future to make it useful for other things!
+Works for recon for now
 
+Immediate Todo
+==
+* refactor tools into small plugin
+* include SSLscan
+* weirdAAL
+* scoutsuite
+* kill active terminals on logout
+* %rand% trigger replacement option
+* scheduling on triggers
+* good job management
+* on domain ingest, check for cloudyboi? nah... build a cloud view tab instead
+* include AWS configuration helper
 
 
 What it looks like

@@ -1,0 +1,54 @@
+class ExamplePlugin < Hm9kPlugin
+  
+  def self.name
+    "example" # matches plugin folder name, ideally matches binary name like "nmap"
+  end
+  
+  def self.description
+    "A plugin for example purposes"
+  end
+
+  def self.partial
+    "_example" # the path to the partial file, which should be in this plugin directory, without ".erb" at the end
+  end
+
+  def self.file_filter
+    "nmap-*.xml" # file filter
+  end
+
+  # Write this method. Any project files matching the file_filter above will have their full pathname passed to this parse method in the file_path argument.
+  def self.parse(project_id, file_path)
+    file_contents = File.read(file_path)
+
+    # we use the nmap parser gem
+    parser = Nmap::Parser.parsestring(file_contents)
+
+    parser.hosts("up") do |nmap_host|
+      db_host = ingest_host(nmap_host.ipv4_addr)
+
+      nmap_host.scripts do |nmap_script|
+        ingest_nmap_host_script(db_host.id, nmap_script.id, nmap_script.output)
+      end
+      
+      db_dns_records = []
+      nmap_host.hostnames().each do |nmap_hostname|
+       db_dns_record = ingest_dns_record(nmap_hostname, "A", nmap_host.ipv4_addr)
+       db_dns_records << db_dns_record
+      end
+
+      [:tcp, :udp].each do |type|
+        nmap_host.getports(type, "open") do |nmap_port|
+          nmap_service = nmap_port.service
+
+          db_service = ingest_service(db_host.id, nmap_port.num, nmap_service.name, nmap_service.product, nmap_service.version, nmap_service.confidence)
+
+          nmap_port.scripts do |nmap_script|
+            ingest_nmap_service_script(db_service.id, db_dns_records, nmap_script.id, nmap_script.output)
+          end
+        end
+      end
+    end
+
+    "true" # just assume it worked
+  end
+end

@@ -40,7 +40,7 @@ dirsearch_scans = DirsearchScan.where(web_application_id: web_application.id)
             <% next if entry.path == "" or seen.include? entry.path %>
             <% seen << entry.path %>
             <tr class="bg-<%= response_to_color(entry.status) %>">
-              <td style="word-break: break-word;"><%= "#{web_application.scheme}://#{web_application.dns_record.dns_name}/#{entry.path}" %></td>
+              <td style="word-break: break-word;"><%= "#{web_application.scheme}://#{web_application.dns_record.record_key}/#{entry.path}" %></td>
             	<td><%= "#{entry.status}" %></td>
             	<td><%= "#{entry.content_length}" %></td>
             	<!-- <td><%= "#{entry.redirect}" %></td> -->

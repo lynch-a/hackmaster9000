@@ -1,0 +1,17 @@
+related_domains = []
+DnsRecord.where(record_value: "52.112.67.75").each do |record|
+  found_domain = Domain.where(domain_name: record.record_key).first
+  if (found_domain)
+    puts "found a domain.... #{found_domain.id} #{found_domain.domain_name}"
+    related_domains << found_domain
+  end
+end
+
+puts related_domains.size
+
+puts related_domains
+related_domains.each_slice(1).each do |domain_slice|
+	domain_slice.each do |domain|
+		puts "domain: #{domain.domain_name}"
+	end
+end

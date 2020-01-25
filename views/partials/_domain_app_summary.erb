@@ -25,7 +25,7 @@ end
       <tr class="domain-web-application-<%= web_application.id %> table-<%= risk_to_color(web_application.risk) %>">
         <td>
           <a href="#web-applications-<%= web_application.id%>" class="hash-nav">
-          <%= "#{web_application.scheme}://#{(web_application.dns_record.dns_name == "") ? "#{web_application.dns_record.record_value}" : "#{web_application.dns_record.dns_name}"}:#{web_application.port}" %>
+          <%= "#{web_application.scheme}://#{(web_application.dns_record.record_key == "") ? "#{web_application.dns_record.record_value}" : "#{web_application.dns_record.record_key}"}:#{web_application.service.port_number}" %>
           </a>
         </td>
         <td>

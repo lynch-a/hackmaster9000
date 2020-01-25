@@ -1,0 +1,41 @@
+<%
+  # Display the output of any nmap script results this host has
+%>
+<% host_script_count = HostScript.where(host_id: host.id).count %>
+
+<pre class="hm9k-pre">
+  <% if host_script_count == 0 %>
+<%= "========= nmap Script Results =========" %>
+    <%= "(No host script results found.)" %>
+  <% else %>
+    <%= "Host Script Results:" %>
+    <% HostScript.where(host_id: host.id).each do |script| %>
+<%= "#{script.script_id} = #{script.script_output}\n" %>
+    <% end %>
+  <% end %>
+
+  <% flag = false %>
+
+  <% host.services.each do |service| %>
+    <% ServiceScript.where(service_id: service.id).each do |script| %>
+      <% flag = true %>
+<%= "#{service.port_number} | #{script.script_id} = #{script.script_output}" %>
+    <% end %>
+  <% end %>
+
+  <% if flag == false %>
+    <%= "(No service script results found.)" %>
+  <% end %>
+<%= "=======================================" %>
+</pre>
+
+<% if host.feed_items.where(source_plugin: "nmap").count == 0 %>
+  <%= "No nmap activity detected." %>
+<% else %> 
+
+  <ul class="list-group" style="max-height:300px;margin-bottom:10px;overflow:scroll;-webkit-overflow-scrolling: touch;">
+    <% host.feed_items.where(source_plugin: "nmap").each do |nmap_feed_item| %>
+      <li class="list-group-item">[time] <%= nmap_feed_item.value %></li>
+    <% end %>
+  </ul>
+<% end %>

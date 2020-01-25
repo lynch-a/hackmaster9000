@@ -1,0 +1,66 @@
+<% web_applications = WebApplication.where(project_id: @project.id, dns_record_id: dns_record.id, hidden: false) %>
+<% matching_hosts = Host.by_dns(@project, dns_record.record_key) %>
+
+
+<div class="card no-select" target="<%= dns_record.record_key %>">
+  <div class="card-header align-items-center no-select table-<%= risk_to_color(dns_record.risk) %>" id="domain-heading-<%= dns_record.id %>">
+      <button href="javascript:void(0);" class="btn btn-link hash-nav domain-expand-button" data-toggle="collapse" data-target="#domain-<%= dns_record.id %>" aria-expanded="false" aria-controls="domain-<%= dns_record.id %>">
+        <%= dns_record.record_key %>
+
+      </button>
+      <button href="javascript:void(0);" class="btn btn-light" >
+        <%= dns_record.record_type %>
+      </button>
+      <button href="javascript:void(0);" class="btn btn-light" >
+        <%= dns_record.record_value %>
+      </button>
+      <button href="javascript:void(0);" class="btn btn-light float-right" >
+        <!-- todo: link to copy the path to the source file or something? -->
+        Source: <%= dns_record.source_plugin %>
+      </button>
+      <% if web_applications.count > 0 %>
+      <a href="#">
+        <span class="fas fa-atlas" title="Has web application(s)"></span>
+      </a>
+      <% end %>
+  </div>
+
+  <div id="domain-<%= dns_record.id %>" class="collapse" aria-labelledby="domain-heading-<%= dns_record.id %>" hostname="<%= dns_record.record_key %>">
+    <div class="col">
+    
+      <%= erb :'partials/_domain_app_summary', locals: {web_applications: web_applications }%> 
+
+      <%
+        # in a view? shoot me
+        
+        require './plugins/Hm9kPlugin.rb'
+
+        Dir["./plugins/*/plugin.rb"].each { |f| require f }
+        Hm9kPlugin.register_plugins
+        # plugins will populate HTML for nav-tabs (required to make tab switching work)
+      %>
+      <% Hm9kPlugin.plugins.each_with_index do |plugin, i| %>
+        <% next if !plugin.visualize_in_dns_records? %>
+        <div class="card border-light no-select">
+          <div class="card-header table-secondary">
+            <button href="javascript:void(0);" class="btn btn-primary hash-nav" type="button" data-toggle="collapse" data-target="#plugin-<%= "#{dns_record.id}-#{i}" %>" aria-expanded="false" aria-controls="plugin-<%= "#{dns_record.id}-#{i}" %>">
+                  <%= plugin.name %> Event Details
+            </button>
+
+            <button href="javascript:void(0);" class="btn btn-danger float-right" type="btn">
+                  Launch <%= plugin.name %> 
+            </button>
+          </div>
+
+          <div id="plugin-<%= "#{dns_record.id}-#{i}" %>" class="collapse">
+            <div class="row">
+              <div class="col">
+                <%= erb :"../plugins/#{plugin.name}/#{plugin.dns_record_feed_partial}", locals: {tool_name: plugin.name, dns_record: dns_record} %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

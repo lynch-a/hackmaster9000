@@ -1,6 +1,5 @@
 #!/usr/bin/env node
  
-const log = require('why-is-node-running')
 const genericPool = require('generic-pool');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
@@ -25,8 +24,8 @@ const factory = {
  
 const browserPagePool = genericPool.createPool(factory, {
   max: 20,
-  min: 0,
-  idleTimeoutMillis: 1500
+  min: 1,
+  idleTimeoutMillis: 8000
 });
  
 //module.exports = browserPagePool;
@@ -34,13 +33,13 @@ const browserPagePool = genericPool.createPool(factory, {
  
 process.argv.shift();
 process.argv.shift();
+console.log(process.argv);
  
-if (process.argv.length < 2) {
-  console.log("Usage: screenshot2 outfile.txt domain1 domain2 ip3 domain4 etc \n*** NO http:// or port, just a raw domain or ip. it will screenshot likely services.")
+if (process.argv.length < 1) {
+  console.log("Usage: screenshot2 domain1 domain2 ip3 domain4 etc \n*** NO http:// or port, just a raw domain or ip. it will screenshot likely services.")
   process.exit();
 }
  
-const outfile = process.argv.shift();
  
 const targets = process.argv;
 const schemes = ['http', 'https'];
@@ -81,7 +80,7 @@ async function take_ss(url, filepath, outline) {
  
     await console.log("testing: " + url);
      
-    const resp = await page.goto(url, {waitUntil: 'load', timeout: 2000});
+    const resp = await page.goto(url, {waitUntil: 'load', timeout: 10000});
     const statusCode = await resp.status();
  
     await console.log("resp: ", statusCode);
@@ -105,13 +104,14 @@ async function take_ss(url, filepath, outline) {
       //    height: 720
       //}});
   
-      await fs.writeFile("web-applications-"+Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + ".txt", outline, 'ascii', function() {});
+      await fs.writeFile("ss2-"+Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + ".txt", outline, 'ascii', function() {});
     } else {
       await console.log("not interesting: " + url + " " + resp.status());
     }
  
   } catch (e) {
     await page.close();
+    console.log(e);
     // page didn't load or timed out
   } finally {
     await browserPagePool.destroy(page); // not releasing?

@@ -93,8 +93,7 @@ class Hackmaster < Sinatra::Base
         session[:uid] = @user.id
         @user.session_key = SecureRandom.uuid.gsub!("-","");
         @user.save
-        session.options[:expire_after] = 2592000
-        #@user.make_session
+        session.options[:expire_after] = 21600
         redirect "/projects"
       else
         session[:uid] = nil
@@ -111,16 +110,6 @@ class Hackmaster < Sinatra::Base
     session[:uid] = nil
     redirect "/login"
   end
-
-  #set :bind, '0.0.0.0'
-  #set :dump_errors, false
-
-  # see http://getskeleton.com/
-
-  #get '/' do
-  #  @hosts = Host.all
-  #  erb :index
-  #end
 
   get "/" do
     redirect "/projects"
@@ -170,14 +159,12 @@ class Hackmaster < Sinatra::Base
 
   get '/projects/:id', auth: :user do
     @user = User.find(session[:uid])
-    puts "User accessed page: #{@user.id} SESSID: #{@user.session_key}"
 
     @project = Project.find(params[:id])
     @jobs = Job.where(project_id: @project.id).order(id: :desc)
     
     # no bueno sorting
     @web_applications = WebApplication.where(project_id: @project.id, hidden: false).order(id: :desc)
-
 
     @triggers = Trigger.where(project_id: @project.id)
 
@@ -192,11 +179,8 @@ class Hackmaster < Sinatra::Base
     #todo: check if user can access project
     # ??? @user.projects << proj
 
-    @hosts = Host.where(project_id: @project.id, hidden: false).all
-    @services = Service.joins(:host).where('hosts.project_id = ?', @project.id).all
 
-    @dns_records = DnsRecord.where(project_id: @project.id, hidden: false).where.not(dns_name: "")
-    erb :tool
+    erb :project
   end
 
   get '/clear', auth: :user do
@@ -361,43 +345,125 @@ class Hackmaster < Sinatra::Base
       search = params[:search][:value]
 
       if @project
-        @all_dns_records_in_project = DnsRecord.where(project_id: @project.id).where.not(dns_name: "")
+        @all_domains_in_project = Domain.where(project_id: @project.id)
 
-        total_count = @all_dns_records_in_project.count
+        total_count = @all_domains_in_project.count
 
-        # we will filter down this list of all webapps by searching
-        @dns_records = @all_dns_records_in_project
+        @filtered_domains = @all_domains_in_project
 
         search_filter_regexes = {
           id_filter_regex: {regex: /id:(\d+)/, search_field: :id},
           hidden_filter_regex: {regex: /hidden:(true|false)/, search_field: :hidden},
-          risk_filter_regex: {regex: /risk:(0|1|2|3)/, search_field: :risk}
+          risk_filter_regex: {regex: /risk:(0|1|2|3)/, search_field: :risk},
         }
 
         if (search.length > 1)
           # sigh
           search_filter_regexes.each do |filter_name, filter|
             if search[filter[:regex]] != nil
-              @dns_records = @dns_records.where(filter[:search_field] => search[filter[:regex]].split(":")[1])
+              @filtered_domains = @filtered_domains.where(filter[:search_field] => search[filter[:regex]].split(":")[1])
               search.gsub!(filter[:regex], "").strip! # remove this filter from the str
             end            
           end
 
-          # search with the rest of the str by ip
-          @dns_records = @dns_records.where(["dns_name LIKE ?", "%#{search}%"])
+          @filtered_domains = @filtered_domains.where(["domain_name LIKE ?", "%#{search}%"])
         else
-          @dns_records = DnsRecord.where(project_id: @project.id, hidden: false).where.not(dns_name: "")
+          @filtered_domains = Domain.where(project_id: @project.id, hidden: false, tld: true)
         end
         
-        count_before_pagination = @dns_records.count
+        count_before_pagination = @filtered_domains.count
 
         # do ordering
-        @dns_records = @dns_records.offset(start).limit(length).order(id: :desc)
+        @filtered_domains = @filtered_domains.offset(start).limit(length).order(id: :desc)
 
-        if @dns_records
+        if @filtered_domains
           data = []
 
-          @dns_records.each do |dns_record|
+          @filtered_domains.each do |domain|
+            html = File.open('views/partials/_domain_row.erb').read
+            template = ERB.new(
+              html
+            )
+            b = binding
+            b.local_variable_set(:domain, domain)
+            data << {card: template.result(b)}
+          end
+
+          data_table_response = {
+            draw: draw,
+            recordsTotal: total_count,
+            recordsFiltered: count_before_pagination,
+            data: data
+          }
+
+
+          content_type :json
+          return data_table_response.to_json
+        end
+      else # no project
+        content_type :json
+        return "{}"
+      end
+    #rescue
+    #  puts "bad search query: #{search}"
+    #  content_type :json
+    #  return "{}"
+    #end
+  end
+
+  ###### DNS RECORDS BELOW
+  # server-side processing for domain datatable
+  post '/projects/:project_id/dns_records', auth: :user do
+    @user = User.find(session[:uid])
+    @project = @user.projects.where(id: params[:project_id]).first
+
+    #begin
+      draw = params[:draw]
+      start = params[:start]
+      length = params[:length]
+      if(length == "-1")
+        length = 999999
+      end
+
+      search = params[:search][:value]
+
+      if @project
+        @all_dns_records_in_project = DnsRecord.where(project_id: @project.id)
+
+        total_count = @all_dns_records_in_project.count
+
+        @filtered_dns_records = @all_dns_records_in_project
+
+        search_filter_regexes = {
+          id_filter_regex: {regex: /id:(\d+)/, search_field: :id},
+          hidden_filter_regex: {regex: /hidden:(true|false)/, search_field: :hidden},
+          risk_filter_regex: {regex: /risk:(0|1|2|3)/, search_field: :risk},
+          type_filter_regex: {regex: /type:(A|AAAA|NS|MX|SOA)/, search_field: :record_type}
+        }
+
+        if (search.length > 1)
+          # sigh
+          search_filter_regexes.each do |filter_name, filter|
+            if search[filter[:regex]] != nil
+              @filtered_domains = @filtered_domains.where(filter[:search_field] => search[filter[:regex]].split(":")[1])
+              search.gsub!(filter[:regex], "").strip! # remove this filter from the str
+            end            
+          end
+
+          @filtered_domains = @filtered_domains.where(["record_key LIKE ?", "%#{search}%"])
+        else
+          @filtered_domains = DnsRecord.where(project_id: @project.id, hidden: false)
+        end
+        
+        count_before_pagination = @filtered_domains.count
+
+        # do ordering
+        @filtered_domains = @filtered_domains.offset(start).limit(length).order(id: :desc)
+
+        if @filtered_domains
+          data = []
+
+          @filtered_domains.each do |dns_record|
             html = File.open('views/partials/_domain_row.erb').read
             template = ERB.new(
               html
@@ -438,7 +504,7 @@ class Hackmaster < Sinatra::Base
       @dns_record = DnsRecord.where(project_id:@project.id, id: params[:dns_record_id]).first
       
       if @dns_record
-        if @dns_record.dns_name != ""
+        if @dns_record.record_key != ""
           erb :'partials/_domain_row', layout: false, locals: { dns_record: @dns_record }
         end
       else
@@ -490,8 +556,8 @@ class Hackmaster < Sinatra::Base
           end
 
           # search with the rest of the str by name
-          @web_applications = @web_applications.joins(:dns_record)
-          .where(["dns_name LIKE ?", "%#{search}%"])
+          @web_applications = @web_applications.joins(:domain)
+          .where(["domain_name LIKE ?", "%#{search}%"])
         else
           @web_applications = WebApplication.where(project_id: @project.id, hidden: false)
         end

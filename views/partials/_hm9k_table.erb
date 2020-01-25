@@ -1,0 +1,28 @@
+<%
+# input to this partial looks like
+# {from_type: "host", target_type: desired_key: "record_key", "domain", data: [domains, hosts, or anything that has a risk and an id]}
+puts "hit?????????"
+%>
+
+<table class="table table-hover table-condensed table-bordered">
+  <thead>
+    <tr>
+      
+    </tr>
+  </thead>
+  <tbody>
+    <% data.each_slice(3).to_a.each do |input_slice| %>
+
+      <tr>
+        <% input_slice.each do |input| %>
+          <td class="table-<%= risk_to_color(input.risk) %> text-center <%= from_type %>-<%= target_type %>-<%= input.id %>">
+            <a href="#<%= target_type %>-<%= input.id %>" class="hash-nav">
+              <%= input.send(desired_key) %>
+            </a>
+            </br>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

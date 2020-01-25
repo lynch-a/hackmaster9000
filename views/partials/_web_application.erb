@@ -1,4 +1,5 @@
-<% full_url = "#{web_application.scheme}://#{(web_application.dns_record.dns_name == "") ? "#{web_application.dns_record.record_value}" : "#{web_application.dns_record.dns_name}"}:#{web_application.port}" %>
+
+<% full_url = "#{web_application.scheme}://#{Domain.find(web_application.domain_id).domain_name}:#{Service.find(web_application.service_id).port_number}" %>
 
 <%
 counts = {}
@@ -11,7 +12,7 @@ end
 %>
 
 
-<div class="card no-select" target="<%= full_url %>" domain="<%= web_application.dns_record.dns_name %>">
+<div class="card no-select" target="<%= full_url %>" domain="<%= Domain.find(web_application.domain_id).domain_name %>">
   <div class="card-header table-<%= risk_to_color(web_application.risk) %>" id="web-application-heading-<%= web_application.id %>">
     <a href="" class="hide-web-application" web_app_id="<%= web_application.id %>">
       <span class="fas fa-trash"></span>
@@ -54,10 +55,10 @@ end
 
 
           <div class="justify-content-center custom-pic-header" style="border-style:solid;border-width:2px;">
-            <% if web_application.dns_record.dns_name == "" %>
-              <img class="card-img" onerror="this.style.display='none';" src="/ss/<%= "#{web_application.scheme}#{web_application.dns_record.record_value}#{web_application.port}" %>-ss.png" >
+            <% if Domain.find(web_application.domain_id).domain_name == "" %>
+              <img class="card-img" onerror="this.style.display='none';" src="/ss/<%= "#{web_application.scheme}#{Domain.find(web_application.domain_id).domain_name}#{Service.find(web_application.service_id).port_number}" %>-ss.png" >
             <% else %>
-              <img class="card-img" onerror="this.style.display='none';" src="/ss/<%= "#{web_application.scheme}#{web_application.dns_record.dns_name}#{web_application.port}" %>-ss.png" >
+              <img class="card-img" onerror="this.style.display='none';" src="/ss/<%= "#{web_application.scheme}#{Domain.find(web_application.domain_id).domain_name}#{Service.find(web_application.service_id).port_number}" %>-ss.png" >
             <% end %>
           </div>
           <br/>
@@ -69,48 +70,12 @@ end
             </div>
           </form>
 
-          <% if web_application.dns_record.dns_name != "" or web_application.dns_record.dns_name == nil %>
-
-              <h5>Domain Name</h5>
-              <table class="table table-hover table-condensed table-bordered no-select">
-                <tbody>
-                  <tr>
-                    <td class="no-select table-<%= risk_to_color(web_application.dns_record.risk) %> text-center web-application-domain-<%= web_application.dns_record.id %>">
-                      <a href="#domains-<%= web_application.dns_record.id %>" class="hash-nav">
-                        <%= web_application.dns_record.dns_name %>
-                      </a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
-          <% else %>
-            <h5>Host</h5>
-
-            <table class="table table-hover table-condensed table-bordered">
-              <tbody>
-                <tr>
-                  <td class="no-select table-<%= risk_to_color(web_application.dns_record.risk) %> text-center web-application-host-<%= web_application.dns_record.id %> no-select">
-                    <a href="#hosts-<%= Host.where(ip: web_application.dns_record.record_value).first.id %>" class="hash-nav">
-                      <%= web_application.dns_record.record_value %>
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-          <% end %>
+       
 
           <%= erb :'partials/_wpscan_results', :locals => { :web_application => web_application } %>
 
           <%= erb :'partials/_dirsearch_results', :locals => { :web_application => web_application } %>
 
-          <h4>Feed</h4>
-
-          <% feed_items = FeedItem.where(data_type: "web_application", data_id: web_application.id) %>
-          <% feed_items.each do |feed_item| %>
-              <pre><%= feed_item.value %></pre>
-          <% end %>
         </div>
       </div>
       <div class="tab-pane" id="web-application-<%= web_application.id %>-map">

@@ -11,13 +11,14 @@
         <option value="None">When a...</option>
           <option value="add-host">Host is discovered</option>
           <option value="add-service">Service is discovered</option>
-          <option value="add-domain">Domain name is discovered</option>
+          <option value="add-domain">Domain name is discovered (includes subdomains)</option>
+          <option value="add-dns-record">DNS Record is discovered</option>
           <option value="script">Script output is discovered</option>
           <option value="dirsearch-result">Dirsearch result is discovered</option>
 
       </select>
 
-      <input class="form-control" type="text" id="trigger-shell-cmd" placeholder="Shell Command" style="width:40%;">
+      <input class="form-control" type="text" id="trigger-shell-cmd" placeholder="Run this shell Command" style="width:40%;">
     </div>
   </div>
 </div>

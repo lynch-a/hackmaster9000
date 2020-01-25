@@ -1,0 +1,21 @@
+<%
+def risk_to_color(risk)
+  if risk == 0 || risk == nil
+    return "secondary"
+  elsif risk == 1
+    return "info"
+  elsif risk == 2
+    return "warning"
+  elsif risk == 3
+  	return "danger"
+  else
+    return ""
+  end
+end
+%>
+
+<tr class="dns-record-row-<%= dns_record.id %> table-<%= risk_to_color(dns_record.risk) %>">
+  <td class="domain">
+    <%= erb :'partials/_dns_record', layout: false, locals: { dns_records: dns_record} %>
+  </td>
+</tr>

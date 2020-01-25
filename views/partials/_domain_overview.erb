@@ -30,7 +30,7 @@ end
   <ul class="nav nav-pills flex-column app-list">
     <% records.each do |dns_record| %>
       <li class="nav-item" domain-id="<%= dns_record.id %>">
-        <a class="nav-link" href="#domains-<%= dns_record.id %>" data-toggle="pill"><%= dns_record.dns_name %></a>
+        <a class="nav-link" href="#domains-<%= dns_record.id %>" data-toggle="pill"><%= dns_record.record_key %></a>
       </li>
     <% end %>
   </ul>

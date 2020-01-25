@@ -11,14 +11,11 @@
 <!-- overview side nav; list of domains -->
 <div class="tab-content clearfix">
   <div class="tab-pane active" id="tab-host-summary">
-      
-    <div class="row no-gutters">
-      <div class="col-lg-12">
-        <table id="host-table" width="100%" cellspacing="0" class="table fixed-width-table selectable nowrap">
+    <div class="row">
+      <div class="col">
+        <table id="host-table" width="100%" cellspacing="0" class="table fixed-width-table nowrap">
           <thead style="width:100%">
-            <tr>
-              <th>Host IP</th>
-            </tr>
+
           </thead>
           <!-- ? -->
           <tbody class="selectable" update-url="/projects/<%= @project.id %>/hosts/">

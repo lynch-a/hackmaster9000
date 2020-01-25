@@ -5,7 +5,7 @@
     <title>h m 9 k</title>
     <meta name="description" content="">
     <meta name="author" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=0.75, maximum-scale=0.75, user-scalable=no">
     <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
     <link rel="icon" type="image/png" href="/images/favicon.png">
 
@@ -41,13 +41,8 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-    <!-- goldenlayout - MIT -->
-    <script type="text/javascript" src="/goldenlayout/goldenlayout.min.js"></script>
-    <link type="text/css" rel="stylesheet" href="/goldenlayout/goldenlayout-base.css" />
-    <link type="text/css" rel="stylesheet" href="/goldenlayout/goldenlayout-dark-theme.css" />
-
-
     <style>
+
       /* selectable stuff - jqueryui*/
       .selectable .ui-selecting { background: #FECA40; }
       .selectable .ui-selected {
@@ -95,30 +90,11 @@
         background-color: var(--dantes-inferno);
       }
 
-      .table-primary {
-        background-color: var(--showtime);
-      }
-
-      /* blue */
-      .table-info, .btn-info {
-        background-color: var(--bio-exorcist);
-      }
-
-      /* orange */
-      .table-warning, .btn-warning {
-        background-color: var(--dantes-inferno);
-      }
-
-      /* red */
-      .table-danger, .btn-danger {
-        background-color: var(--lydia);
-      }
-
       .terminal-nav-link {
         background-color: black;
       }
 
-      .nav-link.active {
+      .hm9k-nav.active {
         background-color: var(--showtime);
       }
 
@@ -139,8 +115,12 @@
         background-color: #8cfb62;
       }
 
-      a.nav-link.active.show {
+      a.hm9k-nav.active.show {
         background-color: var(--showtime);
+      }
+
+      .card-header {
+        padding: 0.1rem 0.1rem;
       }
 
       a, .btn-link {
@@ -155,6 +135,12 @@
         text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
       }
 
+      h4 {
+        color: white;
+        font-weight: bold;
+        text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
+      }
+
       pre {
          overflow-x: auto;
          white-space: pre-wrap;
@@ -162,6 +148,12 @@
          white-space: -pre-wrap;
          white-space: -o-pre-wrap;
          word-wrap: break-word;
+      }
+
+      .hm9k-pre {
+        background-color: black;
+        color: green;
+        padding-left: 20px;
       }
 
       .custom-pic-header{
@@ -175,6 +167,7 @@
         overflow-y:scroll;
         width:320px;
       }
+
 
       table.dataTable tbody td {
         padding-left:10px;

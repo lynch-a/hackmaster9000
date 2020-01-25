@@ -13,26 +13,4 @@
     dns_records = Domain.where(project_id: @project.id).offset(@start).limit(@length).order(id: :desc)
   end
 
-  # quick helper method
-  def risk_to_color(risk)
-    if risk == 0 || risk == nil
-      return "secondary"
-    elsif risk == 1
-      return "info"
-    elsif risk == 2
-      return "warning"
-    elsif risk == 3
-      return "danger"
-    else
-      return ""
-    end
-  end
 %>
-
-<% domains.each do |domain| %>
-  <tr class="domain-row-<%= domain.id %> table-<%= risk_to_color(domain.risk) %>">
-    <td class="domain">
-      <%= erb :'partials/_domain', layout: false, locals: { domain: domain} %>
-    </td>
-  </tr>
-<% end %>

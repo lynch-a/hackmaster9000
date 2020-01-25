@@ -13,9 +13,9 @@ def ingest_web_application(dns_name, scheme, port)
     # make a service because we know the port
     db_service = ingest_service(db_host.id, port, scheme, "", "", "")
     # make a dns record with no dns_name...
-    db_dns_record = ingest_domain("", "A", dns_name) # dns name is really the ip
+    db_dns_record = ingest_dns_record("", "A", dns_name) # dns name is really the ip
   else # it's really a dns record
-    db_dns_record = ingest_domain(dns_name, "A", "")
+    db_dns_record = ingest_dns_record(dns_name, "A", "")
   end
 
   db_web_application = WebApplication.find_or_initialize_by(
@@ -38,12 +38,12 @@ def ingest_web_application(dns_name, scheme, port)
     db_web_application.save
 
     # update the web app
-    if (db_dns_record.dns_name != "")
+    if (db_dns_record.record_key != "")
       #send_web_application_refresh(db_web_application.id)
     end
     
     # update relevant domain
-    if (db_dns_record.dns_name != "")
+    if (db_dns_record.record_key != "")
       #send_domain_refresh(db_dns_record.id)
     end
 
@@ -63,7 +63,7 @@ def ingest_host(ip)
   if !!!(ip =~ /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)
     # it DOESNT look like an ip
     puts "ip looks like a domain instead, ingesting domain:"
-    db_dns_record = ingest_domain(ip ,"A", "") # actually the ip here is a domain
+    db_dns_record = ingest_dns_record(ip ,"A", "") # actually the ip here is a domain
     return nil
   end
   #puts "ingesting ip normally"
@@ -120,7 +120,7 @@ def ingest_service(host_id, port, name, product, version, confidence)
   return db_service
 end
 
-def ingest_domain(dns_name, record_type, record_value)
+def ingest_dns_record(dns_name, record_type, record_value)
    puts "domain ingest start"
     # if ip is given, we check if we have a record_value
   if dns_name == ""
@@ -132,7 +132,7 @@ def ingest_domain(dns_name, record_type, record_value)
       record_type: "A"
     )
     db_dns_record.save
-    if (db_dns_record.dns_name.nil?)
+    if (db_dns_record.record_key.nil?)
       db_dns_record.update_attributes!(dns_name: "")
     end
 
@@ -144,12 +144,12 @@ def ingest_domain(dns_name, record_type, record_value)
 
     db_dns_record = DnsRecord.find_or_initialize_by(
       project_id: 2,
-      dns_name: dns_name,
+      record_key: record_key,
       record_type: "A"
     )
 
     if (db_dns_record.new_record?)
-      if (!db_dns_record.dns_name.nil?)
+      if (!db_dns_record.record_key.nil?)
         #checkTrigger(
         #  "add-domain",
         #  [["%domain%", dns_name]],
@@ -173,7 +173,7 @@ def ingest_domain(dns_name, record_type, record_value)
     # look for a dns record with a blank ip but known dns_name
     db_dns_record = DnsRecord.where(
       project_id: 2,
-      dns_name: dns_name,
+      record_key: record_key,
       record_type: "A"
     ).first
 
@@ -193,8 +193,8 @@ def ingest_domain(dns_name, record_type, record_value)
     ).first
 
     if (db_dns_record) # we found a record by the given ip
-      if (db_dns_record.dns_name == "")
-        db_dns_record.dns_name = dns_name
+      if (db_dns_record.record_key == "")
+        db_dns_record.record_key = dns_name
         db_dns_record.save
         did_combine_flag = true
       end
@@ -212,7 +212,7 @@ def ingest_domain(dns_name, record_type, record_value)
       # check if the dns_name has been discovered before
       db_dns_record = DnsRecord.where(
         project_id: 2,
-        dns_name: dns_name,
+        record_key: record_key,
         record_type: "A"
       ).first
 
@@ -222,7 +222,7 @@ def ingest_domain(dns_name, record_type, record_value)
 
       db_dns_record = DnsRecord.find_or_initialize_by(
         project_id: 2,
-        dns_name: dns_name,
+        record_key: record_key,
         record_type: "A",
         record_value: record_value
       )

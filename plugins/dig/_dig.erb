@@ -1,0 +1,81 @@
+<div id="accordion">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">
+        <button class="btn btn-link" id="<%= tool_name%>-help-heading" data-toggle="collapse" data-target="#<%= tool_name %>-help" aria-expanded="false" aria-controls="<%= tool_name %>-help">
+          DiG Help
+        </button>
+      </h5>
+    </div>
+
+  <div id="<%= tool_name %>-help" class="collapse" data-toggle="collapse" aria-labelledby="<%= tool_name %>-help-heading" data-parent="#accordion">
+      <div class="card-body bg-light">
+        <pre style="margin-bottom:0;">Dig</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= erb :'partials/_config_saver', layout: false, locals: {tool_name: tool_name} %>
+<hr>
+<div class="container no-gutters">
+  <div class="row">
+    <div class='col-sm-6'>
+      <%= erb :'tools/tool_helpers/_text_input', locals: {
+                tool_name: tool_name,
+                label: "Name to lookup",
+                field_name: "target",
+                field_value: "",
+                placeholder: "somednsname.com"
+              }
+      %>
+    </div>
+
+    <div class='col-sm-6'>
+
+    </div>
+  </div>
+
+  <form id="<%= tool_name %>-options">
+    <div class="row">
+      <div class='col'>
+        <%= erb :'tools/tool_helpers/_text_input_optional', locals: {
+                tool_name: tool_name,
+                label: "DNS Server For Lookup",
+                field_name: "dns-server",
+                field_value: "",
+                checked: false,
+                placeholder: "8.8.4.4"
+            }
+        %>
+
+        <%= erb :'tools/tool_helpers/_dropdown_optional', locals: {
+                tool_name: tool_name,
+                label: "Lookup Type",
+                field_name: "lookup-type",
+                options: [
+                  ["A", "A (Host Address)"],
+                  ["CNAME", "CNAME (Canonical name for an alias)"],
+                  ["NS", "NS (Name Server)"],
+                  ["PTR", "TXT (Pointer)"],
+                  ["MX", "MX (Mail eXchange)"],
+                  ["AAAA", "AAAA IPv6 host address"],
+                  ["TXT", "TXT (Descriptive text)"],
+                  ["SRV", "SRV (Location of of service)"],
+                  ["ANY", "ANY (Anything)"]
+
+                ],
+                checked: false,
+                selected_index: 0
+            }
+          %>
+      </div>
+    </div>
+  </form>
+  <hr>
+  <%= erb :'partials/_tool_runner', layout: false, locals: {tool_name: "dig"} %>
+</div>
+
+<script>
+  <%= File.read("plugins/dig/dig.js") %>
+</script>

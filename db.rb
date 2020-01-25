@@ -21,12 +21,14 @@ ActiveRecord::Schema.define do
   unless ActiveRecord::Base.connection.tables.include? 'web_applications'
     create_table :web_applications do |table|
       table.column :project_id, :int
-      table.column :name, :string
-      table.column :description, :string
-      table.column :port, :int
+      table.column :host_id, :int
+      table.column :domain_id, :int
+      table.column :service_id, :int
+
+      table.column :name, :string # unused
       table.column :scheme, :string # http, https
+      table.column :description, :string # unused...... actually i think this is the note
       table.column :risk, :int, default: 0
-      table.column :dns_record_id, :int
       table.column :hidden, :boolean, default: false
     end
   end
@@ -95,10 +97,10 @@ ActiveRecord::Schema.define do
     create_table :users do |table|
       table.column :username, :string
       table.column :password_hash, :string
-      table.column :session_key, :string
+      table.column :session_key, :string # key required to access terminal API, generated on each login.
       table.column :session_expires, :datetime
 
-      table.column :email, :string
+      table.column :email, :string # unused, no registration page / email functionality
     end
   end
 end
@@ -115,7 +117,7 @@ end
 ActiveRecord::Schema.define do
   unless ActiveRecord::Base.connection.tables.include? 'terminals'
     create_table :terminals do |table|
-      table.column :tid, :string
+      table.column :tid, :string #terminal ID
       table.column :user_id, :int
       table.column :project_id, :int
       table.column :name, :string
@@ -128,18 +130,15 @@ ActiveRecord::Schema.define do
   unless ActiveRecord::Base.connection.tables.include? 'hosts'
     create_table :hosts do |table|
       table.column :ip, :string
-      table.column :risk, :int, default: 0
-      table.column :os, :string
-      # low = 0
-      # med = 1
-      # high = 2
-      # unreviewed = nil
-      table.column :reviewed, :boolean, default: false
+      table.column :risk, :int, default: 0 # --------| low = 0
+                                                    #| med = 1
+                                                    #| high = 2
+                                                    #| unreviewed = nil
+      table.column :source, :string, default: ""
       table.column :ordinal, :integer, default: 0
       table.column :note, :string, default: ""
       table.column :project_id, :integer
       table.column :hidden, :boolean, default: false
-
     end
   end
 end
@@ -148,10 +147,13 @@ end
 ActiveRecord::Schema.define do
   unless ActiveRecord::Base.connection.tables.include? 'feed_items'
     create_table :feed_items do |table|
-      table.column :data_id, :integer
-      table.column :data_type, :integer
+      table.column :host_id, :integer, default: 0 # host FK
+      table.column :dns_record_id, :integer, default: 0 # host FK
+      table.column :source_plugin, :string
       table.column :header, :string
       table.column :value, :string
+      table.column :created_at, :datetime
+      table.column :modified_at, :datetime
     end
   end
 end
@@ -186,6 +188,7 @@ ActiveRecord::Schema.define do
   unless ActiveRecord::Base.connection.tables.include? 'service_scripts'
     create_table :service_scripts do |table|
       table.column :service_id, :int
+      table.column :project_id, :int
       table.column :script_id, :string
       table.column :script_output, :string
     end
@@ -222,10 +225,6 @@ ActiveRecord::Schema.define do
   unless ActiveRecord::Base.connection.tables.include? 'services'
     create_table :services do |table|
       table.column :risk, :integer, default: 0
-      # low = 0
-      # med = 1
-      # high = 2
-      # unreviewed = nil
       table.column :port_number, :integer
       table.column :service_name, :string
       table.column :service_version, :string
@@ -234,7 +233,6 @@ ActiveRecord::Schema.define do
       table.column :ordinal, :integer, default: 0
       table.column :note, :string, default: ""
 
-      table.column :web_application_id, :integer
       table.column :host_id, :integer
       table.column :project_id, :integer
       #table.column :vnc, :boolean
@@ -294,11 +292,29 @@ end
 ActiveRecord::Schema.define do
   unless ActiveRecord::Base.connection.tables.include? 'dns_records'
     create_table :dns_records do |table|
-      table.column :dns_name, :string
+      table.column :source_plugin, :string
+      table.column :record_key, :string
       table.column :record_type, :string
       table.column :record_value, :string
-      table.column :risk, :integer, default: 0 
+
       table.column :project_id, :integer
+      table.column :risk, :integer, default: 0 
+      table.column :note, :string, default: ""
+      table.column :hidden, :boolean, default: false
+    end
+  end
+end
+
+ActiveRecord::Schema.define do
+  unless ActiveRecord::Base.connection.tables.include? 'domains'
+    create_table :domains do |table|
+      table.column :source_plugin, :string
+      table.column :domain_name, :string
+      table.column :web_application_id, :integer, default: nil
+
+      table.column :tld, :boolean, default: true # easy to spot errors if this defaults to true
+      table.column :project_id, :integer
+      table.column :risk, :integer, default: 0 
       table.column :note, :string, default: ""
       table.column :hidden, :boolean, default: false
     end
@@ -325,7 +341,9 @@ ActiveRecord::Schema.define do
 end
 
 class WebApplication < ActiveRecord::Base
-  belongs_to :dns_record
+  belongs_to :domain
+  has_one :host
+  has_one :service
   has_many :pages
 
   def self.by_host_or_record(project_id, host, record)
@@ -354,6 +372,7 @@ end
 class Service < ActiveRecord::Base
   belongs_to :host
   belongs_to :project
+  has_one :web_application
 end
 
 class DirsearchResult < ActiveRecord::Base
@@ -362,13 +381,16 @@ end
 
 class DnsRecord < ActiveRecord::Base
   belongs_to :project
+  has_one :domain
   has_many :dirsearch_scans
   has_many :web_applications
+  has_many :feed_items 
+
 
   # DnsRecord.by_host(some_host)
   # - return all DNS records where the record_value matches the host ip
   def self.by_host(project_id, host)
-    DnsRecord.where(project_id: project_id, record_value: host.ip, hidden: false).group(:dns_name).uniq
+    DnsRecord.where(project_id: project_id, record_value: host.ip, hidden: false).group(:record_key).uniq
   end
 
   def self.all_A_records(project_id)
@@ -378,6 +400,10 @@ class DnsRecord < ActiveRecord::Base
   def self.unique_hostnames(project_id)
     DnsRecord.where(project_id: project_id, hidden: false).uniq
   end
+end
+
+class Domain < ActiveRecord::Base
+  has_one :web_applications
 end
 
 class VncEntry < ActiveRecord::Base
@@ -399,19 +425,30 @@ class Project < ActiveRecord::Base
 end
 
 class FeedItem < ActiveRecord::Base
+  belongs_to :host
+  belongs_to :dns_record
 end
 
+=begin
+belongs_to: "I am related to exactly one of these, and I have the foreign key."
+has_one: "I am related to exactly one of these, and it has the foreign key."
+has_many: "I am related to many of these, and they have the foreign key."
+- https://stackoverflow.com/questions/20182317/rails-belongs-to-many
+=end
 class Host < ActiveRecord::Base
   has_many :services
-  has_many :host_details
+  has_many :dns_records
+  has_many :feed_items 
+
   belongs_to :project
 
   # return host objects that have DNS records
-  def self.by_dns(project_id, dns_name)
+  # so that the host page can know what dns records
+  def self.by_dns(project_id, record_key)
     # find all objects with a given dns_name for a given project
     ret = []
 
-    dns_names = DnsRecord.where(project_id: project_id, hidden: false).where(record_type: ["A", "nmap"], dns_name: dns_name).all
+    dns_names = DnsRecord.where(project_id: project_id, hidden: false).where(record_type: ["A"], record_key: record_key).all
 
     dns_names.each do |dns_name|
       # todo: this doesn't work for cnames... should it?
@@ -518,6 +555,9 @@ if User.all.size < 1
   puts first_username
   puts first_password
   puts "###############################"
+#removeme
+  user = User.create!(username: "alex", password: "CoolPassword123")
+
 end
 
 # setup default nmap configs

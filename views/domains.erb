@@ -1,54 +1,48 @@
 <div class="row no-gutters">
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <a class="nav-link active" href="#tab-domain-summary" data-toggle="tab">Overview</a>
+      <a class="nav-link active" href="#tab-domains" data-toggle="tab">Domains</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="#tab-raw-dns" data-toggle="tab">Raw</a>
+      <a class="nav-link" href="#tab-dns-records" data-toggle="tab">DNS Records</a>
     </li>
   </ul>
 </div>
 
-<!-- overview side nav; list of domains -->
+<div class="tab-pane active" id="tab-domains">
+  <div class="row no-gutters">
+    <div class="col-lg-12">
+      <table id="domain-table" width="100%" cellspacing="0" class="table fixed-width-table selectable nowrap">
+        <thead style="width:100%">
+          <tr>
+            <th>Domain names</th>
+          </tr>
+        </thead>
+        <!-- ? -->
+        <tbody class="selectable" update-url="/projects/<%= @project.id %>/domains/">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
 <div class="tab-content clearfix">
-  <div class="tab-pane active" id="tab-domain-summary">
+  <div class="tab-pane" id="tab-dns-records">
     
     <div class="row no-gutters">
       <div class="col-lg-12">
-        <table id="domain-table" width="100%" cellspacing="0" class="table fixed-width-table selectable nowrap">
+        <table id="dns-record-table" width="100%" cellspacing="0" class="table fixed-width-table selectable nowrap">
           <thead style="width:100%">
             <tr>
-              <th>Domain</th>
+              <th>Raw DNS Records</th>
             </tr>
           </thead>
           <!-- ? -->
-          <tbody class="selectable" update-url="/projects/<%= @project.id %>/domains/">
+          <tbody class="selectable" update-url="/projects/<%= @project.id %>/dns_records/">
           </tbody>
         </table>
       </div>
     </div>
-  </div>
-
-  <!-- RAW dns tab -->
-  <div class="tab-pane" id="tab-raw-dns">
-    <table class="table table-sm table-condensed table-striped table-bordered">   
-      <tr class="thead-dark">
-        <th>Record</th>
-        <th>Type</th>
-        <th>Data</th>
-        <th>Actions</th>
-      </tr>
-      <% @dns_records.each do |dns_record| %>
-    	  <tr>
-    	    <td><a href="http://<%= dns_record.dns_name %>"><%= dns_record.dns_name %></a></td>
-    	    <td><%= dns_record.record_type %></td>
-    	    <td><%= dns_record.record_value %></td>
-    	  	<td>
-    	  			nmap<br/>
-    	  			dirsearch
-    	  	</td>
-    	  </tr>
-    	<% end %>
-    </table>
   </div>
 </div>

@@ -83,7 +83,7 @@ EM.run do
             end
           elsif (scanloader_key) # fancy scanloader auth detected
             puts "authing a scanloader.."
-            if (scanloader_key == "12345") # todo: great auth
+            if (scanloader_key == File.read("hackjob_secret.txt")) # thx JD
                 authenticated = true
                 scanloader = true
                 project = Project.where(uuid: msg["data"]["uuid"]).first
@@ -115,7 +115,7 @@ EM.run do
             user.send('{"event": "hide-web-application", "data": '+ hide_web_application_event_data.to_json + "}")
           end
           notification_event_data = {
-            message: "Web application hidden: #{db_web_application.dns_record.dns_name}",
+            message: "Web application hidden: #{db_web_application.dns_record.record_key}",
             type: "info"
           }
 
@@ -278,7 +278,7 @@ EM.run do
             user.send('{"event": "set-web-application-risk", "data": '+set_web_application_risk_event_data.to_json + "}")
           end
           notification_event_data = {
-            message: "Web Application risk updated: #{db_web_application.dns_record.dns_name} - #{db_web_application.risk}",
+            message: "Web Application risk updated: #{db_web_application.dns_record.record_key} - #{db_web_application.risk}",
             type: "info"
           }
 
@@ -302,7 +302,7 @@ EM.run do
           # tell everyone else about the comment; prompt reload of domain
           new_domain_comment_event_data = {
             id: db_dns_record.id,
-            dns_name: db_dns_record.dns_name
+            dns_name: db_dns_record.record_key
           }
 
 

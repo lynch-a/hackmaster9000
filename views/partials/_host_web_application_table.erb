@@ -15,23 +15,28 @@ end
 %>
 
 <% if (web_applications.size > 0) %>
-  <h4>Web Applications</h4>
-  <table class="table table-sm table-condensed table-striped table-bordered no-select" style="">            
-    <tr class="thead-dark">
-      <th>At</th>
-      <th>Description</th>
-    </tr>
-    <% web_applications.each do |web_application| %>
-      <tr class="web-application-host<%= web_application.id %> table-<%= risk_to_color(web_application.risk) %>">
-        <td>
-          <a href="#web-applications-<%= web_application.id%>" class="hash-nav">
-          <%= "#{web_application.scheme}://#{(web_application.dns_record.dns_name == "") ? "#{web_application.dns_record.record_value}" : "#{web_application.dns_record.dns_name}"}:#{web_application.port}" %>
-          </a>
-        </td>
-        <td>
-          <%= web_application.description %>
-        </td>
+  <div class="text-center">
+    <h4>Web Screenshots</h4>
+  </div>
+  <table class="table table-hover table-condensed table-bordered">
+    <thead>
+      <tr>
+        
       </tr>
-    <% end %>
+    </thead>
+    <tbody>
+      <% web_applications.each_slice(1).to_a.each do |web_application_slice| %>
+        <tr>
+          <% web_application_slice.each do |web_application| %>
+            <td class="table-<%= risk_to_color(web_application.risk) %> text-center host-web-application-<%= web_application.id %>">
+              <a href="#web-applications-<%= web_application.id %>" class="hash-nav">
+                <img style="width:300px;height:168pxclass="" onerror="this.style.display='none';" src="/ss/<%= "#{web_application.scheme}#{Domain.find(web_application.domain_id).domain_name}#{Service.find(web_application.service_id).port_number}" %>-ss.png" >
+              </a>
+              </br>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
   </table>
 <% end %>
