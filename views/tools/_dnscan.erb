@@ -1,3 +1,18 @@
+        <%
+          # badly placed helper method for tools to find wordlists
+          def find_wordlists(path)
+            results = []
+            file_paths = Dir[path]
+            file_names = Dir[path].map{|filename| File.basename(filename)}
+
+            file_paths.each_with_index do |file_path, i|
+              results << [ file_paths[i], file_names[i] ]
+            end
+            
+            return results
+          end
+        %>
+
 <div id="accordion">
   <div class="card">
     <div class="card-header">

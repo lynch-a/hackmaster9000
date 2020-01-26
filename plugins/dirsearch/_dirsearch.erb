@@ -50,17 +50,15 @@ Results show up in the web applications view.
     </div>
   </div>
 
-
   <div class="row">
     <div class='col-sm-6'>
-      <% wordlists = find_wordlists("/usr/share/wordlists/web-paths/**/*") %>
 
       <%= erb :'tools/tool_helpers/_dropdown_optional', locals: {
               checked: false,
               tool_name: tool_name,
               label: "Select Wordlist",
               field_name: "wordlist",
-              options: wordlists,
+              options: ["sorry, broken atm"],
               selected_index: 0
           }
         %>

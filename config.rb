@@ -15,9 +15,9 @@ $api_server_bind_port = 8082
 
 # database config
 $database_host = 'localhost'
-$database_username = 'postgres'
+$database_username = 'hm9k'
 # change this to whatever you set the postgre pw to in initial setup
-$database_password = ''
+$database_password = 'test101'
 
 # write this database password in a file for hackjob to read
 File.open('db_password.txt', 'w') {|f| f.write($database_password) }

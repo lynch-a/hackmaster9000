@@ -1,11 +1,11 @@
 require 'active_record'
 require 'bcrypt'
 require 'securerandom'
-require 'textacular'
+#require 'textacular'
 
 require './config.rb'
 
-ActiveRecord::Base.extend(Textacular)
+#ActiveRecord::Base.extend(Textacular)
 
 ActiveRecord::Base.establish_connection(
   adapter: "postgresql",

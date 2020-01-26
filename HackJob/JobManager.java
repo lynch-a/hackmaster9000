@@ -74,7 +74,7 @@ public class JobManager implements Runnable {
         }
         
 		// ConnectionFactory can handle null username and password (for local host-based authentication)
-		ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, "postgres", db_password.toCharArray());
+		ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, "hm9k", db_password.toCharArray());
 		PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(connectionFactory, null);
 		GenericObjectPool connectionPool = new GenericObjectPool(poolableConnectionFactory);
 		poolableConnectionFactory.setPool(connectionPool);

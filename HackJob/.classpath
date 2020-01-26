@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="src" path=""/>
-	<classpathentry kind="lib" path="/home/alex/git/hackmaster9000/HackJob/ormlite-core-5.1.jar"/>
-	<classpathentry kind="lib" path="/home/alex/git/hackmaster9000/HackJob/ormlite-jdbc-5.1.jar"/>
-	<classpathentry kind="lib" path="/home/alex/git/hackmaster9000/HackJob/sqlite-jdbc-3.23.1.jar"/>
-	<classpathentry kind="lib" path="/home/alex/git/hackmaster9000/HackJob/gson-2.6.2.jar"/>
-	<classpathentry kind="lib" path="/home/alex/git/hackmaster9000/HackJob/Java-WebSocket-1.4.0-with-dependencies.jar"/>
-	<classpathentry kind="lib" path="/home/alex/git/hackmaster9000/HackJob/commons-dbcp2-2.6.0.jar"/>
-	<classpathentry kind="lib" path="/home/alex/git/hackmaster9000/HackJob/commons-pool2-2.6.2.jar"/>
-	<classpathentry kind="lib" path="/home/alex/git/hackmaster9000/HackJob/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="/home/alex/git/hackmaster9000/HackJob/postgresql-42.2.5.jar"/>
+	<classpathentry kind="lib" path="commons-dbcp2-2.6.0.jar"/>
+	<classpathentry kind="lib" path="commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="commons-pool2-2.6.2.jar"/>
+	<classpathentry kind="lib" path="gson-2.6.2.jar"/>
+	<classpathentry kind="lib" path="Java-WebSocket-1.4.0-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="javalin-2.3.0.jar"/>
+	<classpathentry kind="lib" path="jetty-all-9.4.12.v20180830-uber.jar"/>
+	<classpathentry kind="lib" path="kotlin-stdlib-1.2.71.jar"/>
+	<classpathentry kind="lib" path="ormlite-core-5.1.jar"/>
+	<classpathentry kind="lib" path="ormlite-jdbc-5.1.jar"/>
+	<classpathentry kind="lib" path="postgresql-42.2.5.jar"/>
+	<classpathentry kind="lib" path="slf4j-api-1.7.25.jar"/>
+	<classpathentry kind="lib" path="slf4j-simple-1.7.25.jar"/>
+	<classpathentry kind="lib" path="sqlite-jdbc-3.23.1.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
