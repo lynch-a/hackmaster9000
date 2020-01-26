@@ -445,6 +445,7 @@ begin
             begin
               plugin.parse(@project.id, file)
               parsed = parsed + 1
+              FileUtils.move("hm9k-projects/"+@project.uuid+"/"+File.basename(file), "hm9k-projects/"+@project.uuid+"/scans/parsed/"+File.basename(file))
             rescue => e
               notify_project("danger", "#{plugin.name} failed to parse: #{File.basename(file)} - #{e.message}")
               puts e.backtrace

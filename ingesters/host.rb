@@ -1,6 +1,7 @@
 require_relative 'common.rb'
 
 def ingest_host(project_id, source_plugin, ip)
+  ip = ip.strip
   if !!!(ip =~ /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)
     puts "PANIC: ingest_host not provided  an IP address."
     return nil

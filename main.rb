@@ -355,6 +355,7 @@ class Hackmaster < Sinatra::Base
           id_filter_regex: {regex: /id:(\d+)/, search_field: :id},
           hidden_filter_regex: {regex: /hidden:(true|false)/, search_field: :hidden},
           risk_filter_regex: {regex: /risk:(0|1|2|3)/, search_field: :risk},
+          tld_filter_regex: {regex: /tld:(true|false)/, search_field: :tld}
         }
 
         if (search.length > 1)
@@ -368,7 +369,7 @@ class Hackmaster < Sinatra::Base
 
           @filtered_domains = @filtered_domains.where(["domain_name LIKE ?", "%#{search}%"])
         else
-          @filtered_domains = Domain.where(project_id: @project.id, hidden: false, tld: true)
+          @filtered_domains = Domain.where(project_id: @project.id, hidden: false)
         end
         
         count_before_pagination = @filtered_domains.count
@@ -412,7 +413,7 @@ class Hackmaster < Sinatra::Base
   end
 
   ###### DNS RECORDS BELOW
-  # server-side processing for domain datatable
+  # server-side processing for dns record datatable
   post '/projects/:project_id/dns_records', auth: :user do
     @user = User.find(session[:uid])
     @project = @user.projects.where(id: params[:project_id]).first
@@ -438,33 +439,33 @@ class Hackmaster < Sinatra::Base
           id_filter_regex: {regex: /id:(\d+)/, search_field: :id},
           hidden_filter_regex: {regex: /hidden:(true|false)/, search_field: :hidden},
           risk_filter_regex: {regex: /risk:(0|1|2|3)/, search_field: :risk},
-          type_filter_regex: {regex: /type:(A|AAAA|NS|MX|SOA)/, search_field: :record_type}
+          type_filter_regex: {regex: /type:(A|AAAA|NS|MX|SOA|TXT|CNAME|ANY)/, search_field: :record_type}
         }
 
         if (search.length > 1)
           # sigh
           search_filter_regexes.each do |filter_name, filter|
             if search[filter[:regex]] != nil
-              @filtered_domains = @filtered_domains.where(filter[:search_field] => search[filter[:regex]].split(":")[1])
+              @filtered_dns_records = @filtered_dns_records.where(filter[:search_field] => search[filter[:regex]].split(":")[1])
               search.gsub!(filter[:regex], "").strip! # remove this filter from the str
             end            
           end
 
-          @filtered_domains = @filtered_domains.where(["record_key LIKE ?", "%#{search}%"])
+          @filtered_dns_records = @filtered_dns_records.where(["record_key LIKE ?", "%#{search}%"])
         else
-          @filtered_domains = DnsRecord.where(project_id: @project.id, hidden: false)
+          @filtered_dns_records = DnsRecord.where(project_id: @project.id, hidden: false)
         end
         
-        count_before_pagination = @filtered_domains.count
+        count_before_pagination = @filtered_dns_records.count
 
         # do ordering
-        @filtered_domains = @filtered_domains.offset(start).limit(length).order(id: :desc)
+        @filtered_dns_records = @filtered_dns_records.offset(start).limit(length).order(id: :desc)
 
-        if @filtered_domains
+        if @filtered_dns_records
           data = []
 
-          @filtered_domains.each do |dns_record|
-            html = File.open('views/partials/_domain_row.erb').read
+          @filtered_dns_records.each do |dns_record|
+            html = File.open('views/partials/_dns_record_row.erb').read
             template = ERB.new(
               html
             )
@@ -496,7 +497,7 @@ class Hackmaster < Sinatra::Base
   end
 
   # render a domain datatable row
-  get '/projects/:project_id/domains/:dns_record_id', auth: :user do
+  get '/projects/:project_id/dns_records/:dns_record_id', auth: :user do
     @user = User.find(session[:uid])
     @project = @user.projects.where(id: params[:project_id]).first
 
@@ -505,7 +506,7 @@ class Hackmaster < Sinatra::Base
       
       if @dns_record
         if @dns_record.record_key != ""
-          erb :'partials/_domain_row', layout: false, locals: { dns_record: @dns_record }
+          erb :'partials/_dns_record_row', layout: false, locals: { dns_record: @dns_record }
         end
       else
         puts "cannot render dns record: #{params[:dns_record_id]}, it doesn't exist"

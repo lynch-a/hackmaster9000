@@ -1,5 +1,18 @@
 
-<% full_url = "#{web_application.scheme}://#{Domain.find(web_application.domain_id).domain_name}:#{Service.find(web_application.service_id).port_number}" %>
+<%
+  scheme = web_application.scheme
+
+  if (web_application.domain_id != nil)
+    target = Domain.find(web_application.domain_id).domain_name
+  else
+    target = Host.find(web_application.host_id).ip
+  end
+
+  port = Service.find(web_application.service_id).port_number
+
+  full_url = "#{scheme}://#{target}:#{port}"
+  full_ss_path = "/ss/#{scheme}#{target}#{port}-ss.png"
+%> 
 
 <%
 counts = {}
@@ -12,7 +25,7 @@ end
 %>
 
 
-<div class="card no-select" target="<%= full_url %>" domain="<%= Domain.find(web_application.domain_id).domain_name %>">
+<div class="card no-select" target="<%= full_url %>" domain="<%= target %>">
   <div class="card-header table-<%= risk_to_color(web_application.risk) %>" id="web-application-heading-<%= web_application.id %>">
     <a href="" class="hide-web-application" web_app_id="<%= web_application.id %>">
       <span class="fas fa-trash"></span>
@@ -55,11 +68,7 @@ end
 
 
           <div class="justify-content-center custom-pic-header" style="border-style:solid;border-width:2px;">
-            <% if Domain.find(web_application.domain_id).domain_name == "" %>
-              <img class="card-img" onerror="this.style.display='none';" src="/ss/<%= "#{web_application.scheme}#{Domain.find(web_application.domain_id).domain_name}#{Service.find(web_application.service_id).port_number}" %>-ss.png" >
-            <% else %>
-              <img class="card-img" onerror="this.style.display='none';" src="/ss/<%= "#{web_application.scheme}#{Domain.find(web_application.domain_id).domain_name}#{Service.find(web_application.service_id).port_number}" %>-ss.png" >
-            <% end %>
+              <img class="card-img" onerror="this.style.display='none';" src="<%= full_ss_path %>" >
           </div>
           <br/>
 

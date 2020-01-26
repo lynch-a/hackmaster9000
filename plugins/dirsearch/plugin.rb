@@ -1,3 +1,5 @@
+require_relative '../../ingesters/common.rb'
+
 class DirsearchPlugin < Hm9kPlugin
   
   def self.name
@@ -49,6 +51,8 @@ class DirsearchPlugin < Hm9kPlugin
         scheme = parsed_url.scheme
         port = parsed_url.port
 
+        puts "ingesting dirsearch web app #{scheme}://#{known_name}:#{port} "
+
         db_web_application = ingest_web_application(project_id, "dirsearch", known_name, scheme, port)
 
         entries = []
@@ -74,8 +78,10 @@ class DirsearchPlugin < Hm9kPlugin
             status: entry[:status],
             content_length: entry[:content_length]
           )
+
           if db_ds_result.new_record?
             checkTrigger(
+              project_id,
               "dirsearch-result",
               [ # replacers
                 ["%url%", url+entry[:path]]

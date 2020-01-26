@@ -1256,11 +1256,19 @@ $(document).ready(function() {
       { "data": "card", className: "domain" }
     ],
     buttons: [
+          {
+          text: 'TLDs only',
+          action: function () {
+            //SelectSelectableElement($("#domain-table"), $("td"));
+            domain_dtable.search('tld:true').draw();;
+          }
+      },
       {
           text: 'Select all',
           action: function () {
             //SelectSelectableElement($("#domain-table"), $("td"));
             $("#domain-table").find("td").each(function(index) {
+              if ($(this).hasClass("noselect")) { return true; }
               $(this).addClass("ui-selected");
               $("#domain-table").data("ui-selectable")._mouseStop(null);
             });
@@ -1281,8 +1289,8 @@ $(document).ready(function() {
         buttons: [
           {
             text: 'nmap', action: function() {
-              $('.nav-pills a[href="#tools"]').tab('show');
-              $('.nav-tabs a[href="#tab-nmap"]').tab('show');
+              $('.nav-link[href="#tools"]').tab('show');
+              $('.nav-link[href="#tab-nmap"]').tab('show');
 
               var targets = "";
 
@@ -1294,9 +1302,23 @@ $(document).ready(function() {
             }
           },
           {
+            text: 'dig', action: function() {
+              $('.nav-link[href="#tools"]').tab('show');
+              $('.nav-link[href="#tab-dig"]').tab('show');
+
+              var targets = "";
+
+              $(".domain.ui-selected").each(function() {
+                targets += $(this).find(".card").attr("target") + " ";
+              });
+
+              $("#dig-target").val(targets.trim());
+            }
+          },
+          {
             text: 'dnscan', action: function() {
-              $('.nav-pills a[href="#tools"]').tab('show');
-              $('.nav-tabs a[href="#tab-dnscan"]').tab('show');
+              $('.nav-link[href="#tools"]').tab('show');
+              $('.nav-link[href="#tab-dnscan"]').tab('show');
 
               var targets = "";
 
@@ -1309,8 +1331,8 @@ $(document).ready(function() {
           },
           {
             text: 'screenshot2', action: function() {
-              $('.nav-pills a[href="#tools"]').tab('show');
-              $('.nav-tabs a[href="#tab-screenshot2"]').tab('show');
+              $('.nav-link[href="#tools"]').tab('show');
+              $('.nav-link[href="#tab-screenshot2"]').tab('show');
 
               var targets = "";
 
@@ -1360,6 +1382,7 @@ $(document).ready(function() {
         action: function () {
           //SelectSelectableElement($("#domain-table"), $("td"));
           $("#host-table").find("td").each(function(index) {
+            if ($(this).hasClass("noselect")) { return true; }
             $(this).addClass("ui-selected");
             $("#host-table").data("ui-selectable")._mouseStop(null);
           });
@@ -1376,7 +1399,7 @@ $(document).ready(function() {
       },
       {
         extend: 'collection',
-        text: 'Launch with selected...',
+        text: 'Send to',
         buttons: [
           {
             text: 'nmap', action: function() {
@@ -1390,20 +1413,6 @@ $(document).ready(function() {
               });
 
               $("#nmap-target").val(targets.trim());
-            }
-          },
-          {
-            text: 'pwnVNC', action: function() {
-              $('.nav-pills a[href="#tools"]').tab('show');
-              $('.nav-tabs a[href="#tab-pwn-vnc"]').tab('show');
-
-              var targets = "";
-
-              $(".host.ui-selected").each(function() {
-                targets += $(this).find(".card").attr("target") + " ";
-              });
-
-              $("#pwn-vnc-target").val(targets.trim());
             }
           },
           {
@@ -1435,7 +1444,7 @@ $(document).ready(function() {
 /////// DNS Record TABLE BELOW
 var dns_record_dtable = $('#dns-record-table').DataTable( {
   fnDrawCallback: function() {
-    $("#domain-table thead").remove();
+    $("#dns-record-table thead").remove();
   },
   deferRender:    false,
   autoWidth:      false,  
@@ -1450,10 +1459,10 @@ var dns_record_dtable = $('#dns-record-table').DataTable( {
     "searchPlaceholder": "Filter by domain name"
   },
   "ajax": {
-    url: current_page_no_hash()+"/domains", // json datasource
+    url: current_page_no_hash()+"/dns_records", // json datasource
     type: "POST",
     error: function() {
-      console.log("Host datatable failed to load");
+      console.log("DNS Record datatable failed to load");
     }
   },
   paging: true,
@@ -1464,73 +1473,21 @@ var dns_record_dtable = $('#dns-record-table').DataTable( {
     {
       text: 'Select all',
       action: function () {
-        //SelectSelectableElement($("#domain-table"), $("td"));
-        $("#domain-table").find("td").each(function(index) {
+        $("#dns-record-table").find("td").each(function(index) {
+          if ($(this).hasClass("noselect")) { return true; }
           $(this).addClass("ui-selected");
-          $("#domain-table").data("ui-selectable")._mouseStop(null);
+          $("#dns-record-table").data("ui-selectable")._mouseStop(null);
         });
       }
     },
     {
       text: 'Unselect all',
       action: function () {
-        $("#domain-table").find("td").each(function(index) {
+        $("#dns-record-table").find("td").each(function(index) {
           $(this).removeClass("ui-selected");
-          $("#domain-table").data("ui-selectable")._mouseStop(null);
+          $("#dns-record-table").data("ui-selectable")._mouseStop(null);
         });
       }
-    },
-    {
-      extend: 'collection',
-      text: 'Launch with selected...',
-      buttons: [
-        {
-          text: 'nmap', action: function() {
-            $('.nav-link[href="#tools"]').tab('show');
-            $('.nav-link[href="#tab-nmap"]').tab('show');
-
-            var targets = "";
-
-            $(".host.ui-selected").each(function() {
-              targets += $(this).find(".card").attr("target") + " ";
-            });
-
-            $("#nmap-target").val(targets.trim());
-          }
-        },
-        {
-          text: 'pwnVNC', action: function() {
-            $('.nav-pills a[href="#tools"]').tab('show');
-            $('.nav-tabs a[href="#tab-pwn-vnc"]').tab('show');
-
-            var targets = "";
-
-            $(".host.ui-selected").each(function() {
-              targets += $(this).find(".card").attr("target") + " ";
-            });
-
-            $("#pwn-vnc-target").val(targets.trim());
-          }
-        },
-        {
-          text: 'screenshot2', action: function() {
-            //$('.nav-pills a[href="#tools"]').tab('show');
-            $('.nav-link[href="#tools"]').tab('show');
-            $('.nav-link[href="#tab-screenshot2"]').tab('show');
-            //$('.nav-tabs a[href="#tab-screenshot2"]').tab('show');
-
-            var targets = "";
-
-            $(".host.ui-selected").each(function() {
-              targets += $(this).find(".card").attr("target") + " ";
-            });
-
-            console.log(targets);
-
-            $("#screenshot2-target").val(targets.trim());
-          }
-        }
-      ]
     }
   ],
   initComplete: function () {
@@ -1566,6 +1523,7 @@ var dns_record_dtable = $('#dns-record-table').DataTable( {
         action: function () {
           //SelectSelectableElement($("#domain-table"), $("td"));
           $("#web-application-table ").find("td").each(function(index) {
+            if ($(this).hasClass("noselect")) {return true;}
             $(this).addClass("ui-selected");
             $("#web-application-table").data("ui-selectable")._mouseStop(null);
           });
@@ -1587,8 +1545,8 @@ var dns_record_dtable = $('#dns-record-table').DataTable( {
         buttons: [
           {
             text: 'dirsearch', action: function() {
-              $('.nav-pills a[href="#tools"]').tab('show');
-              $('.nav-tabs a[href="#tab-dirsearch"]').tab('show');
+              $('.nav-link[href="#tools"]').tab('show');
+              $('.nav-link[href="#tab-dirsearch"]').tab('show');
 
               var targets = "";
 
@@ -1601,8 +1559,8 @@ var dns_record_dtable = $('#dns-record-table').DataTable( {
           },
           {
             text: 'dnscan', action: function() {
-              $('.nav-pills a[href="#tools"]').tab('show');
-              $('.nav-tabs a[href="#tab-dnscan"]').tab('show');
+              $('.nav-link[href="#tools"]').tab('show');
+              $('.nav-link[href="#tab-dirsearch"]').tab('show');
 
               var targets = "";
 
@@ -1621,13 +1579,13 @@ var dns_record_dtable = $('#dns-record-table').DataTable( {
           },
           {
             text: 'screenshot2', action: function() {
-              $('.nav-pills a[href="#tools"]').tab('show');
-              $('.nav-tabs a[href="#tab-screenshot2"]').tab('show');
+              $('.nav-link[href="#tools"]').tab('show');
+              $('.nav-link[href="#tab-screenshot2"]').tab('show');
 
               var targets = "";
 
-              $(".domain.ui-selected").each(function() {
-                targets += $(this).find(".card").attr("target") + " ";
+              $(".web-application.ui-selected").each(function() {
+                targets += $(this).find(".card").attr("domain") + " ";
               });
 
               $("#screenshot2-target").val(targets.trim());
@@ -1637,8 +1595,7 @@ var dns_record_dtable = $('#dns-record-table').DataTable( {
       }
     ],
     initComplete: function () {
-      web_application_dtable.buttons().container().appendTo( $('#web_application-table_wrapper .row') );
-
+      web_application_dtable.buttons().container().appendTo( $('#web-application-table_wrapper .row:eq(0)') );
     }
   });
 
@@ -1668,7 +1625,6 @@ var job_dtable = $('#job-table').DataTable( {
   {
       text: 'Select all',
       action: function () {
-        //SelectSelectableElement($("#domain-table"), $("td"));
         $("#job-table ").find("td").each(function(index) {
           $(this).addClass("ui-selected");
           $("#job-table").data("ui-selectable")._mouseStop(null);
@@ -1801,6 +1757,21 @@ var job_dtable = $('#job-table').DataTable( {
     terminal_server.send('new_terminal', null);
   });
 
+  function dtable_search(table_selector, search, append) {
+    var table = $(table_selector).last().DataTable();
+    var current_search = $(table_selector + ' input').val();
+
+    if (append) {
+      if (current_search.length > 0) {
+        table.search(current_search + " " + search).draw();
+      } else { // can't append nothing; just search it
+        table.search(search).draw();
+      }
+    } else { // not appending - just search it
+      table.search(search).draw();
+    }
+  }
+
   // function that can be called to navigate by hash
   function hashNavigate() {
     var hash = window.location.hash;
@@ -1811,10 +1782,43 @@ var job_dtable = $('#job-table').DataTable( {
     }
     
     if (hash == "#tools") {
-      console.log("hash:" + hash);
-      // go back to directory tab
       $('.nav-link[href="#tools"]').tab('show');
       $('.nav-link[href="#tab-help"]').tab('show');
+
+    } else if (hash == "#jobs") {
+      $('.nav-link[href="#jobs"]').tab('show');
+      //dtable_search('#web-application-table', "", false);
+
+    } else if (hash == "#triggers") {
+      $('.nav-link[href="#triggers"]').tab('show');
+      //dtable_search('#web-application-table', "", false);
+
+    } else if (hash == "#web-applications") {
+      $('.nav-link[href="#web-applications"]').tab('show');
+      //dtable_search('#web-application-table', "", false);
+
+    } else if (hash == "#hosts") {
+      $('.nav-link[href="#hosts"]').tab('show');
+      //dtable_search('#host-table', "", false);
+
+    } else if (hash == "#domains") {
+      $('.nav-link[href="#domains"]').tab('show');
+      //dtable_search('#domain-table', "", false);
+
+    } else if (hash == "#dns-records") {
+      $('.nav-link[href="#dns-records"]').tab('show');
+      //dtable_search('#dns-record-table', "", false);
+
+    } else if (hash == "#domains") {
+      $('.nav-link[href="#domains"]').tab('show')
+      $('.nav-link[href="#domain-overview"]').tab('show');
+      //dtable_search('#domain-table', "", false);
+
+    } else if (hash == "#domain-overview") {
+      $('.nav-link[href="#domains"]').tab('show')
+      $('.nav-link[href="#domain-overview"]').tab('show');
+
+      table_search('#domain-table', "tld:true", false);
 
     } else if (hash.startsWith("#web-applications-")) {
       var split = hash.split("-");
@@ -1842,7 +1846,7 @@ var job_dtable = $('#job-table').DataTable( {
           // test
           table.search('id:'+web_application_id).draw();
           $(row).parent().find(".collapse").collapse("show");
-          window.scrollTo(0,0);
+          //window.scrollTo(0,0);
 
           // LAZY
          $(".web-application-row-"+web_application_id).find(".dirsearch-table").each(function(index, obj) {
@@ -1862,45 +1866,10 @@ var job_dtable = $('#job-table').DataTable( {
 
         }
       }
-    } else if (hash.startsWith("#hosts-")) {
-      var split = hash.split("-");
-
-      if (split.length > 1) {
-        // open hosts tab
-        $('.nav-link[href="#hosts"]').tab('show');
-        // scroll to specific domain
-        var host_id = split[1];
-        console.log("scrolling to host: " + host_id)
-
-        var table = $('#host-table').last().DataTable();
-        var row = $('#host-heading-'+host_id);
-
-        table.search('id:'+host_id).draw();
-        $(row).parent().find(".collapse").collapse("show");
-        window.scrollTo(0,0);
-
-        //location.hash = hash;
-      }
-    } else if (hash.startsWith("#domains-")) {
-      var split = hash.split("-");
-
-      if (split.length > 1) {
-        // open domain tab
-        $('.nav-link[href="#domains"]').tab('show');
-        // scroll to specific domain
-        var domain_id = split[1];
-        console.log("scrolling to domain: " + domain_id)
-
-        var table = $('#domain-table').last().DataTable();
-        var row = $('#domain-heading-'+domain_id);
-
-        table.search('id:'+domain_id).draw();
-        $(row).parent().find(".collapse").collapse("show");
-        window.scrollTo(0,0);
-
-        //location.hash = hash;
-      }
     } else if (hash.startsWith("#domain-search|")) {
+      $('.nav-link[href="#tools"]').tab('show');
+      $('.nav-link[href="#tab-help"]').tab('show');
+      
       var split = hash.split("|");
 
       if (split.length > 1) {
@@ -1912,13 +1881,45 @@ var job_dtable = $('#job-table').DataTable( {
         var table = $('#domain-table').last().DataTable();
         table.search(domain_search).draw();
         $(row).parent().find(".collapse").collapse("show");
-        window.scrollTo(0,0);
+        //window.scrollTo(0,0);
+
+        //location.hash = hash;
+      }
+    } else if (hash.startsWith("#dns-record-search|")) {
+      var split = hash.split("|");
+
+      if (split.length > 1) {
+        // open domain tab
+        $('.nav-link[href="#dns-records"]').tab('show');
+        // scroll to specific domain
+        var dns_record_search = split[1];
+
+        var table = $('#dns-record-table').last().DataTable();
+        table.search(dns_record_search).draw();
+        $(row).parent().find(".collapse").collapse("show");
+        //window.scrollTo(0,0);
+
+        //location.hash = hash;
+      }
+    } else if (hash.startsWith("#host-search|")) {
+      var split = hash.split("|");
+
+      if (split.length > 1) {
+        // open domain tab
+        $('.nav-link[href="#hosts"]').tab('show');
+        // scroll to specific domain
+        var host_search = split[1];
+
+        var table = $('#host-table').last().DataTable();
+        table.search(host_search).draw();
+        $(row).parent().find(".collapse").collapse("show");
+        //window.scrollTo(0,0);
 
         //location.hash = hash;
       }
     } else { //catch-all to navigate by left-tab
       $('.nav-link[href="' + hash + '"]').tab('show');
-      $("html, body").animate({ scrollTop: 0 }, "slow");
+      //$("html, body").animate({ scrollTop: 0 }, "slow");
 
       //if ($("#navbarSupportedContent").hasClass("show")) {
       //  $('.navbar-toggler').click();

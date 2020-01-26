@@ -110,3 +110,7 @@ This will move the output file back into the project root directory where it wil
   <hr>
   <%= erb :'partials/_tool_runner', layout: false, locals: {tool_name: tool_name} %>
 </div>
+
+<script>
+  <%= File.read("plugins/zmap/zmap.js") %>
+</script>

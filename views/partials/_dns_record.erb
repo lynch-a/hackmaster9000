@@ -1,35 +1,44 @@
-<% web_applications = WebApplication.where(project_id: @project.id, dns_record_id: dns_record.id, hidden: false) %>
-<% matching_hosts = Host.by_dns(@project, dns_record.record_key) %>
+<% 
+  matching_hosts = Host.by_dns(@project, dns_record.record_key)
+%>
 
 
 <div class="card no-select" target="<%= dns_record.record_key %>">
-  <div class="card-header align-items-center no-select table-<%= risk_to_color(dns_record.risk) %>" id="domain-heading-<%= dns_record.id %>">
-      <button href="javascript:void(0);" class="btn btn-link hash-nav domain-expand-button" data-toggle="collapse" data-target="#domain-<%= dns_record.id %>" aria-expanded="false" aria-controls="domain-<%= dns_record.id %>">
+  <div class="card-header align-items-center no-select table-<%= risk_to_color(dns_record.risk) %>" id="dns-record-heading-<%= dns_record.id %>">
+      <button href="javascript:void(0);" class="btn btn-link hash-nav dns-record-expand-button" data-toggle="collapse" data-target="#dns-record-<%= dns_record.id %>" aria-expanded="false" aria-controls="dns-record-<%= dns_record.id %>">
         <%= dns_record.record_key %>
-
       </button>
-      <button href="javascript:void(0);" class="btn btn-light" >
-        <%= dns_record.record_type %>
-      </button>
-      <button href="javascript:void(0);" class="btn btn-light" >
-        <%= dns_record.record_value %>
-      </button>
+      <a href="#dns-record-search|type:<%= dns_record.record_type %>" class="hash-nav">
+        <button class="btn btn-sm btn-light" >
+          <%= dns_record.record_type %>
+        </button>
+      </a>
+      <% if dns_record.record_type == "A" %>
+        <a href="#host-search|<%= dns_record.record_value %>" class="hash-nav">
+          <button class="btn btn-sm btn-light" >
+            <%= dns_record.record_value %>
+          </button>
+        </a>
+      <% elsif dns_record.record_type == "CNAME" %>
+        <a href="#domain-search|<%= dns_record.record_key %>" class="hash-nav">
+          <button class="btn btn-sm btn-light" >
+            <%= dns_record.record_key %>
+          </button>
+        </a>
+      <% else %>
+        <button href="#" class="btn btn-sm btn-light" >
+          <%= dns_record.record_key %>
+        </button>
+      <% end %>
       <button href="javascript:void(0);" class="btn btn-light float-right" >
         <!-- todo: link to copy the path to the source file or something? -->
         Source: <%= dns_record.source_plugin %>
       </button>
-      <% if web_applications.count > 0 %>
-      <a href="#">
-        <span class="fas fa-atlas" title="Has web application(s)"></span>
-      </a>
-      <% end %>
   </div>
 
-  <div id="domain-<%= dns_record.id %>" class="collapse" aria-labelledby="domain-heading-<%= dns_record.id %>" hostname="<%= dns_record.record_key %>">
+  <div id="dns-record-<%= dns_record.id %>" class="collapse" aria-labelledby="dns-record-heading-<%= dns_record.id %>" hostname="<%= dns_record.record_key %>">
     <div class="col">
     
-      <%= erb :'partials/_domain_app_summary', locals: {web_applications: web_applications }%> 
-
       <%
         # in a view? shoot me
         

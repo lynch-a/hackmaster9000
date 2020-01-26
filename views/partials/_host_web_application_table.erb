@@ -28,9 +28,25 @@ end
       <% web_applications.each_slice(1).to_a.each do |web_application_slice| %>
         <tr>
           <% web_application_slice.each do |web_application| %>
+          <%
+            scheme = web_application.scheme
+
+            if (web_application.domain_id != nil)
+              target = Domain.find(web_application.domain_id).domain_name
+            else
+              target = Host.find(web_application.host_id).ip
+            end
+
+            port = Service.find(web_application.service_id).port_number
+
+            full_url = "#{scheme}://#{target}:#{port}"
+            full_ss_path = "/ss/#{scheme}#{target}#{port}-ss.png"
+          %> 
             <td class="table-<%= risk_to_color(web_application.risk) %> text-center host-web-application-<%= web_application.id %>">
               <a href="#web-applications-<%= web_application.id %>" class="hash-nav">
-                <img style="width:300px;height:168pxclass="" onerror="this.style.display='none';" src="/ss/<%= "#{web_application.scheme}#{Domain.find(web_application.domain_id).domain_name}#{Service.find(web_application.service_id).port_number}" %>-ss.png" >
+                <%= full_url %>
+                <br>
+                <img style="width:300px;height:168px" class="" onerror="this.style.display='none';" src="<%= full_ss_path %>" >
               </a>
               </br>
             </td>

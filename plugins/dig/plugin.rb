@@ -56,19 +56,22 @@ class DigPlugin < Hm9kPlugin
 
       next if line.blank?
 
-      data = line.split("\t")
-      puts data.inspect
-      record_key = data[0].gsub(/\.$/, '').strip
-      sometimer = data[2].strip
-      always_in = data[3].strip
-      record_type = data[4].strip
-      record_value = data[5].strip
+      data = line.gsub(/\s+/m, ' ').strip.split(" ")
 
-      db_dns_record = ingest_dns_record(project_id, "DiG", record_key, record_type, record_value)
+      record_key = data[0].strip.gsub(/\.$/, '').strip
+
+      sometimer = data[1].strip
+      always_in = data[2].strip
+      record_type = data[3].strip
+      record_value = data[4].strip
+
+      puts data.inspect
+
+      db_dns_record = ingest_dns_record(project_id, "dig", record_key, record_type, record_value)
       
       # we know this is a host (but not necessarily that it's alive)
       if record_type == "A"
-        db_host = ingest_host(project_id, "DiG", record_value)
+        db_host = ingest_host(project_id, "dig", record_value)
       end
     end
   end

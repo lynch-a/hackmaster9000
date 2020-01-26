@@ -21,17 +21,19 @@ def ingest_web_application(project_id, source_plugin, known_name, scheme, port)
     project_id: project_id,
     scheme: scheme,
     host_id: db_host.id,
-    domain_id: db_domain.id,
     service_id: db_service.id
   )
 
+  if (!db_domain.nil?)
+    db_web_application.update_attributes(domain_id: db_domain.id)
+  end
+
   if db_web_application.new_record?
-    db_web_application.update_attributes!(name: "New Application")
 
     db_web_application.save!
-    puts "ingested new web app: #{Domain.find(db_web_application.domain_id).domain_name}"
+    #puts "ingested new web app: #{Domain.find(db_web_application.domain_id).domain_name}"
   else
-    puts "ingested duplicate web app (not adding): #{Domain.find(db_web_application.domain_id).domain_name}"
+    #puts "ingested duplicate web app (not adding): #{Domain.find(db_web_application.domain_id).domain_name}"
   end
 
   return db_web_application

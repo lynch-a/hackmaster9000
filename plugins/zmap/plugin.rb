@@ -42,9 +42,8 @@ class ZmapPlugin < Hm9kPlugin
       ip = row['saddr']
       port = row['sport']
 
-      db_host = ingest_host(ip)
+      db_host = ingest_host(project_id, 'zmap', ip)
       ingest_service(project_id, db_host.id, port, "zmap", "", "", "")
     end
-    FileUtils.move("hm9k-projects/"+@project.uuid+"/"+file, "hm9k-projects/"+@project.uuid+"/scans/parsed/"+file)
   end
 end

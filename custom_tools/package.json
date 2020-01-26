@@ -1,0 +1,15 @@
+{
+  "name": "custom_tools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "screenshot2.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "generic-pool": "^3.7.1",
+    "puppeteer": "^2.0.0"
+  }
+}

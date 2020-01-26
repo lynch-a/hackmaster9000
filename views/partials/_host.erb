@@ -47,17 +47,14 @@
 
 
     <% if web_applications.size > 0 %>
-      <a href="#">
-        <span class="fas fa-atlas">
-      </a> (<%= web_applications.size %>)
+      <span class="badge badge-secondary"><%= web_applications.size %> webapp(s)</span>
     <% end %>
 
-    <%                                                                                                 
-      services_str = "["                                                                                 
+    <%
+      services_str = ""
       host.services.each do |s|
-        services_str = services_str + "#{s.port_number},"
-      end                                                                                                
-      services_str = services_str + "]"                                                                   
+        services_str = services_str + "<span class='badge badge-secondary'>#{s.port_number}</span>&nbsp;"
+      end 
     %>
 
     <%= services_str %>  
@@ -105,8 +102,8 @@
           <% related_domains.each_slice(2).each do |domain_slice| %>
             <tr>
               <% domain_slice.each do |domain| %>
-                <td class="table-<%= risk_to_color(domain.risk) %> text-center host-domain-<%= domain.id %>">
-                  <a href="#domains-<%= domain.id %>" class="hash-nav">
+                <td class="noselect table-<%= risk_to_color(domain.risk) %> text-center host-domain-<%= domain.id %>">
+                  <a href="#domain-search|<%= domain.domain_name %>" class="hash-nav">
                     <%= domain.domain_name %>
                   </a>
                   </br>

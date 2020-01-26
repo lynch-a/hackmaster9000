@@ -66,7 +66,7 @@ var tour = {
           target: $("a[href='#hosts']")[0],
           placement: "right",
           onNext: function() {
-            $('.nav-pills a[href="#hosts"]').tab('show');
+              $('.nav-link[href="#hosts"]').tab('show');
           },
           nextOnTargetClick: true 
           

@@ -24,7 +24,22 @@ function generate_dig_command() {
 }
 
 $("#dig-run").click(function() {
+  
+  var target = $("#dig-target").val().trim();
+
+  var targets = target.split(" ");
+  if (targets.length > 1) {
+    for(var i = 0; i < targets.length; i++) {
+      $("#dig-target").val(targets[i]);
+      if ($("#dig-target").val().length > 1) { // ignore empty target problems
+        var cmd = generate_dig_command();
+        schedule_or_run("dig", cmd);
+      }
+    }
+    
+    $("#dig-target").val(target)
+  } else {
     var cmd = generate_dig_command();
-    console.log(cmd);
-    schedule_or_run("dig", cmd);
+    schedule_or_run("dirsearch", cmd);
+  }
 });

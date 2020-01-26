@@ -23,8 +23,8 @@ function generate_dirsearch_command() {
     }
   }
 
-  var hostname_requests = $("#dirsearch-hostname-request:checked").length > 0
-  if (hostname_requests) {
+  var by_hostname = $("#dirsearch-by-hostname:checked").length > 0
+  if (by_hostname) {
     cmd += " -b";
   }
 
@@ -40,7 +40,7 @@ function generate_dirsearch_command() {
     cmd += " --random-agents";
   }
 
-  var output_name = "dirsearch-"+Math.random().toString(36).substring(7);
+  var output_name = Math.random().toString(36).substring(7);
   if (output_name != "") {
     cmd += " --simple-report=dirsearch-"+output_name+".html";
     cmd += " --json-report=dirsearch-"+output_name+".json";

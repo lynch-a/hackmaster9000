@@ -43,7 +43,7 @@ Results show up in the web applications view.
                 tool_name: tool_name,
                 label: "Target Extensions",
                 field_name: "target-extensions",
-                field_value: "",
+                field_value: "aspx",
                 placeholder: ""
               }
       %>
@@ -105,7 +105,15 @@ Results show up in the web applications view.
   </div>
 
   <div class="row">
-    <div class='col-sm-6'>    
+    <div class='col-sm-6'>
+
+      <%= erb :'tools/tool_helpers/_checkbox', locals: {
+            tool_name: tool_name,
+            label: "Connect by hostname (-b)",
+            field_name: "by-hostname",
+            checked: true
+          }
+      %>
       <%= erb :'tools/tool_helpers/_checkbox', locals: {
             tool_name: tool_name,
             label: "Follow Redirects",

@@ -15,7 +15,7 @@ end
 %>
 
 <tr class="dns-record-row-<%= dns_record.id %> table-<%= risk_to_color(dns_record.risk) %>">
-  <td class="domain">
-    <%= erb :'partials/_dns_record', layout: false, locals: { dns_records: dns_record} %>
+  <td class="dns-record">
+    <%= erb :'partials/_dns_record', layout: false, locals: { dns_record: dns_record} %>
   </td>
 </tr>

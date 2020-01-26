@@ -1,0 +1,22 @@
+{
+    "https://sso.tesla.com:443/": [
+        {
+            "content-length": 312,
+            "path": "%2e%2e//google.com",
+            "redirect": null,
+            "status": 403
+        },
+        {
+            "content-length": 326,
+            "path": ".well-known/",
+            "redirect": null,
+            "status": 503
+        },
+        {
+            "content-length": 326,
+            "path": ".well-known/security.txt",
+            "redirect": null,
+            "status": 503
+        }
+    ]
+}

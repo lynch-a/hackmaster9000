@@ -1,6 +1,18 @@
 <%
-  # incoming domains are TLD's
   subdomain_count = Domain.where(["domain_name LIKE ?", "%.#{domain.domain_name}"]).count
+
+  web_applications = WebApplication.where(domain_id: domain.id)
+
+  related_hosts = []
+  DnsRecord.where(record_key: domain.domain_name).each do |related_dns_record|
+    if related_dns_record.record_type == "A"
+      host = Host.where(ip: related_dns_record.record_value).first
+      if (host)
+        related_hosts << host
+      end
+    end
+  end
+
 %>
 
 <div class="card no-select" target="<%= domain.domain_name %>">
@@ -8,6 +20,10 @@
       <button href="javascript:void(0);" class="btn btn-link hash-nav domain-expand-button" data-toggle="collapse" data-target="#domain-<%= domain.id %>" aria-expanded="false" aria-controls="domain-<%= domain.id %>">
         <%= domain.domain_name %>
       </button>
+      <% if web_applications.count > 0 %>
+        <a href="#domain-search|<%= domain.domain_name %>" class="hash-nav"><span class="badge badge-secondary"><%= web_applications.count %> web app(s)</span></a>
+      <% end %>
+
       <% if subdomain_count > 0 %>
         <a href="#domain-search|.<%= domain.domain_name %>" class="hash-nav"><span class="badge badge-secondary"><%= subdomain_count %> subdomain(s)</span></a>
       <% else %>
@@ -15,13 +31,40 @@
           <a href="#domain-search|<%= domain.domain_name %>" class="hash-nav"><span class="badge badge-secondary">Filter</span></a>
         <% end %>
       <% end %>
-      <button href="#" class="btn btn-link hash-nav float-right">
+      <button href="#dns-record-search|<%= domain.domain_name %>" class="btn btn-link hash-nav float-right">
         Show DNS Records
       </button>
   </div>
 
   <div id="domain-<%= domain.id %>" class="collapse" aria-labelledby="domain-heading-<%= domain.id %>" hostname="<%= domain.domain_name %>">
     <div class="col">
+      <div class="text-center">
+        <h4>Related Hosts</h4>
+      </div>
+      <table class="table table-hover table-condensed table-bordered">
+        <thead>
+          <tr>
+            
+          </tr>
+        </thead>
+        <tbody>
+          <% related_hosts.each_slice(2).each do |host_slice| %>
+            <tr>
+              <% host_slice.each do |host| %>
+                <td class="table-<%= risk_to_color(host.risk) %> text-center">
+                  <a href="#host-search|<%= host.ip %>" class="hash-nav">
+                    <%= host.ip %>
+                  </a>
+                  </br>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <%= erb :'partials/_host_web_application_table', layout: false, :locals => { web_applications: web_applications } %>
+
       <%
         # in a view? shoot me
         

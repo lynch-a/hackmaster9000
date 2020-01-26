@@ -1,29 +1,39 @@
 <%
-# find all of the dirsearch scans across all associated dns records 
-%>
-
-<%
-def response_to_color(response)
-  if response == "200"
-    return "success"
-  elsif response == "301" or response == "302"
-    return "warning"
-  elsif response == "500" or response == "403" or response == "400"
-    return "danger"
-  else
-    return "none"
+  def response_to_color(response)
+    if response == "200"
+      return "success"
+    elsif response == "301" or response == "302"
+      return "warning"
+    elsif response == "500" or response == "403" or response == "400"
+      return "danger"
+    else
+      return "none"
+    end
   end
-end
 %>
 
+<%
+  scheme = web_application.scheme
+
+  if (web_application.domain_id != nil)
+    target = Domain.find(web_application.domain_id).domain_name
+  else
+    target = Host.find(web_application.host_id).ip
+  end
+
+  port = Service.find(web_application.service_id).port_number
+
+  full_url = "#{scheme}://#{target}:#{port}"
+  full_ss_path = "/ss/#{scheme}#{target}#{port}-ss.png"
+%> 
 
 <%
-dirsearch_scans = DirsearchScan.where(web_application_id: web_application.id)
+  dirsearch_scans = DirsearchScan.where(web_application_id: web_application.id)
 %>
 
 <% if dirsearch_scans.size > 0 %>
   <h5>Dirsearch Results</h5>
-  <table style="width:100%" class="table fixed-width-table dirsearch-table">
+  <table style="width:100%" class="table table-secondary fixed-width-table dirsearch-table">
     <thead>
       <tr>
         <th>URL</th>
@@ -39,8 +49,8 @@ dirsearch_scans = DirsearchScan.where(web_application_id: web_application.id)
           <% scan.dirsearch_results.order(:status).each do |entry| %>
             <% next if entry.path == "" or seen.include? entry.path %>
             <% seen << entry.path %>
-            <tr class="bg-<%= response_to_color(entry.status) %>">
-              <td style="word-break: break-word;"><%= "#{web_application.scheme}://#{web_application.dns_record.record_key}/#{entry.path}" %></td>
+            <tr class="table-secondary">
+              <td class="noselect" style="word-break: break-word;"><%= "#{full_url}/#{entry.path}" %></td>
             	<td><%= "#{entry.status}" %></td>
             	<td><%= "#{entry.content_length}" %></td>
             	<!-- <td><%= "#{entry.redirect}" %></td> -->

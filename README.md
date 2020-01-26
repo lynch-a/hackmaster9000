@@ -58,7 +58,7 @@ apt-get install -y open-vm-tools-desktop fuse
 #### Setup dependencies, install tools, install hm9k, setup directories, etc
 
 # dependencies
-apt-get install -y nodejs postgresql postgresql-contrib libpq-dev imagemagick phantomjs ruby ruby-dev libgmp-dev build-essential libsqlite3-dev openjdk-8-jdk patch zlib1g-dev liblzma-dev
+apt-get install -y nodejs postgresql postgresql-contrib libpq-dev imagemagick phantomjs ruby ruby-dev libgmp-dev build-essential libsqlite3-dev openjdk-8-jdk patch zlib1g-dev liblzma-dev npm
 
 
 # install hm9k
@@ -67,6 +67,13 @@ git clone https://github.com/lynch-a/hackmaster9000
 cd hackmaster9000
 gem install bundler:2.0.1
 bundle install
+
+# setup hm9k db stuff
+service postgresql start
+sudo -u postgres psql -c "CREATE USER hm9k WITH PASSWORD 'SOMETHINGSECURE';"
+sudo -u postgres psql -c "CREATE DATABASE hm9k;"
+#### don't forget to edit config.rb to match this
+
 
 # install dnscan
 cd /usr/share
@@ -88,22 +95,10 @@ sudo ln -s /usr/share/GitGot/gitgot.py /usr/bin/gitgot
 # install sslscan
 sudo apt-get install sslscan
 
-# install some node dependencies for the screenshot utility - you might need to "npm init" in the custom_tools dir first
+# install some node dependencies for the screenshot utility - you might need to "npm init" in the custom_tools dir first maybe?
 cd /usr/share/hackmaster9000/custom_tools
-npm install puppeteer why-is-node-running generic-pool
-
-# setup symlinks for some of the custom tools
-sudo ln -s /usr/share/hackmaster9000/custom_tools/xtreme-scraper.rb /usr/bin/xtreme-scraper
-chmod +x /usr/bin/xtreme-scraper
-
-sudo ln -s /usr/share/hackmaster9000/custom_tools/web-screenshot.rb /usr/bin/web-screenshot
-chmod +x /usr/bin/web-screenshot
-
-sudo ln -s /usr/share/hackmaster9000/custom_tools/check_vnc.rb /usr/bin/check_vnc
-chmod +x /usr/bin/check_vnc
-
-sudo ln -s /usr/share/hackmaster9000/custom_tools/pwnVNC.py /usr/bin/pwnVNC
-chmod +x /usr/bin/pwnVNC
+npm install puppeteer generic-pool
+sudo ln -s /usr/share/hackmaster9000/custom_tools/screenshot2.js /usr/bin/screenshot2
 
 # this is a meme tool with no web interface, but if you've read this far you might as well try it out lol. It takes a wordlist and uses a recurrent neural network to attempt to brute force other subdomains based on it. No, it's not very good.
 sudo ln -s /usr/share/hackmaster9000/custom_tools/rnnsub.py /usr/bin/rnnsub
@@ -111,9 +106,6 @@ chmod +x /usr/bin/rnnsub
 
 sudo ln -s /usr/share/hackmaster9000/custom_tools/zdns /usr/bin/zdns
 chmod +x /usr/bin/zdns
-
-sudo ln -s /usr/share/hackmaster9000/custom_tools/metaldetector /usr/bin/metaldetector
-chmod +x /usr/bin/metaldetector
 
 # install zmap
 sudo apt-get install -y zmap
@@ -143,21 +135,6 @@ mkdir /usr/share/wordlists/subdomains
 cp /usr/share/dirsearch/db/dicc.txt /usr/share/wordlists/dirsearch-default.txt
 cp /usr/share/dnscan/subdomains-*.txt /usr/share/wordlists/subdomains/
 
-cd /usr/share/hackmaster9000
-service postgresql start
-
-echo "You will now be switched to the postgre system user to setup the database. You should:"
-echo "Type \password<enter>"
-echo "Then follow the instructions to change the password to something secure "
-echo "Then:
-echo "CREATE DATABASE hm9k;"
-echo "\connect hm9k"
-echo "CREATE EXTENSION pg_trgm;" # i don't remember if this is actually necessary... but it works! so i'm not changing it right now!
-echo "\q"
-
-sudo -u postgres psql postgres
-
-echo "Now that postgre is configured, edit config.rb to include the database password and/or change other configuration details"
 ```
 
 That's it for installation! I recommend running it by following this process:
