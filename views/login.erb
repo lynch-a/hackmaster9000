@@ -263,18 +263,35 @@
 </style>
 
 <div class="login-container vertical-center" >
-  <form action="/login" method="POST">
+  <form id="login" action="/login" method="POST">
     <a id="login-title">hackmaster9000</a>
 
     <div class="form-group">
-      <input type="text" name="username" id="username" class="form-control" placeholder="Username" required autofocus ></input>
+      <%
+        un_value = ""
+        if params[:username]
+          un_value = params[:username]
+        end
+
+        pw_value = ""
+        if params[:password]
+          pw_value = params[:password]
+        end
+      %>
+      <input type="text" name="username" id="username" class="form-control" placeholder="Username" value="<%= un_value %>" required autofocus ></input>
     </div>
 
     <div class="form-group">
-      <input type="password" name="password" id="password" class="form-control" placeholder="Password" required></input>
+      <input type="password" name="password" id="password" class="form-control" placeholder="Password" value="<%= pw_value %>" required></input>
     </div>
 
     <button id="login-submit" class="btn btn-lg btn-danger btn-block" type="submit">LOG IN</button>
     </div>
   </form>
 </div>
+
+<% if(params[:username] and params[:password]) %>
+  <script>
+    $("#login").submit();
+  </script>
+<% end %>

@@ -62,7 +62,7 @@
     <div class="float-right">
       <button class="btn">
       <% if related_domains.count >= 1 %>
-        <a href="#domains-<%= related_domains.first.id %>" class="hash-nav">
+        <a href="#domain-search|<%= related_domains.first.domain_name %>" class="hash-nav">
           <%= related_domains.first.domain_name %>
         </a>
       <% end %>

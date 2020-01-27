@@ -40,8 +40,29 @@ function schedule_or_run(tool_name, cmd) {
   }
 }
 
+function create_job(cmd, run_every_minutes, background) {
+  // if they  specified a repeat job, the job should not have a max number of runtimes by default
+  var max_runtimes = "1";
+  if (parseInt(run_every_minutes, 10) > 0) {
+    max_runtimes = "0";
+  }
+
+  var add_job_event_data = {
+    job_type: "TOOL",
+    job_data: cmd,
+    job_run_every: run_every_minutes.toString(),
+    job_max_runtimes: max_runtimes,
+    job_run_in_background: background
+  };
+
+  api_server.send('add-job', add_job_event_data);
+}
+
 // SETUP TERMINAL SERVER CONNECTION
 var terminal_server = new TerminalEventsDispatcher("ws://"+window.location.hostname+":8081");
+
+// SETUP API/INTERFACE SERVER CONNECTION
+var api_server = new ApiEventsDispatcher("ws://"+window.location.hostname+":8082");
 
 $(document).ready(function() {
   console.log("ready!");
@@ -51,9 +72,6 @@ $(document).ready(function() {
   var terminals = [];
 
   hterm.defaultStorage = new lib.Storage.Local();
-
-  // SETUP API/INTERFACE SERVER CONNECTION
-  var api_server = new ApiEventsDispatcher("ws://"+window.location.hostname+":8082");
 
   // authenticate to API server
   api_server.bind('open', function() {
@@ -937,24 +955,6 @@ $(document).ready(function() {
       send_to_active_terminal(cmd + "\n");
   });
 
-  function create_job(cmd, run_every_minutes, background) {
-    // if they  specified a repeat job, the job should not have a max number of runtimes by default
-    var max_runtimes = "1";
-    if (parseInt(run_every_minutes, 10) > 0) {
-      max_runtimes = "0";
-    }
-
-    var add_job_event_data = {
-      job_type: "TOOL",
-      job_data: cmd,
-      job_run_every: run_every_minutes.toString(),
-      job_max_runtimes: max_runtimes,
-      job_run_in_background: background
-    };
-
-    api_server.send('add-job', add_job_event_data);
-  }
-
   function generate_wpscan_command() {
     var cmd = "wpscan";
 
@@ -1499,6 +1499,13 @@ var dns_record_dtable = $('#dns-record-table').DataTable( {
   var web_application_dtable = $('#web-application-table').DataTable( {
     fnDrawCallback: function() {
       $("#web-application-table thead").remove();
+    },
+    "oLanguage": {
+      "sLengthMenu": "_MENU_",
+      "sSearch": ""
+    },
+    "language": {
+      "searchPlaceholder": ""
     },
     lengthMenu: [ [10, 50, 100, -1], [10, 50, 100, "All"] ],
     deferRender:    false,
