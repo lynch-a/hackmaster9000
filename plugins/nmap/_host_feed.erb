@@ -28,14 +28,3 @@
   <% end %>
 <%= "=======================================" %>
 </pre>
-
-<% if host.feed_items.where(source_plugin: "nmap").count == 0 %>
-  <%= "No nmap activity detected." %>
-<% else %> 
-
-  <ul class="list-group" style="max-height:300px;margin-bottom:10px;overflow:scroll;-webkit-overflow-scrolling: touch;">
-    <% host.feed_items.where(source_plugin: "nmap").each do |nmap_feed_item| %>
-      <li class="list-group-item">[time] <%= nmap_feed_item.value %></li>
-    <% end %>
-  </ul>
-<% end %>

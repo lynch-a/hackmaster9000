@@ -25,16 +25,22 @@ class Screenshot2Plugin < Hm9kPlugin
   end
 
   def self.visualize_in_domains?
-    true
+    false
   end
 
   def self.domain_feed_partial
-    "_domain_feed"
+    ""
   end
 
   def self.visualize_in_web_applications?
-    true
+    false
   end
+
+  def self.web_application_feed_partial
+    ""
+  end
+
+
 
   # Write this method. Any project files matching the file_filter above will have their full pathname passed to this parse method in the file_path argument.
   def self.parse(project_id, file_path)

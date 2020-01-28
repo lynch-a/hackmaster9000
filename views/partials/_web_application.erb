@@ -79,12 +79,37 @@ end
             </div>
           </form>
 
-       
+          <%
+            # in a view? shoot me
+            
+            require './plugins/Hm9kPlugin.rb'
 
-          <%= erb :'partials/_wpscan_results', :locals => { :web_application => web_application } %>
+            Dir["./plugins/*/plugin.rb"].each { |f| require f }
+            Hm9kPlugin.register_plugins
+            # plugins will populate HTML for nav-tabs (required to make tab switching work)
+          %>
+          <% Hm9kPlugin.plugins.each_with_index do |plugin, i| %>
+            <% next if !plugin.visualize_in_web_applications? %>
+            <div class="card border-light no-select">
+              <div class="card-header table-secondary">
+                <button href="javascript:void(0);" class="btn btn-primary hash-nav" type="button" data-toggle="collapse" data-target="#plugin-<%= "#{web_application.id}-#{i}" %>" aria-expanded="false" aria-controls="plugin-<%= "#{web_application.id}-#{i}" %>">
+                      <%= plugin.name %>
+                </button>
 
-          <%= erb :'partials/_dirsearch_results', :locals => { :web_application => web_application } %>
+                <button href="javascript:void(0);" class="btn btn-danger float-right" type="btn">
+                      Launch <%= plugin.name %> 
+                </button>
+              </div>
 
+              <div id="plugin-<%= "#{web_application.id}-#{i}" %>" class="collapse">
+                <div class="row">
+                  <div class="col">
+                    <%= erb :"../plugins/#{plugin.name}/#{plugin.web_application_feed_partial}", locals: {tool_name: plugin.name, web_application: web_application} %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
         </div>
       </div>
       <div class="tab-pane" id="web-application-<%= web_application.id %>-map">

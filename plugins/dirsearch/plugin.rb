@@ -27,7 +27,7 @@ class DirsearchPlugin < Hm9kPlugin
   end
 
   def self.visualize_in_domains?
-    true
+    false
   end
 
   def self.domain_feed_partial
@@ -36,6 +36,10 @@ class DirsearchPlugin < Hm9kPlugin
 
   def self.visualize_in_web_applications?
     true
+  end
+
+  def self.web_application_feed_partial
+    "_domain_feed_entry"
   end
 
   # Write this method. Any project files matching the file_filter above will have their full pathname passed to this parse method in the file_path argument.

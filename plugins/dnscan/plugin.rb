@@ -21,7 +21,7 @@ class DnscanPlugin < Hm9kPlugin
   end
 
   def self.visualize_in_dns_records?
-    true
+    false
   end
 
   def self.dns_record_feed_partial
@@ -29,7 +29,7 @@ class DnscanPlugin < Hm9kPlugin
   end
 
   def self.visualize_in_domains?
-    true
+    false
   end
 
   def self.domain_feed_partial
@@ -37,7 +37,7 @@ class DnscanPlugin < Hm9kPlugin
   end
 
   def self.visualize_in_web_applications?
-    true
+    false
   end
 
   # Write this method. Any project files matching the file_filter above will have their full pathname passed to this parse method in the file_path argument.

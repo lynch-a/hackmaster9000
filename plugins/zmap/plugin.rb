@@ -17,11 +17,11 @@ class ZmapPlugin < Hm9kPlugin
   end
 
   def self.visualize_in_hosts?
-    true
+    false
   end
   
   def self.host_feed_partial
-    "_host_feed"
+    ""
   end
 
   def self.visualize_in_dns_records?
