@@ -13,6 +13,8 @@
     <a class="nav-link active" href="#tab-help" data-toggle="tab">DIRECTORY</a>
   </li>
   <% Hm9kPlugin.plugins.each do |plugin| %>
+    <% next if !plugin.has_tool_ui? %>
+    
     <li class="nav-item">
       <a class="nav-link" href="#tab-<%= plugin.name %>" data-toggle="tab"><%= plugin.name %></a>
     </li>
@@ -24,6 +26,8 @@
     <%= erb :'tools/_help' %>
   </div>
   <% Hm9kPlugin.plugins.each do |plugin| %>
+    <% next if !plugin.has_tool_ui? %>
+
     <div class="tab-pane" id="tab-<%= plugin.name %>">
       <%= erb :"../plugins/#{plugin.name}/#{plugin.partial}", locals: {tool_name: plugin.name} %>
     </div>

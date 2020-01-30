@@ -8,6 +8,10 @@ class DigPlugin < Hm9kPlugin
     @meta = "domain information groper" # short description of underlying utility
   end
 
+  def self.has_tool_ui?
+    return true
+  end
+  
   def self.partial
     "_dig"
   end

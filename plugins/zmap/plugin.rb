@@ -8,6 +8,10 @@ class ZmapPlugin < Hm9kPlugin
     "Zmap is a fast, internet-scope port scanner capable of sending gigabites of traffic."
   end
 
+  def self.has_tool_ui?
+    return true
+  end
+  
   def self.partial
     "_zmap" # the path to the partial file, which should be in this plugin directory, without ".erb" at the end
   end

@@ -16,149 +16,157 @@
   </div>
 </div>
 
-<%= erb :'partials/_config_saver', layout: false, locals: {tool_name: tool_name} %>
+<div class="row">
+  <div class="col">
+    <%= erb :'partials/_send_to_autoscan', layout: false, locals: {autoscan_replacer: "%ip%", tool_name: tool_name} %>
+  </div>
+</div>
+
+<div class="row">
+  <div class='col'>
+    <%= erb :'tools/tool_helpers/_text_input', locals: {
+              tool_name: tool_name,
+              label: "Target",
+              field_name: "target",
+              field_value: "",
+              placeholder: "127.0.0.1"
+            }
+    %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= erb :'partials/_config_saver', layout: false, locals: {tool_name: tool_name} %>
+  </div>
+</div>
+
 <hr>
-<div class="container no-gutters">
+
+<form id="<%= tool_name %>-options">
   <div class="row">
-    <div class='col-sm-6'>
-      <%= erb :'tools/tool_helpers/_text_input', locals: {
-                tool_name: tool_name,
-                label: "Target",
-                field_name: "target",
-                field_value: "",
-                placeholder: "127.0.0.1"
-              }
+    <div class='col'>
+      <%= erb :'tools/tool_helpers/_text_input_optional', locals: {
+              tool_name: tool_name,
+              label: "Top Ports",
+              field_name: "top-ports",
+              field_value: "",
+              checked: false,
+              placeholder: "How many?"
+          }
+      %>
+
+      <%= erb :'tools/tool_helpers/_text_input_optional', locals: {
+              tool_name: tool_name,
+              label: "Ports",
+              field_name: "port-range",
+              field_value: "",
+              checked: false,
+              placeholder: "1-100,80,443 (all ports: -)"
+          }
       %>
     </div>
 
-    <div class='col-sm-6'>
-
+    <div class='col'>
+      <%= erb :'tools/tool_helpers/_dropdown', locals: {
+              tool_name: tool_name,
+              label: "Timing",
+              field_name: "timing",
+              options: [
+                ["0", "paranoid - IDS Evasion"],
+                ["1", "sneaky - IDS Evasion"],
+                ["2", "polite - Go slow"],
+                ["3", "normal - Default"],
+                ["4", "aggressive - Fast and reliable networks"],
+                ["5", "insane - Really fast network"]
+              ],
+              selected_index: 3
+          }
+        %>
     </div>
   </div>
 
-  <form id="<%= tool_name %>-options">
-    <div class="row">
-      <div class='col-sm-6'>
-        <%= erb :'tools/tool_helpers/_text_input_optional', locals: {
-                tool_name: tool_name,
-                label: "Top Ports",
-                field_name: "top-ports",
-                field_value: "",
-                checked: false,
-                placeholder: "How many?"
-            }
-        %>
-
-        <%= erb :'tools/tool_helpers/_text_input_optional', locals: {
-                tool_name: tool_name,
-                label: "Ports",
-                field_name: "port-range",
-                field_value: "",
-                checked: false,
-                placeholder: "1-100,80,443 (all ports: -)"
-            }
-        %>
-      </div>
-
-      <div class='col-sm-6'>
-        <%= erb :'tools/tool_helpers/_dropdown', locals: {
-                tool_name: tool_name,
-                label: "Timing",
-                field_name: "timing",
-                options: [
-                  ["0", "paranoid - IDS Evasion"],
-                  ["1", "sneaky - IDS Evasion"],
-                  ["2", "polite - Go slow"],
-                  ["3", "normal - Default"],
-                  ["4", "aggressive - Fast and reliable networks"],
-                  ["5", "insane - Really fast network"]
-                ],
-                selected_index: 3
-            }
-          %>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-6">
-        <%= erb :'tools/tool_helpers/_text_input_optional', locals: {
-                tool_name: tool_name,
-                label: "Scripts",
-                field_name: "scripts",
-                field_value: "",
-                checked: false,
-                placeholder: "banner,http-headers"
-            }
-        %>
-      </div>
-
-      <div class="col-sm-6">
-        <%= erb :'tools/tool_helpers/_text_input_optional', locals: {
-                tool_name: tool_name,
-                label: "Script Args",
-                field_name: "script-args",
-                field_value: "",
-                checked: false,
-                placeholder: "http-default-accounts.basepath='/admin', category='web'"
-            }
-        %>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class='col-sm-6'>
-        <%= erb :'tools/tool_helpers/_checkbox', locals: {
-                tool_name: tool_name,
-                label: "OS Detection",
-                field_name: "os-detection"
-            }
-        %>
-
-        <%= erb :'tools/tool_helpers/_checkbox', locals: {
-                tool_name: tool_name,
-                label: "Service Version Detection",
-                field_name: "service-detection",
-                checked: true
-            }
-        %>
-
-          <%= erb :'tools/tool_helpers/_checkbox', locals: {
-                tool_name: tool_name,
-                label: "Only show open ports",
-                field_name: "open-ports-only",
-                checked: true
-              }
-          %>
-      </div>
-
-      <div class="col-sm-6">
-        <%= erb :'tools/tool_helpers/_checkbox', locals: {
+  <div class="row">
+    <div class="col">
+      <%= erb :'tools/tool_helpers/_text_input_optional', locals: {
               tool_name: tool_name,
-              label: "Treat all hosts as online",
-              field_name: "ping-unresponsive",
-              checked: true,
-            }
-        %>
+              label: "Scripts",
+              field_name: "scripts",
+              field_value: "",
+              checked: false,
+              placeholder: "banner,http-headers"
+          }
+      %>
+    </div>
+
+    <div class="col">
+      <%= erb :'tools/tool_helpers/_text_input_optional', locals: {
+              tool_name: tool_name,
+              label: "Script Args",
+              field_name: "script-args",
+              field_value: "",
+              checked: false,
+              placeholder: "http-default-accounts.basepath='/admin', category='web'"
+          }
+      %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class='col'>
+      <%= erb :'tools/tool_helpers/_checkbox', locals: {
+              tool_name: tool_name,
+              label: "OS Detection",
+              field_name: "os-detection"
+          }
+      %>
+
+      <%= erb :'tools/tool_helpers/_checkbox', locals: {
+              tool_name: tool_name,
+              label: "Service Version Detection",
+              field_name: "service-detection",
+              checked: true
+          }
+      %>
 
         <%= erb :'tools/tool_helpers/_checkbox', locals: {
               tool_name: tool_name,
-              label: "Never do DNS resolution",
-              field_name: "no-dns-resolution"
+              label: "Only show open ports",
+              field_name: "open-ports-only",
+              checked: true
             }
         %>
-
-        <%= erb :'tools/tool_helpers/_checkbox', locals: {
-              tool_name: tool_name,
-              label: "No port scan (ping sweep)",
-              field_name: "no-ports"
-            }
-        %>
-      </div>
     </div>
-  </form>
-  <hr>
-  <%= erb :'partials/_tool_runner', layout: false, locals: {tool_name: "nmap"} %>
-</div>
+
+    <div class="col">
+      <%= erb :'tools/tool_helpers/_checkbox', locals: {
+            tool_name: tool_name,
+            label: "Treat all hosts as online",
+            field_name: "ping-unresponsive",
+            checked: true,
+          }
+      %>
+
+      <%= erb :'tools/tool_helpers/_checkbox', locals: {
+            tool_name: tool_name,
+            label: "Never do DNS resolution",
+            field_name: "no-dns-resolution"
+          }
+      %>
+
+      <%= erb :'tools/tool_helpers/_checkbox', locals: {
+            tool_name: tool_name,
+            label: "No port scan (ping sweep)",
+            field_name: "no-ports"
+          }
+      %>
+    </div>
+  </div>
+</form>
+
+<hr>
+
+<%= erb :'partials/_tool_runner', layout: false, locals: {tool_name: "nmap"} %>
 
 <script>
   <%= File.read("plugins/nmap/nmap.js") %>

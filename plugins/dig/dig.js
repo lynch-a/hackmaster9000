@@ -1,5 +1,5 @@
 
-function generate_dig_command() {
+function generate_dig_command(filename_override) {
   var cmd = "dig";
 
   if ($("#dig-toggle-lookup-type").prop("checked")) {
@@ -18,9 +18,15 @@ function generate_dig_command() {
 
   cmd += " " + $("#dig-target").val();
 
-  return cmd + " > dig-"+Math.random().toString(36).substring(7)+".txt"
-    + " \n"
-    + cmd;
+  if (filename_override !== undefined) {
+    return cmd + " > dig-"+filename_override+".txt"
+      + " \n"
+      + cmd;
+  } else {
+    return cmd + " > dig-"+Math.random().toString(36).substring(7)+".txt"
+      + " \n"
+      + cmd;
+  }
 }
 
 $("#dig-run").click(function() {

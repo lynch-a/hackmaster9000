@@ -39,7 +39,13 @@ ActiveRecord::Schema.define do
     create_table :pages do |table|
       table.column :web_application_id, :int
       table.column :path, :string
+
+      table.column :title, :string
       table.column :description, :string
+      table.column :content_length, :integer
+      table.column :redirect, :string
+      table.column :status, :string
+
     end
   end
 end
@@ -346,6 +352,22 @@ class WebApplication < ActiveRecord::Base
   has_one :service
   has_many :pages
 
+  def full_url()
+    scheme = self.scheme
+
+    if (self.domain_id != nil)
+      target = Domain.find(self.domain_id).domain_name
+    else
+      target = Host.find(self.host_id).ip
+    end
+
+    port = Service.find(self.service_id).port_number
+
+    full_url = "#{scheme}://#{target}:#{port}"
+
+    return full_url
+  end
+
   def self.by_host_or_record(project_id, host, record)
     WebApplication.where(project_id: project_id, record_value: host.ip)
   end
@@ -355,6 +377,10 @@ class Page < ActiveRecord::Base
   has_many :inputs
   has_many :headers
   belongs_to :web_application
+
+  def full_url
+    "#{self.web_application.full_url}/#{self.path}"
+  end
 end
 
 class Input < ActiveRecord::Base

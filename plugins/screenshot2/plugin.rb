@@ -8,6 +8,10 @@ class Screenshot2Plugin < Hm9kPlugin
     "A custom PhantomJS headless screenshotter. It's kinda fast."
   end
 
+  def self.has_tool_ui?
+    return true
+  end
+  
   def self.partial
     "_screenshot2" # the path to the partial file, which should be in this plugin directory, without ".erb" at the end
   end

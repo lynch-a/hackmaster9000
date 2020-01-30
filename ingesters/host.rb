@@ -24,6 +24,6 @@ def ingest_host(project_id, source_plugin, ip)
     update_host_feed(db_host, source_plugin, "unused", "discovered duplicate host: #{ip}" )
   end
 
-  puts "Host ingested: #{db_host.id} - #{db_host.ip}"
+  puts "[#{source_plugin}] Host ingested: #{db_host.id} - #{db_host.ip}"
   return db_host
 end

@@ -132,7 +132,7 @@
           <% host.services.each_slice(1).to_a.each do |service_slice| %>
             <tr>
               <% service_slice.each do |service| %>
-                <td class="table-<%= risk_to_color(service.risk) %> text-center">
+                <td class="noselect table-<%= risk_to_color(service.risk) %> text-center">
                   <a href="#services-<%= service.id %>" class="hash-nav">
                     <%= service.port_number %> | 
                     <%= service.service_name %>
@@ -154,26 +154,31 @@
       Hm9kPlugin.register_plugins
       # plugins will populate HTML for nav-tabs (required to make tab switching work)
     %>
-    <% Hm9kPlugin.plugins.each_with_index do |plugin, i| %>
-      <div class="row">
-        <div class="col">
-          <% if host.feed_items.where(source_plugin: plugin.name).count == 0 %>
-          <% else %> 
-            <ul class="list-group" style="max-height:300px;margin-bottom:10px;overflow:scroll;-webkit-overflow-scrolling: touch;">
-              <% host.feed_items.where(source_plugin: plugin.name).each do |plugin_item| %>
+    <div class="row">
+      <div class="col">
+        <div class="text-center">
+          <h4>Plugin Events</h4>
+        </div>
+        <ul class="list-group" style="max-height:300px;margin-bottom:10px;overflow:scroll;-webkit-overflow-scrolling: touch;">
+          <% Hm9kPlugin.plugins.each_with_index do |plugin, i| %>
+            <% host.feed_items.where(source_plugin: plugin.name).each do |plugin_item| %>
+              <% if host.feed_items.where(source_plugin: plugin.name).count == 0 %>
+              <% else %> 
                 <li class="list-group-item">[time] [<%= plugin.name %>] <%= plugin_item.value %></li>
               <% end %>
-            </ul>
+            <% end %>
           <% end %>
-        </div>
+        </ul>
       </div>
+    </div>
+    <% Hm9kPlugin.plugins.each_with_index do |plugin, i| %>
 
       <% next if !plugin.visualize_in_hosts? %>
 
       <div class="card border-light no-select">
         <div class="card-header table-secondary">
           <button href="javascript:void(0);" class="btn btn-primary hash-nav" type="button" data-toggle="collapse" data-target="#plugin-<%= "#{host.id}-#{i}" %>" aria-expanded="false" aria-controls="plugin-<%= "#{host.id}-#{i}" %>">
-                <%= plugin.name %> Event Details
+                <%= plugin.name %> Stuff
           </button>
 
           <button href="javascript:void(0);" class="btn btn-danger float-right" type="btn">
@@ -187,8 +192,7 @@
               <%= erb :"../plugins/#{plugin.name}/#{plugin.host_feed_partial}", locals: {tool_name: plugin.name, host: host} %>
             </div>
           </div>
-        </div>
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 </div>

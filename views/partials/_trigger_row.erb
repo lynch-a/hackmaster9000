@@ -4,14 +4,12 @@
   	  <input type="checkbox" <%= (trigger.paused == true) ? "":"checked" %> class="form-check-input trigger-pause" data-trigger-id="<%= trigger.id %>"/>
   	</div>
   </td>
-
-  <td class="text-center">
-    <div class="form-check" style="color:black;">
-      <input type="checkbox" <%= (trigger.run_in_background == "t") ? "checked":"" %> class="form-check-input trigger-silent" data-trigger-id="<%= trigger.id %>"/>
-    </div>
-  </td>
   
   <td style="word-break: break-word;color:black;">
-  	<%= trigger.name %>
+    <%= trigger.name %>
+  </td>
+
+  <td style="word-break: break-word;color:black;">
+  	<%= trigger.run_shell %>
   </td>
 </tr>

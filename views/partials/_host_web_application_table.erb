@@ -42,7 +42,7 @@ end
             full_url = "#{scheme}://#{target}:#{port}"
             full_ss_path = "/ss/#{scheme}#{target}#{port}-ss.png"
           %> 
-            <td class="table-<%= risk_to_color(web_application.risk) %> text-center host-web-application-<%= web_application.id %>">
+            <td class="noselect table-<%= risk_to_color(web_application.risk) %> text-center host-web-application-<%= web_application.id %>">
               <a href="#web-applications-<%= web_application.id %>" class="hash-nav">
                 <%= full_url %>
                 <br>

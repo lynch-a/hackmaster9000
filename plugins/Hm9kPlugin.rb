@@ -8,6 +8,11 @@ class Hm9kPlugin
     @plugins
   end
 
+  # maybe?
+  #def self.get_host_plugins
+
+  #end
+
   def self.register_plugins
     Object.constants.each do |klass|
       const = Kernel.const_get(klass)

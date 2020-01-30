@@ -10,6 +10,10 @@ class NmapPlugin < Hm9kPlugin
     @meta = "A popular network mapping tool." # short description of underlying utility
   end
 
+  def self.has_tool_ui?
+    return true
+  end
+
   def self.partial
     "_nmap"
   end

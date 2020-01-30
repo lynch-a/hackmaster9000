@@ -1,4 +1,5 @@
 require './db.rb'
+require 'securerandom'
 
 def checkTrigger(project_id, trigger_type, replacements, match_data)
   triggers = Trigger.where(project_id: project_id, trigger_on: trigger_type, paused: false)
@@ -8,9 +9,9 @@ def checkTrigger(project_id, trigger_type, replacements, match_data)
     #puts "checking trigger: #{trigger}"
     conditions = TriggerCondition.where(trigger_id: trigger.id)
 
-    should_trigger = true # "did every condition match?" flag - false if any condition failed to match        
+    should_trigger = true # "did every condition match?" make it false if any condition failed to match        
 
-    flag = false # did this condition match?
+    flag = false # did /this/ condition match?
 
     # assume pass on no conditions
     if (conditions.size == 0)
@@ -58,12 +59,14 @@ def checkTrigger(project_id, trigger_type, replacements, match_data)
       replacements.each do |replacer|
         real_cmd = real_cmd.gsub(replacer[0].to_s, replacer[1].to_s)
       end
+
+      real_cmd = real_cmd.gsub("%rand7%", SecureRandom.hex[0..7]) # also replace rand7
       #puts "cmd to run: #{real_cmd}"
 
       # create the job
       db_job = Job.create!(
         user_id: trigger.user_id,
-        project_id: @project.id,
+        project_id: project_id,
         job_type: "TOOL",
         job_data: real_cmd,
         run_every: 0,

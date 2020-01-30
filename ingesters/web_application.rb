@@ -29,6 +29,18 @@ def ingest_web_application(project_id, source_plugin, known_name, scheme, port)
   end
 
   if db_web_application.new_record?
+    if db_service.new_record?
+      checkTrigger(
+        project_id,
+        "add-web-application",
+        [
+          ["%full_url%", db_web_application.full_url] # hopefully hosts are ingested before the service
+        ], [
+          ["full_url", db_web_application.full_url],
+          ["port", port]
+        ]
+      )
+    end
 
     db_web_application.save!
     #puts "ingested new web app: #{Domain.find(db_web_application.domain_id).domain_name}"

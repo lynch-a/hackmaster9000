@@ -8,6 +8,10 @@ class DnscanPlugin < Hm9kPlugin
     "Brute-force domain names"
   end
 
+  def self.has_tool_ui?
+    return true
+  end
+  
   def self.partial
     "_dnscan" # the path to the partial file, which should be in this plugin directory, without ".erb" at the end
   end

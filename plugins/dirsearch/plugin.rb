@@ -10,6 +10,10 @@ class DirsearchPlugin < Hm9kPlugin
     "Brute-force searches website directories"
   end
 
+  def self.has_tool_ui?
+    return true
+  end
+  
   def self.partial
     "_dirsearch" # the path to the partial file, which should be in this plugin directory
   end
@@ -44,62 +48,42 @@ class DirsearchPlugin < Hm9kPlugin
 
   # Write this method. Any project files matching the file_filter above will have their full pathname passed to this parse method in the file_path argument.
   def self.parse(project_id, file_path)
-      file_contents = File.read(file_path)
+    file_contents = File.read(file_path)
 
-      # we manually parse this JSON
-      parsed = JSON.parse(file_contents)
+    # we manually parse this JSON
+    parsed = JSON.parse(file_contents)
 
-      parsed.keys.each do |url|
-        parsed_url = URI(url)
-        known_name = parsed_url.host # this could either be an IP or a domain name (and not necessarily a DNS record) so ingesting it poses problems.
-        scheme = parsed_url.scheme
-        port = parsed_url.port
+    parsed.keys.each do |url|
+      parsed_url = URI(url)
+      known_name = parsed_url.host # this could either be an IP or a domain name (and not necessarily a DNS record) so ingesting it poses problems.
+      scheme = parsed_url.scheme
+      port = parsed_url.port
 
-        puts "ingesting dirsearch web app #{scheme}://#{known_name}:#{port} "
+      puts "[dirsearch] ingesting web app #{scheme}://#{known_name}:#{port} "
 
-        db_web_application = ingest_web_application(project_id, "dirsearch", known_name, scheme, port)
+      db_web_application = ingest_web_application(project_id, "dirsearch", known_name, scheme, port)
 
-        entries = []
+      entries = []
 
-        parsed[url].each do |entry|
-          entries << {
-            path: entry["path"],
-            status: entry["status"],
-            content_length: entry["content-length"]
-          }
-        end
+      parsed[url].each do |entry|
+        entries << {
+          path: entry["path"],
+          status: entry["status"],
+          content_length: entry["content-length"],
+          redirect: entry["redirect"]
+        }
+      end
 
-        db_ds_scan = DirsearchScan.find_or_create_by(
-          web_application_id: db_web_application.id,
+      entries.each do |entry|
+        db_page = ingest_page(db_web_application.id,
+          "dirsearch",
+          entry[:path],
+          entry[:content_length],
+          entry[:status],
+          entry[:redirect]
         )
-        db_ds_scan.save!
-
-        entries.each do |entry|
-          db_ds_result = DirsearchResult.find_or_initialize_by(
-            dirsearch_scan_id: db_ds_scan.id,
-            path: entry[:path],
-            redirect: entry[:redirect],
-            status: entry[:status],
-            content_length: entry[:content_length]
-          )
-
-          if db_ds_result.new_record?
-            checkTrigger(
-              project_id,
-              "dirsearch-result",
-              [ # replacers
-                ["%url%", url+entry[:path]]
-              ], [ # data matchers
-                ["path", entry[:path]],
-                ["status", entry[:status]],
-                ["redirect", entry[:redirect]],
-                ["content_length", entry[:content_length]]
-              ]
-            )
-
-          end
-          db_ds_result.save!
-        end  # end each-entry
+        puts "[dirsearch] ingested page: #{db_page.path} CL: #{db_page.content_length}, status: #{db_page.status}, redirect: #{db_page.redirect}"
       end
     end
+  end
 end

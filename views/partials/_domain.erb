@@ -51,7 +51,7 @@
           <% related_hosts.each_slice(2).each do |host_slice| %>
             <tr>
               <% host_slice.each do |host| %>
-                <td class="table-<%= risk_to_color(host.risk) %> text-center">
+                <td class="noselect table-<%= risk_to_color(host.risk) %> text-center">
                   <a href="#host-search|<%= host.ip %>" class="hash-nav">
                     <%= host.ip %>
                   </a>

@@ -1,136 +1,83 @@
 <div class="row">
-  <div class="col-sm">
-    <h2>New trigger</h2>
+  <div class="col">
+    <h2>Auto Scan Configuration</h2>
   </div>
 </div>
 
 <div class="row">
-  <div class="col-lg-12">
-    <div class="input-group">
-      <select class="form-control" id="trigger-on">
-        <option value="None">When a...</option>
-          <option value="add-host">Host is discovered</option>
-          <option value="add-service">Service is discovered</option>
-          <option value="add-domain">Domain name is discovered (includes subdomains)</option>
-          <option value="add-dns-record">DNS Record is discovered</option>
-          <option value="script">Script output is discovered</option>
-          <option value="dirsearch-result">Dirsearch result is discovered</option>
+  <div class="col">
+    <p>Here you can define scans that will automatically execute when data is discovered by a plugin. For example, you might want to automatically launch a screenshot tool if nmap discovers that port 80 open.</p>
 
-      </select>
+    <p>Try using the "Send to Auto Scan" button from any available tool after you've defined the tool options you want.</p>
+  </div>
+</div>
 
-      <input class="form-control" type="text" id="trigger-shell-cmd" placeholder="Run this shell Command" style="width:40%;">
-    </div>
+<div class="row">
+  <div class="col">
+    <input class="form-control" type="text" id="trigger-shell-cmd" placeholder="Shell command to run">
   </div>
 </div>
 
 <br/>
 
 <div class="row">
-  <div class="col-lg-12">
-    <div class="input-group">
-      <input class="form-control" type="text" id="trigger-name" placeholder="Friendly name" style="width:40%;">
-      <button class="btn btn-sm btn-primary form-control" id="create-trigger">Create Trigger</button>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-lg-12">
-    <div class="form-check">
-      <input type="checkbox" class="form-check-input" id="trigger-run-silent"/>
-      <label class="form-check-label" for="trigger-run-silent">Run silently (don't open a terminal)</label>
-    </div>
+  <div class="col">
+    <select class="form-control" id="trigger-on">
+        <option value="None">Run this command when a...</option>
+        <option value="add-host">Host is discovered</option>
+        <option value="add-service">Service is discovered</option>
+        <option value="add-domain">Domain name is discovered (includes subdomains)</option>
+        <option value="add-web-application">Web application is discovered</option>
+        <option value="add-page">Webpage is discovered</option>
+        <option value="add-dns-record">Raw DNS Record is discovered</option>
+        <option value="add-nmap-script">Nmap Script output is discovered</option>
+    </select>
   </div>
 </div>
 
 <br/>
 
-<div class="container trigger-host-options">
+<div class="row">
+  <div class="col">
+    <input class="form-control" type="text" id="trigger-name" placeholder="Scan Description">
+  </div>
+</div>
+
+<br/>
+<div class="row scan-conditions-helper">
+  <div class="col">
+    <h4>Scan Conditions <small>(All conditions must match to launch the scan. Leave blank for no conditions.)</small></h4>
+  </div>
+</div>
+
+<div class="trigger-host-options">
   <div class="row">
-    <h5>Replacement Options</h5>
+    <div class="col">
+      <h4>Shell Command Replacement Options</h4>
+    </div>
   </div>
 
   <div class="row">
     <dt class="col-sm-3">%ip%</dt>
     <dd class="col-sm-9">The discovered host IP address</dd>
   </div>
+    <div class="row">
+    <dt class="col-sm-3">%rand7%</dt>
+    <dd class="col-sm-9">A random 7 character alphanumeric string, useful for randomly naming output files to prevent collisions.</dd>
+  </div>
 </div>
 
-<div class="container trigger-service-options">
-  <div class="row">
-    <h5>Only Trigger If...</h5>
-  </div>
 
-  <div class="row">
-    <form class="form-inline">
-      <div class="input-group">
-        <label for="service-trigger-port">Port Matches: </label>
-        <input class="form-control" type="text" id="service-trigger-port" placeholder="Port">
-
-        <select class="form-control" id="service-trigger-match-by">
-          <option value="None">Match by...</option>
-          <option value="csv">(default) CSV | ex: 80,443 or just 80</option>
-          <option value="regex">Regex | ex: 80|443</option>
-        </select>
-      </div>
-    </form>
-  </div>
+<div class="trigger-service-options">
+  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "service", data_name: "port", placeholder: "80", default: :csv} %>
+  </br> 
 
   <br/>
 
   <div class="row">
-    <h5>Shell Command Replacement Options</h5>
-  </div>
-
-  <div class="row">
-    <dt class="col-sm-3">%ip%</dt>
-    <dd class="col-sm-9">The IP address associated with this service</dd>
-    <dt class="col-sm-3">%port%</dt>
-    <dd class="col-sm-9">The port associated with this service </dd>
-  </div>
-</div>
-
-<div class="container trigger-dirsearch-options">
-  <div class="row">
-    <h5>Only Trigger If...</h5>
-  </div>
-
-  <div class="row">
-    <form class="form-inline">
-      <div class="input-group">
-        <label for="trigger-dirsearch-path">Path matches: </label>
-        <input class="form-control" type="text" id="trigger-dirsearch-path" placeholder="*.php">
-        <select class="form-control" id="trigger-dirsearch-path-match-by">
-          <option value="None">Match by...</option>
-          <option value="csv">CSV | ex: test.html,test3.html </option>
-          <option value="regex">(default) Regex | ex: *.php </option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label for="trigger-dirsearch-status">Status code matches: </label>
-        <input class="form-control" type="text" id="trigger-dirsearch-status" placeholder="">
-
-        <select class="form-control" id="trigger-dirsearch-status-match-by">
-          <option value="None">Match by...</option>
-          <option value="csv">(default) CSV | ex: 200,500 </option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label for="trigger-dirsearch-contentlength">Content-length matches: </label>
-        <input class="form-control" type="text" id="trigger-dirsearch-contentlength" placeholder="">
-
-        <select class="form-control" id="trigger-dirsearch-contentlength-match-by">
-          <option value="None">Match by...</option>
-          <option value="csv">CSV | ex: 12134,12131 </option>
-        </select>
-      </div>
-    </form>
-  </div>
-
-  <br/>
-
-  <div class="row">
-    <h5>Shell Command Replacement Options</h5>
+    <div class="col">
+      <h5>Shell Command Replacement Options</h5>
+    </div>
   </div>
 
   <div class="row">
@@ -139,50 +86,19 @@
   </div>
 </div>
 
-<div class="container trigger-script-options">
-  <div class="row">
-    <h5>Only Trigger If...</h5>
-  </div>
+<div class="trigger-nmap-script-options">
+  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "script", data_name: "scriptname", placeholder: "http-title", default: :csv} %>
+  </br> 
+  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "script", data_name: "scriptoutput", placeholder: "80", default: :regex} %>
+  </br> 
+    <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "script", data_name: "port", placeholder: "80", default: :csv} %>
+  
+  </br>
 
   <div class="row">
-    <form class="form-inline">
-      <div class="input-group">
-        <label for="service-script-trigger-scriptname">Script name matches: </label>
-        <input class="form-control" type="text" id="script-trigger-scriptname" placeholder="http-title">
-
-        <select class="form-control" id="script-trigger-scriptname-match-by">
-          <option value="None">Match by...</option>
-          <option value="csv">CSV | ex: http-title,http-robots.txt </option>
-          <option value="regex">(default) Regex | ex: http-*</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label for="service-trigger-scriptoutput">Script output matches: </label>
-        <input class="form-control" type="text" id="script-trigger-scriptoutput" placeholder="">
-
-        <select class="form-control" id="script-trigger-scriptoutput-match-by">
-          <option value="None">Match by...</option>
-          <option value="csv">CSV | ex: http-title,http-robots.txt </option>
-          <option value="regex">(default) Regex | ex: http-*</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label for="script-trigger-port">Script port matches: </label>
-        <input class="form-control" type="text" id="script-trigger-port" placeholder="">
-
-        <select class="form-control" id="script-trigger-port-match-by">
-          <option value="None">Match by...</option>
-          <option value="csv">(default) CSV | ex: 80,443 </option>
-          <option value="regex">Regex | ex: 133*</option>
-        </select>
-      </div>
-    </form>
-  </div>
-
-  <br/>
-
-  <div class="row">
-    <h5>Shell Command Replacement Options</h5>
+    <div class="col">
+      <h5>Shell Command Replacement Options</h5>
+    </div>
   </div>
 
   <div class="row">
@@ -195,42 +111,65 @@
   </div>
 </div>
 
-<div class="container trigger-domain-options">
+<div class="trigger-domain-options">
+  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "domain", data_name: "domain-name", placeholder: "example.com", default: :regex} %>
+  </br> 
+  
+  </br>
+
   <div class="row">
-    <h5>Only Trigger If...</h5>
+    <div class="col">
+      <h5>Shell Command Replacement Options</h5>
+    </div>
   </div>
 
   <div class="row">
-    <form class="form-inline">
-      <div class="input-group">
-        <label for="domain-trigger">Domain Matches: </label>
-        <input class="form-control" type="text" id="domain-trigger" placeholder="Domain">
-
-        <select class="form-control" id="domain-trigger-match-by">
-          <option value="None">Match by...</option>
-          <option value="csv">CSV | ex: site.com,site2.com</option>
-          <option value="regex">(default) Regex | ex: w(e|o)bsite.com</option>
-        </select>
-      </div>
-    </form>
+    <dt class="col-sm-3">%ip%</dt>
+    <dd class="col-sm-9">The discovered service IP address</dd>
+    <dt class="col-sm-3">%port%</dt>
+    <dd class="col-sm-9">The discovered service port</dd>
+    <dt class="col-sm-3">%domain%</dt>
+    <dd class="col-sm-9">The discovered service domain</dd>
   </div>
+</div>
+
+<div class="trigger-page-options">
+  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "page", data_name: "path", placeholder: "http\/some\/page\.(php|aspx)", default: :regex} %>
+  </br> 
+  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "page", data_name: "status", placeholder: "200,302", default: :csv} %>
+  </br>
+  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "page", data_name: "contentlength", placeholder: "4568", default: :regex} %>
+  </br>
+
 
   <br/>
 
   <div class="row">
-    <h5>Shell Command Replacement Options</h5>
+    <div class="col">
+      <h5>Shell Command Replacement Options</h5>
+    </div>
   </div>
 
   <div class="row">
-    <dt class="col-sm-3">%domain%</dt>
-    <dd class="col-sm-9">The discovered domain name</dd>
+    <dt class="col-sm-3">%thing%</dt>
+    <dd class="col-sm-9">Description of thing</dd>
+  </div>
+</div>
+
+
+
+<br/>
+
+<div class="row">
+  <div class="col">
+    <button class="btn btn btn-primary form-control" id="create-trigger">Create Auto Scan (TODO: hide this button until trigger type is selected)</button>
   </div>
 </div>
 
 <hr>
 
 <div class="row">
-  <h2>Current Triggers</h5>
+  <h2>Current Auto Scans</h5>
 </div>
 <div class="row">
   <div class="col-lg-12">
@@ -238,8 +177,8 @@
       <thead style="width:100%">
         <tr>
           <th>Active</th>
-          <th>Silent</th>
-          <th>Friendly</th>
+          <th>Description</th>
+          <th>Load/Edit (TODO)</th>
         </tr>
       </thead>
       <!-- ? -->

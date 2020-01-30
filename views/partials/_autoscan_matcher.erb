@@ -1,0 +1,18 @@
+<div class="row">
+  <div class="col">
+      <%= data_name %> matches:
+      <input class="form-control" type="text" id="<%= data_type %>-trigger-<%= data_name %>" placeholder="<%= placeholder %>">
+  </div>
+  <div class="col">
+    match with:
+    <select class="form-control" id="<%= data_type %>-trigger-<%= data_name %>-match-by">
+      <% if default == :csv %>
+        <option value="csv" selected>(default) CSV</option>
+        <option value="regex">Regex</option>
+      <% elsif default == :regex %>
+        <option value="csv">CSV</option>
+        <option value="regex" selected>(default) Regex</option>
+      <% end %>
+    </select>
+  </div>
+</div>

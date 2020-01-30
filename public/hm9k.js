@@ -425,7 +425,7 @@ $(document).ready(function() {
     );
 
     $.notify({
-        message: 'Trigger ' + trigger_name + ' has been unpaused.',
+        message: 'Auto Scan ' + trigger_name + ' has been enabled.',
         url: '#triggers-'+trigger_id
       },{
         type: 'info'
@@ -445,7 +445,7 @@ $(document).ready(function() {
     );
 
     $.notify({
-        message: 'Trigger ' + trigger_name + ' has been paused.',
+        message: 'Auto Scan ' + trigger_name + ' has been disabled.',
         url: '#triggers-'+trigger_id
       },{
         type: 'info'
@@ -689,7 +689,29 @@ $(document).ready(function() {
     });
   });
 
+  function rand_str7() {
+    return ""+Math.random().toString(36).substring(7)
+  }
 
+  $('body').on('click', '.send-to-autoscan', function() {
+    var tool_name = $(this).attr("data-tool-name");
+    var replacer_str = $(this).attr("data-target-replacer");
+
+
+    // replace the target parameter with an autoscan-friendly text
+    $("#"+tool_name+"-target").val(replacer_str);
+
+    // round up the boys
+    var cmd = window["generate_"+tool_name+"_command"]("%rand7%");
+
+    // switch to autoscan window with info filled out
+    $("#trigger-shell-cmd").val(cmd);
+    $('.nav-link[href="#autoscan"]').tab('show');
+
+
+    console.log(cmd);
+
+  });
   
 
   function generate_wfuzz_command() {
@@ -1170,6 +1192,7 @@ $(document).ready(function() {
     }
     
 
+    // todo: 
     // get a handle to the terminal to the right of this terminal
 
     // no handle? try the terminal to the left
@@ -1678,8 +1701,8 @@ var job_dtable = $('#job-table').DataTable( {
     paging: false,
     columns: [
       {"width": "10%", "targets": 0}, // active
-      {"width": "10%", "targets": 1}, // background
-      {"width": "80%", "targets": 2} // name
+      {"width": "10%", "targets": 1}, // description
+      {"width": "80%", "targets": 2} // command line
     ],
     buttons: [
       {
@@ -1727,7 +1750,6 @@ var job_dtable = $('#job-table').DataTable( {
 
   $('body').on('click', '.web-application-expand-button', function() {
     if ($(this).attr("aria-expanded") == "false") {
-      console.log("hit");
       $("#"+$(this).attr("aria-controls")).find(".dirsearch-table").each(function(index, obj) {
           if (!$.fn.DataTable.isDataTable(this)) {
             $(this).DataTable({
@@ -1742,6 +1764,7 @@ var job_dtable = $('#job-table').DataTable( {
       });
     }
   });
+
 
 
   $('a[class^="nav-link"]').on('shown.bs.tab', function (e) {
@@ -1853,7 +1876,7 @@ var job_dtable = $('#job-table').DataTable( {
           // test
           table.search('id:'+web_application_id).draw();
           $(row).parent().find(".collapse").collapse("show");
-          //window.scrollTo(0,0);
+          window.scrollTo(0,0);
 
           // LAZY
          $(".web-application-row-"+web_application_id).find(".dirsearch-table").each(function(index, obj) {
@@ -2068,6 +2091,10 @@ $(".selectable").selectable({ // make everything selectable that should be
     }
   });
 
+  $('body').on('click', '.focus-terminal-button', function() {
+    $("#terminal-container").find(".hm9k-term.active")[0].ownerDocument.defaultView.focus();
+  });
+
   $('body').on('click', '.maximize-terminals-button', function() {
     var current_height = $(".footer").css("height");
 
@@ -2237,8 +2264,10 @@ $(".selectable").selectable({ // make everything selectable that should be
   $('.trigger-host-options').hide();
   $('.trigger-service-options').hide(); 
   $('.trigger-domain-options').hide();
-  $('.trigger-script-options').hide();
-  $('.trigger-dirsearch-options').hide(); 
+  $('.trigger-nmap-script-options').hide();
+  $('.trigger-dirsearch-options').hide();
+  $('.trigger-page-options').hide();
+  $('.scan-conditions-helper').hide();
 
 
 
@@ -2248,22 +2277,28 @@ $(".selectable").selectable({ // make everything selectable that should be
       $('.trigger-host-options').hide();
       $('.trigger-service-options').hide(); 
       $('.trigger-domain-options').hide();
-      $('.trigger-script-options').hide();
-      $('.trigger-dirsearch-options').hide(); 
+      $('.trigger-nmap-script-options').hide();
+      $('.trigger-dirsearch-options').hide();
+      $('.trigger-page-options').hide();
+
+      $('.scan-conditions-helper').show();
+
 
 
       if(changed_to == 'add-host') {
+        $('.scan-conditions-helper').hide(); // none for host
         $('.trigger-host-options').show();
+
       } else if (changed_to == 'add-service') {
         $('.trigger-service-options').show(); 
       } else if (changed_to == 'add-domain') {
         $('.trigger-domain-options').show(); 
-      } else if (changed_to == 'script') {
-        $('.trigger-script-options').show(); 
-      } else if (changed_to == 'dirsearch-result') {
-        $('.trigger-dirsearch-options').show(); 
+      } else if (changed_to == 'add-nmap-script') {
+        $('.trigger-nmap-script-options').show(); 
+      } else if (changed_to == 'add-page') {
+        $('.trigger-page-options').show(); 
       } else {
-
+        $('.scan-conditions-helper').hide();
       }
   });
 
@@ -2361,13 +2396,13 @@ $(".selectable").selectable({ // make everything selectable that should be
     var trigger_on = $("#trigger-on").val();
     var trigger_name = $("#trigger-name").val();
     var shell_cmd = $("#trigger-shell-cmd").val();
-    var run_in_background = $("#trigger-run-silent").prop('checked');
+    var run_in_background = true; //$("#trigger-run-silent").prop('checked');
 
     var service_port_match = $("#service-trigger-port").val();
-    var service_trigger_match_by = $("#service-trigger-match-by").val();
+    var service_trigger_port_match_by = $("#service-trigger-port-match-by").val();
 
-    var domain_name_match = $("#domain-trigger").val();
-    var domain_trigger_match_by = $("#domain-trigger-match-by").val();
+    var domain_name_match = $("#domain-trigger-domain-name").val();
+    var domain_trigger_match_by = $("#domain-trigger-domain_name-match-by").val();
 
     var script_name_match = $("#script-trigger-scriptname").val();
     var script_name_match_by = $("#script-trigger-scriptname-match-by").val();
@@ -2376,12 +2411,12 @@ $(".selectable").selectable({ // make everything selectable that should be
     var script_port_match = $("#script-trigger-port").val();
     var script_port_match_by = $("#script-trigger-port-match-by").val();
 
-    var dirsearch_path_match = $("#trigger-dirsearch-path").val();
-    var dirsearch_path_match_by = $("#trigger-dirsearch-path-match-by").val();
-    var dirsearch_status_code_match = $("#trigger-dirsearch-status").val();
-    var dirsearch_status_code_match_by = $("#trigger-dirsearch-status-match-by").val();
-    var dirsearch_contentlength_match = $("#trigger-dirsearch-contentlength").val();
-    var dirsearch_contentlength_match_by = $("#trigger-dirsearch-contentlength-match-by").val();
+    var page_path_match = $("#trigger-page-path").val();
+    var page__match_by = $("#trigger-page-path-match-by").val();
+    var page_status_code_match = $("#trigger-page-status").val();
+    var page_status_code_match_by = $("#trigger-page-status-match-by").val();
+    var page_contentlength_match = $("#trigger-page-contentlength").val();
+    var page_contentlength_match_by = $("#trigger-page-contentlength-match-by").val();
 
     var conditions = []
 
@@ -2396,7 +2431,7 @@ $(".selectable").selectable({ // make everything selectable that should be
         conditions = [{
           match_key: "port",
           match_value: service_port_match,
-          match_type: service_trigger_match_by
+          match_type: service_trigger_port_match_by
         }]
       }
     }

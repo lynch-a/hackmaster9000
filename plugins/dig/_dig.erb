@@ -16,11 +16,16 @@
   </div>
 </div>
 
-<%= erb :'partials/_config_saver', layout: false, locals: {tool_name: tool_name} %>
+<div class="row">
+  <div class="col">
+    <%= erb :'partials/_send_to_autoscan', layout: false, locals: {autoscan_replacer: "%domain%", tool_name: tool_name} %>
+  </div>
+</div>
+
 <hr>
 <div class="container no-gutters">
   <div class="row">
-    <div class='col-sm-6'>
+    <div class='col'>
       <%= erb :'tools/tool_helpers/_text_input', locals: {
                 tool_name: tool_name,
                 label: "Name to lookup",
@@ -30,9 +35,12 @@
               }
       %>
     </div>
+  </div>
 
-    <div class='col-sm-6'>
-
+  <div class="row">
+    <div class="col">
+      <%= erb :'partials/_config_saver', layout: false, locals: {tool_name: tool_name} %>
+      </br>
     </div>
   </div>
 

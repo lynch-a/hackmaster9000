@@ -20,6 +20,8 @@
   plugin_tools = {}
 
   Hm9kPlugin.plugins.each do |plugin|
+    next if !plugin.has_tool_ui?
+
     plugin_tools.merge({"#{plugin.name}": "#{plugin.description}"})
   end
 
@@ -106,6 +108,7 @@
 <div class="row">
   <div class="col-md">
     <% Hm9kPlugin.plugins.each do |plugin| %>
+      <% next if !plugin.has_tool_ui? %>
       <div class='list-group list-group-root well'>
         <a href="#tab-<%= plugin.name %>" class="list-group-item hash-nav">
           <div data-toggle="tooltip" title="<%= plugin.description %>">

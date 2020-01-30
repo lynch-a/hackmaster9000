@@ -11,12 +11,16 @@ def ingest_dns_record(project_id, source_plugin, record_key, record_type, record
   )
 
   if (db_dns_record.new_record?)
-  #  checkTrigger(
-  #    project_id,
-  #    "add-domain-record",
-  #    [["%domain%", record_key]],
-  #    [["domain", record_key]] # check against all of the "domain" match keys in the conditions
-  #  )
+    # we really don't want to check for triggers here because some of the tools make fake A records for now 
+    #checkTrigger(
+    #  project_id,
+    #  "add-domain",
+    #  [
+    #    ["%domain%", db_domain.domain_name], # hopefully hosts are ingested before the service
+    #  ], [
+    #    ["domain", db_domain.domain_name]
+    #  ]
+    #)
     db_dns_record.update_attributes(source_plugin: source_plugin)
     db_dns_record.save!
     update_dns_record_feed(db_dns_record, source_plugin, "unused", "discovered new DNS record: #{record_key} #{record_type} #{record_value}")
@@ -29,6 +33,16 @@ def ingest_dns_record(project_id, source_plugin, record_key, record_type, record
     db_domain = Domain.find_or_initialize_by(project_id: project_id, domain_name: record_key)
   
     if db_domain.new_record?
+      checkTrigger(
+        project_id,
+        "add-domain",
+        [
+          ["%domain%", db_domain.domain_name] # hopefully hosts are ingested before the service
+        ], [
+          ["domain", db_domain.domain_name]
+        ]
+      )
+
       db_domain.update_attributes(source_plugin: source_plugin)
       puts "Ingested new domain: #{db_domain.domain_name}"
     else

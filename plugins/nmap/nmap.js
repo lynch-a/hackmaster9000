@@ -1,9 +1,12 @@
 
-function generate_nmap_command() {
+function generate_nmap_command(filename_override) {
   var cmd = "nmap -v";
 
-  cmd += " -oA nmap-"+Math.random().toString(36).substring(7);
-
+  if (filename_override !== undefined) {
+    cmd += " -oA nmap-"+filename_override;
+  } else {
+    cmd += " -oA nmap-"+Math.random().toString(36).substring(7);
+  }
 
   if ($("#nmap-toggle-top-ports").prop("checked")) {
     var top_ports = $("#nmap-top-ports").val();
