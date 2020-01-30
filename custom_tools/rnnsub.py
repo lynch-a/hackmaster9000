@@ -105,7 +105,7 @@ while True:
 
   # sample from the model now and then
   if n % 100 == 0:
-    sample_ix = sample(hprev, inputs[0], 5000)
+    sample_ix = sample(hprev, inputs[0], 2000)
     txt = ''.join(ix_to_char[ix] for ix in sample_ix)
     # replace whitespace with one newline
     txt = re.sub(r'\n\s*\n', '\n', txt)

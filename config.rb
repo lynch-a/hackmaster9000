@@ -1,16 +1,16 @@
 require 'securerandom'
 
 # webserver (main.rb)
-$webserver_bind_to_address = '127.0.0.1' # set to 0.0.0.0 to access from the internet
+$webserver_bind_to_address = '0.0.0.0' # set to 0.0.0.0 to access from the internet
 $webserver_port = 8080
 $webserver_environment = :development # or :production to turn off errors and stuff
 
 # terminal server (terminal-server.rb)
-$terminal_server_bind_address = '127.0.0.1' # set to 0.0.0.0 to access from the internet
+$terminal_server_bind_address = '0.0.0.0' # set to 0.0.0.0 to access from the internet
 $terminal_server_bind_port = 8081
 
 # api server (api-server.rb)
-$api_server_bind_address = '127.0.0.1' # set to 0.0.0.0 to access from the internet
+$api_server_bind_address = '0.0.0.0' # set to 0.0.0.0 to access from the internet
 $api_server_bind_port = 8082
 
 # database config

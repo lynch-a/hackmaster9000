@@ -75,7 +75,9 @@ class DirsearchPlugin < Hm9kPlugin
       end
 
       entries.each do |entry|
-        db_page = ingest_page(db_web_application.id,
+        puts "ingesting page: pid: #{project_id} appid: #{db_web_application.id} path: #{entry[:path]}, CL: #{entry[:content_length]}, status: #{entry[:status]} redirect: #{entry[:redirect]}"
+        db_page = ingest_page(project_id,
+          db_web_application.id,
           "dirsearch",
           entry[:path],
           entry[:content_length],

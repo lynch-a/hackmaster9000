@@ -1,0 +1,6 @@
+301    46B   https://media-router-omega1.prod.media.vip.bf1.yahoo.com:443/%2e%2e//google.com
+301    87B   https://media-router-omega1.prod.media.vip.bf1.yahoo.com:443/Citrix//AccessPlatform/auth/clientscripts/cookies.js
+301    74B   https://media-router-omega1.prod.media.vip.bf1.yahoo.com:443/engine/classes/swfupload//swfupload.swf
+301    77B   https://media-router-omega1.prod.media.vip.bf1.yahoo.com:443/engine/classes/swfupload//swfupload_f9.swf
+301    62B   https://media-router-omega1.prod.media.vip.bf1.yahoo.com:443/extjs/resources//charts.swf
+301    72B   https://media-router-omega1.prod.media.vip.bf1.yahoo.com:443/html/js/misc/swfupload//swfupload.swf

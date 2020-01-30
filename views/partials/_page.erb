@@ -35,21 +35,6 @@
           <% end %>
         </ul>
       <% end %>
-
-      <br/>
-      <h5>Actions</h5>
-      <%
-      if (page.web_application.dns_record.record_key == "")
-        target = "#{page.web_application.scheme}://#{page.web_application.dns_record.record_value}:#{page.web_application.service.port_number}#{page.path}"
-      else
-        target = "#{page.web_application.scheme}://#{page.web_application.dns_record.record_key}:#{page.web_application.service.port_number}#{page.path}"
-      end
-      %>
-
-      <button class="btn btn-sm page-to-sqlmap" target='<%= h target %>'>Send to sqlmap</button>
-
-      <button class="btn btn-sm page-to-wfuzz" target='<%= h target %>'>Send to wfuzz</button>
-
     </div>
   </div>
 </div>

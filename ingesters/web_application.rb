@@ -42,11 +42,12 @@ def ingest_web_application(project_id, source_plugin, known_name, scheme, port)
       )
     end
 
-    db_web_application.save!
     #puts "ingested new web app: #{Domain.find(db_web_application.domain_id).domain_name}"
   else
     #puts "ingested duplicate web app (not adding): #{Domain.find(db_web_application.domain_id).domain_name}"
   end
-
+  
+  puts "web app was ingested: pid: #{project_id} webappid: #{db_web_application.id}"
+  db_web_application.save!
   return db_web_application
 end
