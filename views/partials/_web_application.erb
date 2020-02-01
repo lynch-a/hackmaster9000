@@ -80,6 +80,42 @@ end
           </form>
 
           <%
+            pages = Page.where(web_application_id: web_application.id)
+          %>
+
+          <% if pages.size > 0 %>
+            <div class="text-center">
+              <h4>Discovered Pages</h4>
+            </div>
+
+            <table style="width:100%" class="table table-secondary fixed-width-table page-table">
+              <thead>
+                <tr>
+                  <th>URL</th>
+                  <th>Code</th>
+                  <th>Size</th>
+                  <!-- <th>Redirect</th> -->
+                </tr>
+              </thead>
+
+                <tbody>
+                  <% seen = [] %>
+                  <% pages.each do |page| %>
+                    <% next if page.path == "" or seen.include? page.path %>
+                    <% seen << page.path %>
+                    <tr class="table-secondary">
+                      <td class="noselect" style="word-break: break-word;"><%= "#{full_url}/#{page.path}" %></td>
+                      <td><%= "#{page.status}" %></td>
+                      <td><%= "#{page.content_length}" %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+          <% else %>
+            No pages discovered yet. Try Dirsearch.
+          <% end %>
+
+          <%
             # in a view? shoot me
             
             require './plugins/Hm9kPlugin.rb'

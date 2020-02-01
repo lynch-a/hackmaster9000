@@ -23,8 +23,8 @@ const factory = {
 };
  
 const browserPagePool = genericPool.createPool(factory, {
-  max: 20,
-  min: 1,
+  max: 25,
+  min: 0,
   idleTimeoutMillis: 8000
 });
  
@@ -34,7 +34,7 @@ const browserPagePool = genericPool.createPool(factory, {
 process.argv.shift();
 process.argv.shift();
 console.log(process.argv);
- 
+
 if (process.argv.length < 1) {
   console.log("Usage: screenshot2 domain1 domain2 ip3 domain4 etc \n*** NO http:// or port, just a raw domain or ip. it will screenshot likely services.")
   process.exit();
@@ -80,10 +80,10 @@ async function take_ss(url, filepath, outline) {
  
     await console.log("testing: " + url);
      
-    const resp = await page.goto(url, {waitUntil: 'load', timeout: 10000});
+    const resp = await page.goto(url, {waitUntil: 'load', timeout: 5000});
     const statusCode = await resp.status();
  
-    await console.log("resp: ", statusCode);
+    //await console.log("resp: ", statusCode);
      
     if(statusCode == "200" || statusCode == "400" || statusCode == "500" || statusCode == "404" || statusCode == "503") {
       console.log("exists, screenshotting: " + url);
@@ -110,13 +110,14 @@ async function take_ss(url, filepath, outline) {
     }
  
   } catch (e) {
+    await page.goto("about:blank", {waitUntil: 'load', timeout: 2500});
     await page.close();
-    console.log(e);
+    //console.log(e);
     // page didn't load or timed out
   } finally {
+    //await page.goto("about:blank", {waitUntil: 'load', timeout: 2500});
     await browserPagePool.destroy(page); // not releasing?
   }
-  //await page.goto("about:blank", {waitUntil: 'load', timeout: 2500});
 }
  
 ////
@@ -137,7 +138,9 @@ async function main() {
     //headless: true,
     ignoreHTTPSErrors: true
   });
+
   perform_ss();
+  
   const checker = setInterval(async () => {
     if (browserPagePool.size === 0) {
       await browserPagePool.drain();
@@ -145,7 +148,7 @@ async function main() {
       browser.close();
       clearInterval(checker);
     }
-  }, 500);
+  }, 250);
 }
 
 main();

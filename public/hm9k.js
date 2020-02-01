@@ -699,18 +699,19 @@ $(document).ready(function() {
 
 
     // replace the target parameter with an autoscan-friendly text
+      var save = $("#"+tool_name+"-target").val();
     $("#"+tool_name+"-target").val(replacer_str);
 
     // round up the boys
     var cmd = window["generate_"+tool_name+"_command"]("%rand7%");
 
     // switch to autoscan window with info filled out
+    var save = $("#trigger-shell-cmd").val;
     $("#trigger-shell-cmd").val(cmd);
     $('.nav-link[href="#autoscan"]').tab('show');
 
-
-    console.log(cmd);
-
+    // clean up
+    $("#"+tool_name+"-target").val(save);
   });
   
 
@@ -930,23 +931,6 @@ $(document).ready(function() {
     
     var cmd = generate_rip_git_command();
     schedule_or_run("rip-git", cmd);
-  });
-
-  function generate_web_screenshot_command() {
-    var cmd = "screenshot2";
-    //var cmd = "web-screenshot";
-    
-    var target = $("#screenshot2-target").val();
-    if (target != "") {
-        cmd += " "+target;
-    }
-
-    return cmd;
-  }
-
-  $("#screenshot2-run").click(function() {
-    var cmd = generate_web_screenshot_command();
-    schedule_or_run("web-screenshot", cmd);
   });
 
   function generate_bounty_targets_data_cmd() {
@@ -1750,7 +1734,7 @@ var job_dtable = $('#job-table').DataTable( {
 
   $('body').on('click', '.web-application-expand-button', function() {
     if ($(this).attr("aria-expanded") == "false") {
-      $("#"+$(this).attr("aria-controls")).find(".dirsearch-table").each(function(index, obj) {
+      $("#"+$(this).attr("aria-controls")).find(".page-table").each(function(index, obj) {
           if (!$.fn.DataTable.isDataTable(this)) {
             $(this).DataTable({
               "autoWidth": true,
@@ -1879,7 +1863,7 @@ var job_dtable = $('#job-table').DataTable( {
           window.scrollTo(0,0);
 
           // LAZY
-         $(".web-application-row-"+web_application_id).find(".dirsearch-table").each(function(index, obj) {
+         $(".web-application-row-"+web_application_id).find(".page-table").each(function(index, obj) {
               if (!$.fn.DataTable.isDataTable(this)) {
                 $(this).DataTable({
                   "autoWidth": true,
@@ -1949,14 +1933,15 @@ var job_dtable = $('#job-table').DataTable( {
       }
     } else { //catch-all to navigate by left-tab
       $('.nav-link[href="' + hash + '"]').tab('show');
-      //$("html, body").animate({ scrollTop: 0 }, "slow");
-
       //if ($("#navbarSupportedContent").hasClass("show")) {
       //  $('.navbar-toggler').click();
       //}
 
       location.hash = hash;
     }
+
+    $("html, body").animate({ scrollTop: 0 }, "slow");
+
 
     $($.fn.dataTable.tables(true)).DataTable()
        .columns.adjust();
@@ -2098,7 +2083,7 @@ $(".selectable").selectable({ // make everything selectable that should be
   $('body').on('click', '.maximize-terminals-button', function() {
     var current_height = $(".footer").css("height");
 
-      $(".footer").css("height",  "80%");
+      $(".footer").css("height",  "75%");
   });
 
   $('body').on('click', '.parse-http-request-button', function() {
@@ -2265,11 +2250,10 @@ $(".selectable").selectable({ // make everything selectable that should be
   $('.trigger-service-options').hide(); 
   $('.trigger-domain-options').hide();
   $('.trigger-nmap-script-options').hide();
+  $('.trigger-web-application-options').hide();
   $('.trigger-dirsearch-options').hide();
   $('.trigger-page-options').hide();
   $('.scan-conditions-helper').hide();
-
-
 
   $('#trigger-on').change(function(){
       var changed_to = $('#trigger-on').val();
@@ -2277,18 +2261,16 @@ $(".selectable").selectable({ // make everything selectable that should be
       $('.trigger-host-options').hide();
       $('.trigger-service-options').hide(); 
       $('.trigger-domain-options').hide();
+      $('.trigger-web-application-options').hide();
       $('.trigger-nmap-script-options').hide();
       $('.trigger-dirsearch-options').hide();
       $('.trigger-page-options').hide();
 
       $('.scan-conditions-helper').show();
 
-
-
       if(changed_to == 'add-host') {
         $('.scan-conditions-helper').hide(); // none for host
         $('.trigger-host-options').show();
-
       } else if (changed_to == 'add-service') {
         $('.trigger-service-options').show(); 
       } else if (changed_to == 'add-domain') {
@@ -2297,6 +2279,8 @@ $(".selectable").selectable({ // make everything selectable that should be
         $('.trigger-nmap-script-options').show(); 
       } else if (changed_to == 'add-page') {
         $('.trigger-page-options').show(); 
+      } else if (changed_to == 'add-web-application') {
+        $('.trigger-web-application-options').show();
       } else {
         $('.scan-conditions-helper').hide();
       }
@@ -2404,6 +2388,20 @@ $(".selectable").selectable({ // make everything selectable that should be
     var domain_name_match = $("#domain-trigger-domain-name").val();
     var domain_trigger_match_by = $("#domain-trigger-domain_name-match-by").val();
 
+    var web_application_full_url_match = $("#web-application-trigger-full_url").val();
+    var web_application_full_url_match_by = $("#web-application-trigger-full_url-match-by").val();
+    var web_application_port_match = $("#web-application-trigger-port").val();
+    var web_application_port_match_by = $("#web-application-trigger-port-match-by").val();
+    var web_application_scheme_match = $("#web-application-trigger-scheme").val();
+    var web_application_scheme_match_by = $("#web-application-trigger-scheme-match-by").val();
+
+    var page_path_match = $("#page-trigger-path").val();
+    var page_path_match_by = $("#page-trigger-path-match-by").val();
+    var page_status_match = $("#page-trigger-status").val();
+    var page_status_match_by = $("#page-trigger-status-match-by").val();
+    var page_contentlength_match = $("#page-contentlength-path").val();
+    var page_contentlength_match_by = $("#page-trigger-contentlength-match-by").val();
+
     var script_name_match = $("#script-trigger-scriptname").val();
     var script_name_match_by = $("#script-trigger-scriptname-match-by").val();
     var script_output_match = $("#script-trigger-scriptoutput").val();
@@ -2478,47 +2476,6 @@ $(".selectable").selectable({ // make everything selectable that should be
       }
     }
 
-    if (trigger_on == "dirsearch-result") {
-      // if there is a port match filled out we should create the trigger condition
-
-      if (dirsearch_path_match.length > 0) {
-        // default to csv match so you don't have to do the dropdown box
-        if (dirsearch_path_match_by == "None") {
-          dirsearch_path_match_by = "regex";
-        }
-
-        conditions.push({
-          match_key: "path",
-          match_value: dirsearch_path_match,
-          match_type: dirsearch_path_match_by
-        });
-      }
-
-      if (dirsearch_status_code_match.length > 0) {
-        if (dirsearch_status_code_match_by == "None") {
-          dirsearch_status_code_match_by = "csv";
-        }
-
-        conditions.push({
-          match_key: "status",
-          match_value: dirsearch_status_code_match,
-          match_type: dirsearch_status_code_match_by
-        });
-      }
-
-      if (dirsearch_contentlength_match.length > 0) {
-        if (dirsearch_contentlength_match_by == "None") {
-          dirsearch_status_contentlength_match_by = "csv";
-        }
-
-        conditions.push({
-          match_key: "content_length",
-          match_value: dirsearch_contentlength_match,
-          match_type: dirsearch_contentlength_match_by
-        });
-      }
-    }
-
     if (trigger_on == "add-domain") {
       // if there is a domain match filled out we should create the trigger condition
       if (domain_name_match.length > 0) {
@@ -2535,7 +2492,67 @@ $(".selectable").selectable({ // make everything selectable that should be
       }
     }
 
-    if (trigger_on != "None" && shell_cmd.length > 0 && trigger_name.length > 0) {
+
+    if (trigger_on == "add-web-application") {
+      // if there is a domain match filled out we should create the trigger condition
+      if (web_application_full_url_match.length > 0) {
+        // default to csv match so you don't have to do the dropdown box
+        if (web_application_full_url_match_by == "None") {
+          domain_trigger_match_by = "csv";
+        }
+
+        conditions.push({
+          match_key: "full_url",
+          match_value: web_application_full_url_match,
+          match_type: web_application_full_url_match_by
+        });
+      }
+
+      if (web_application_port_match.length > 0) {
+        conditions.push({
+          match_key: "port",
+          match_value: web_application_full_url_match,
+          match_type: web_application_full_url_match_by
+        });
+      }
+
+      if (web_application_port_match.length > 0) {
+        conditions.push({
+          match_key: "port",
+          match_value: web_application_full_url_match,
+          match_type: web_application_full_url_match_by
+        });
+      }
+    }
+
+    if (trigger_on == "add-page") {
+      // if there is a domain match filled out we should create the trigger condition
+      if (page_path_match.length > 0) {
+        conditions.push({
+          match_key: "path",
+          match_value: page_path_match,
+          match_type: page_path_match_by
+        });
+      }
+
+      if (page_status_match.length > 0) {
+        conditions.push({
+          match_key: "status",
+          match_value: page_status_match,
+          match_type: page_status_match_by
+        });
+      }
+
+      if (page_contentlength_match.length > 0) {
+        conditions.push({
+          match_key: "contentlength",
+          match_value: page_contentlength_match,
+          match_type: page_contentlength_match_by
+        });
+      }
+    }
+
+    if (trigger_on != "None" && shell_cmd.length > 0) {
       add_trigger_event_data = {
         name: trigger_name,
         trigger_on: trigger_on,
@@ -2546,9 +2563,9 @@ $(".selectable").selectable({ // make everything selectable that should be
 
       api_server.send('add-trigger', add_trigger_event_data);
 
-      var trigger_on = $("#trigger-on").val("None");
-      trigger_name = $("#trigger-name").val("");
-      var shell_cmd = $("#trigger-shell-cmd").val("");
+      //var trigger_on = $("#trigger-on").val("None");
+      //trigger_name = $("#trigger-name").val("");
+      //var shell_cmd = $("#trigger-shell-cmd").val("");
     }
 
   });

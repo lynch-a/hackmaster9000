@@ -1,4 +1,4 @@
-function generate_dirsearch_command() {
+function generate_dirsearch_command(filename_override) { // this already forces file name
   var cmd = "dirsearch";
 
   var target = $("#dirsearch-target").val();
@@ -40,11 +40,17 @@ function generate_dirsearch_command() {
     cmd += " --random-agents";
   }
 
-  var output_name = Math.random().toString(36).substring(7);
-  if (output_name != "") {
-    cmd += " --simple-report=dirsearch-"+output_name+".html";
-    cmd += " --json-report=dirsearch-"+output_name+".json";
-    cmd += " --plain-text-report=dirsearch-"+output_name+".txt";
+  if (filename_override !== undefined) {
+    cmd += " --simple-report=dirsearch-"+filename_override+".html";
+    cmd += " --json-report=dirsearch-"+filename_override+".json";
+    cmd += " --plain-text-report=dirsearch-"+filename_override+".txt";
+  } else {
+    var output_name = Math.random().toString(36).substring(7);
+    if (output_name != "") {
+      cmd += " --simple-report=dirsearch-"+output_name+".html";
+      cmd += " --json-report=dirsearch-"+output_name+".json";
+      cmd += " --plain-text-report=dirsearch-"+output_name+".txt";
+    }
   }
 
   var wordlist = $("#dirsearch-toggle-wordlist").prop('checked');

@@ -29,7 +29,7 @@
         <option value="add-domain">Domain name is discovered (includes subdomains)</option>
         <option value="add-web-application">Web application is discovered</option>
         <option value="add-page">Webpage is discovered</option>
-        <option value="add-dns-record">Raw DNS Record is discovered</option>
+        <!-- <option value="add-dns-record">Raw DNS Record is discovered</option> -->
         <option value="add-nmap-script">Nmap Script output is discovered</option>
     </select>
   </div>
@@ -59,7 +59,7 @@
 
   <div class="row">
     <dt class="col-sm-3">%ip%</dt>
-    <dd class="col-sm-9">The discovered host IP address</dd>
+    <dd class="col-sm-9">In your shell command above, any instances of "%ip%" will be replaced with an IP address discovered by a plugin.</dd>
   </div>
     <div class="row">
     <dt class="col-sm-3">%rand7%</dt>
@@ -69,8 +69,7 @@
 
 
 <div class="trigger-service-options">
-  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "service", data_name: "port", placeholder: "80", default: :csv} %>
-  </br> 
+  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "service", data_name: "ip", placeholder: "80", default: :csv} %>
 
   <br/>
 
@@ -81,8 +80,33 @@
   </div>
 
   <div class="row">
-    <dt class="col-sm-3">%url%</dt>
-    <dd class="col-sm-9">The full URL to the discovered path</dd>
+    <dt class="col-sm-3">%ip%</dt>
+    <dd class="col-sm-9">In your shell command above, any instances of "%ip%" will be replaced with the IP address of a service discovered by a plugin.</dd>
+    <dt class="col-sm-3">%port%</dt>
+    <dd class="col-sm-9">In your shell command above, any instances of "%port%" will be replaced with the port number of a service discovered by a plugin.</dd>
+    <dt class="col-sm-3">%rand7%</dt>
+    <dd class="col-sm-9">A random 7 character alphanumeric string, useful for randomly naming output files to prevent collisions.</dd>
+  </div>
+</div>
+
+<div class="trigger-web-application-options">
+  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "web-application", data_name: "full_url", placeholder: "not very useful tbh", default: :csv} %>
+  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "web-application", data_name: "port", placeholder: "3000", default: :csv} %>
+  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "web-application", data_name: "scheme", placeholder: "https (also not  that useful)", default: :csv} %>
+
+  <div class="row">
+    <div class="col">
+      <h5>Shell Command Replacement Options</h5>
+    </div>
+  </div>
+
+  <div class="row">
+    <dt class="col-sm-3">%full_url%</dt>
+    <dd class="col-sm-9">In your shell command above, any instances of "%full_url%" will be replaced with the full URL to a web application that is discovered by a plugin in the format: http://website.com:80</dd>
+    <dt class="col-sm-3">%port%</dt>
+    <dd class="col-sm-9">In your shell command above, any instances of "%port%" will be replaced with the port number where a web application was discovered by a plugin.</dd>
+    <dt class="col-sm-3">%scheme%</dt>
+    <dd class="col-sm-9">In your shell command above, any instances of "%scheme%" will be replaced with the scheme associated with a web application discovered by a plugin.</dd>
   </div>
 </div>
 
@@ -92,7 +116,6 @@
   <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "script", data_name: "scriptoutput", placeholder: "80", default: :regex} %>
   </br> 
     <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "script", data_name: "port", placeholder: "80", default: :csv} %>
-  
   </br>
 
   <div class="row">
@@ -103,19 +126,17 @@
 
   <div class="row">
     <dt class="col-sm-3">%ip%</dt>
-    <dd class="col-sm-9">The discovered service IP address</dd>
+    <dd class="col-sm-9">In your shell command above, any instances of "%ip%" will be replaced with an IP address discovered by a plugin.</dd>
     <dt class="col-sm-3">%port%</dt>
-    <dd class="col-sm-9">The discovered service port</dd>
-    <dt class="col-sm-3">%domain%</dt>
-    <dd class="col-sm-9">The discovered service domain</dd>
+    <dd class="col-sm-9">In your shell command above, any instances of "%port%" will be replaced with the port number of the service discovered by a plugin.</dd>
+    <dt class="col-sm-3">%domain</dt>
+    <dd class="col-sm-9">In your shell command above, any instances of "%domain%" will be replaced with a domain discovered by an nmap script. Sometimes scripts are discovered on an IP with no associated domain so this will end up blank.</dd>
   </div>
 </div>
 
 <div class="trigger-domain-options">
   <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "domain", data_name: "domain-name", placeholder: "example.com", default: :regex} %>
   </br> 
-  
-  </br>
 
   <div class="row">
     <div class="col">
@@ -124,17 +145,13 @@
   </div>
 
   <div class="row">
-    <dt class="col-sm-3">%ip%</dt>
-    <dd class="col-sm-9">The discovered service IP address</dd>
-    <dt class="col-sm-3">%port%</dt>
-    <dd class="col-sm-9">The discovered service port</dd>
     <dt class="col-sm-3">%domain%</dt>
-    <dd class="col-sm-9">The discovered service domain</dd>
+    <dd class="col-sm-9">In your shell command above, any instances of "%domain%" will be replaced with a domain discovered by a plugin.</dd>
   </div>
 </div>
 
 <div class="trigger-page-options">
-  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "page", data_name: "path", placeholder: "http\/some\/page\.(php|aspx)", default: :regex} %>
+  <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "page", data_name: "path", placeholder: "wp_admin.php", default: :csv} %>
   </br> 
   <%= erb :'partials/_autoscan_matcher', layout: false, locals: {data_type: "page", data_name: "status", placeholder: "200,302", default: :csv} %>
   </br>
@@ -151,8 +168,8 @@
   </div>
 
   <div class="row">
-    <dt class="col-sm-3">%thing%</dt>
-    <dd class="col-sm-9">Description of thing</dd>
+    <dt class="col-sm-3">%full_url%</dt>
+    <dd class="col-sm-9">In your shell command above, any instances of "%full_url%" will be replaced with the full URL to a page discovered to exist in a web application as returned by a plugin.</dd>
   </div>
 </div>
 

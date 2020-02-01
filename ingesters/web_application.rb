@@ -34,10 +34,13 @@ def ingest_web_application(project_id, source_plugin, known_name, scheme, port)
         project_id,
         "add-web-application",
         [
-          ["%full_url%", db_web_application.full_url] # hopefully hosts are ingested before the service
+          ["%full_url%", db_web_application.full_url],
+          ["%port%", port], # CHEAT
+          ["%scheme%", db_web_application.scheme]
         ], [
           ["full_url", db_web_application.full_url],
-          ["port", port]
+          ["port", port],
+          ["scheme", db_web_application.scheme]
         ]
       )
     end

@@ -28,12 +28,12 @@
 %> 
 
 <%
-  dirsearch_scans = DirsearchScan.where(web_application_id: web_application.id)
+  pages = Page.where(web_application_id: web_application.id)
 %>
 
-<% if dirsearch_scans.size > 0 %>
+<% if pages.size > 0 %>
   <h5>Dirsearch Results</h5>
-  <table style="width:100%" class="table table-secondary fixed-width-table dirsearch-table">
+  <table style="width:100%" class="table table-secondary fixed-width-table page-table">
     <thead>
       <tr>
         <th>URL</th>
@@ -45,17 +45,15 @@
 
       <tbody>
         <% seen = [] %>
-        <% dirsearch_scans.each do |scan| %>
-          <% scan.dirsearch_results.order(:status).each do |entry| %>
-            <% next if entry.path == "" or seen.include? entry.path %>
-            <% seen << entry.path %>
-            <tr class="table-secondary">
-              <td class="noselect" style="word-break: break-word;"><%= "#{full_url}/#{entry.path}" %></td>
-            	<td><%= "#{entry.status}" %></td>
-            	<td><%= "#{entry.content_length}" %></td>
-            	<!-- <td><%= "#{entry.redirect}" %></td> -->
-            </tr>
-          <% end %>
+        <% pages.each do |scan| %>
+          <% next if page.path == "" or seen.include? entry.path %>
+          <% seen << page.path %>
+          <tr class="table-secondary">
+            <td class="noselect" style="word-break: break-word;"><%= "#{full_url}/#{entry.path}" %></td>
+          	<td><%= "#{page.status}" %></td>
+          	<td><%= "#{page.content_length}" %></td>
+          	<!-- <td><%= "#{entry.redirect}" %></td> -->
+          </tr>
         <% end %>
       </tbody>
     </table>

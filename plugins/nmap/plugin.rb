@@ -10,22 +10,27 @@ class NmapPlugin < Hm9kPlugin
     @meta = "A popular network mapping tool." # short description of underlying utility
   end
 
+  # does this plugin include a html/js tool running interface?
   def self.has_tool_ui?
     return true
   end
 
+  # what is the filename for the ERB partial (without .erb at the end) that has the the tool interface?
   def self.partial
     "_nmap"
   end
 
+  # what filenames should this plugin parse?
   def self.file_filter
     "nmap-*.xml" # files
   end
 
+  # does this plugin include extra useful data that should be attached to a host?
   def self.visualize_in_hosts?
     true
   end
 
+  # if so, what is the filename for the ERB partial (without .erb at the end) for the extra data?
   def self.host_feed_partial
     "_host_feed"
   end
@@ -48,6 +53,7 @@ class NmapPlugin < Hm9kPlugin
     file_shortname = File.basename(file_path)
 
     # we use the nmap parser gem
+    # btw, can you xxe the nmap parser gem?
     parser = Nmap::Parser.parsestring(file_contents)
 
     parser.hosts("up") do |nmap_host|
@@ -59,7 +65,7 @@ class NmapPlugin < Hm9kPlugin
       
       db_dns_records = []
       nmap_host.hostnames().each do |nmap_hostname|
-        # falsely assumes nmap reverse host resolution is an actual A record
+        # falsely assumes nmap reverse host resolution is an actual A record (or is it?)
        db_dns_record = ingest_dns_record(project_id, "nmap", nmap_hostname, "A", nmap_host.ipv4_addr)
        db_dns_records << db_dns_record
       end

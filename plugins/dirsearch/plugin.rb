@@ -39,7 +39,7 @@ class DirsearchPlugin < Hm9kPlugin
   end
 
   def self.visualize_in_web_applications?
-    true
+    false
   end
 
   def self.web_application_feed_partial

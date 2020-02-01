@@ -97,7 +97,7 @@
 %>
 
 <div class="row">
-  <div class="col-lg-12">
+  <div class="col">
     <div class="text-center" style="padding-top:20px;">
       <h2>First Visit?<h2>
       <p><a href="javascript:void(0);" class="btn btn-lg btn-primary start-tour-button"> Take a tour</a></p>
@@ -106,16 +106,16 @@
 </div>
 
 <div class="row">
-  <div class="col-md">
-    <% Hm9kPlugin.plugins.each do |plugin| %>
-      <% next if !plugin.has_tool_ui? %>
-      <div class='list-group list-group-root well'>
-        <a href="#tab-<%= plugin.name %>" class="list-group-item hash-nav">
-          <div data-toggle="tooltip" title="<%= plugin.description %>">
-            <%= plugin.name %>
-          </div>
-        </a>
+  <% Hm9kPlugin.plugins.each do |plugin| %>
+    <% next if !plugin.has_tool_ui? %>
+    <div class="col-sm-4" style="padding: 10px;">
+      <div class="card">
+        <h5 class="card-header"><%= plugin.name %></h5>
+        <div class="card-body">
+          <p class="card-text"><%= plugin.description %></p>
+          <a href="#tab-<%= plugin.name %>" data-toggle="tab" class="btn btn-primary">Run</a>
+        </div>
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 </div>

@@ -70,7 +70,9 @@ bundle install
 
 # setup hm9k db stuff
 service postgresql start
+
 sudo -u postgres psql -c "CREATE USER hm9k WITH PASSWORD 'SOMETHINGSECURE';"
+#sudo -u postgres psql -c "DROP DATABASE hm9k;"
 sudo -u postgres psql -c "CREATE DATABASE hm9k;"
 #### don't forget to edit config.rb to match this
 

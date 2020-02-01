@@ -19,22 +19,31 @@ Valid screenshots are saved automatically to:
     </div>
   </div>
 </div>
-<hr>
 
-<div class="container no-gutters">
-  <div class="row">
-    <div class='col-sm-6'>    
-      <%= erb :'tools/tool_helpers/_text_input', locals: {
-                tool_name: tool_name,
-                label: "Target",
-                field_name: "target",
-                field_value: "",
-                placeholder: "Target Domain(s) or IP(s) or mixed (ex: google.com 127.0.0.1)"
-              }
-      %>
-    </div>
+<div class="row">
+  <div class="col">
+    <%= erb :'partials/_send_to_autoscan', layout: false, locals: {text: "Send to AutoScan [IPs]", autoscan_replacer: "%ip%", tool_name: tool_name} %>
+    <%= erb :'partials/_send_to_autoscan', layout: false, locals: {text: "Send to AutoScan [Domains]", type: :domain, autoscan_replacer: "%domain%", tool_name: tool_name} %>
+
   </div>
-
-  <hr>
-  <%= erb :'partials/_tool_runner', layout: false, locals: {tool_name: tool_name} %>
 </div>
+
+<div class="row">
+  <div class='col'>    
+    <%= erb :'tools/tool_helpers/_text_input', locals: {
+              tool_name: tool_name,
+              label: "Target",
+              field_name: "target",
+              field_value: "",
+              placeholder: "Target Domain(s) or IP(s) or mixed (ex: google.com 127.0.0.1)"
+            }
+    %>
+  </div>
+</div>
+
+<hr>
+<%= erb :'partials/_tool_runner', layout: false, locals: {tool_name: tool_name} %>
+
+<script>
+  <%= File.read("plugins/screenshot2/screenshot2.js") %>
+</script>
