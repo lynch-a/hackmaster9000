@@ -55,7 +55,7 @@ class DigPlugin < Hm9kPlugin
 
       # check if there's a ;, stop parsing if there is
       if line[0] == ";"
-        return
+        return true
       end
 
       next if line.blank?
@@ -78,5 +78,7 @@ class DigPlugin < Hm9kPlugin
         db_host = ingest_host(project_id, "dig", record_value)
       end
     end
+
+    return true
   end
 end

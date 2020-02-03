@@ -49,5 +49,6 @@ class ZmapPlugin < Hm9kPlugin
       db_host = ingest_host(project_id, 'zmap', ip)
       ingest_service(project_id, db_host.id, port, "zmap", "", "", "")
     end
+    return true
   end
 end

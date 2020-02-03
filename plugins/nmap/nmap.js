@@ -1,4 +1,5 @@
 
+// this function looks at every tool option in _nmap.erb and returns a complete working nmap command
 function generate_nmap_command(filename_override) {
   var cmd = "nmap -v";
 
@@ -87,6 +88,7 @@ function generate_nmap_command(filename_override) {
   return cmd;
 }
 
+// when the run button is clicked, we do a little extra processing to check if the command should run in the background or on a schedule
 $("#nmap-run").click(function() {
     var cmd = generate_nmap_command();
     console.log(cmd);

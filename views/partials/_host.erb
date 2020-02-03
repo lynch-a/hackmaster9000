@@ -17,21 +17,21 @@
 
   # generate links to all of the domains by searching through DNS records. slow? meh
   related_domains = []
+  web_applications = []
   DnsRecord.where(record_value: host.ip).each do |record|
-    found_domain = Domain.where(project_id: @project.id, domain_name: record.record_key).first
+    found_domain = Domain.where(project_id: @project.id, domain_name: record.record_key, hidden: false).first
     if (found_domain)
       related_domains << found_domain
+      found_web_apps = WebApplication.where(project_id: @project.id, domain_id: found_domain.id, hidden: false)
+      if (found_web_apps)
+        web_applications = web_applications + found_web_apps
+      end
     end
   end
 
-  web_applications = []
-
-  # count webapps
-  dns_records.each do |dns_record|
-    web_apps = WebApplication.where(project_id: @project.id, host_id: host.id, hidden: false)
-    if (web_apps.count > 0)
-      web_applications = web_applications + web_apps
-    end
+  # find screenshots that are of the IP address itself
+  WebApplication.where(service_id: host.services).each do |web_app|
+    web_applications = web_applications << web_app
   end
 %>
 

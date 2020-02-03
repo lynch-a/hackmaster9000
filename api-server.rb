@@ -115,7 +115,7 @@ EM.run do
             user.send('{"event": "hide-web-application", "data": '+ hide_web_application_event_data.to_json + "}")
           end
           notification_event_data = {
-            message: "Web application hidden: #{db_web_application.dns_record.record_key}",
+            message: "Web application hidden: #{db_web_application.full_url}",
             type: "info"
           }
 
@@ -169,12 +169,17 @@ EM.run do
           db_host.hidden = true
           db_host.save
 
-          # also hide all DNS records associated with this host
-          dns_records = DnsRecord.where(record_type: ["A"], record_value: db_host.ip).where.not(dns_name: "")
-          dns_records.each do |dns_record|
-            dns_record.hidden = true
-            dns_record.save
+          # also hide all A DNS records and domains associated with this host
+          DnsRecord.where(project_id: project.id, record_value: db_host.ip, record_type: "A").each do |record|
+            record.hidden = true
+            record.save
+            found_domain = Domain.where(project_id: project.id, domain_name: record.record_key).first
+            if (found_domain)
+              found_domain.hidden = true
+              found_domain.save
+            end
           end
+
 
           refresh_event_data = {
           }

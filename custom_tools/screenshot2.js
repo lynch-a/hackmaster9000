@@ -43,7 +43,7 @@ if (process.argv.length < 1) {
  
 const targets = process.argv;
 const schemes = ['http', 'https'];
-const ports = ["80", "443", "3000", "8080"];
+const ports = ["80", "443", "3000", "8080", "8000"];
  
 var target_list = [];
 var outfile_list = [];

@@ -1,0 +1,8 @@
+<% 
+# host = the host we need to find feed entries for
+feed_entry = FeedItem.where(host_id: host.id, source_plugin: "testssl", header: "testssl_result").last
+%>
+
+<% if feed_entry %>
+	<iframe src="/<%= feed_entry.value %>" height="500px" width="100%" style="background-color:white">
+<% end %>

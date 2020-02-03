@@ -87,5 +87,6 @@ class DirsearchPlugin < Hm9kPlugin
         puts "[dirsearch] ingested page: #{db_page.path} CL: #{db_page.content_length}, status: #{db_page.status}, redirect: #{db_page.redirect}"
       end
     end
+    return true
   end
 end

@@ -33,7 +33,7 @@ function schedule_or_run(tool_name, cmd) {
     // conclusion: DUMB
 
     if (dry_run) {
-      send_to_active_terminal(cmd); // run in foreground
+      send_to_active_terminal(cmd);
     } else {
       send_to_active_terminal(cmd + "\n");
     } 
@@ -66,6 +66,8 @@ var api_server = new ApiEventsDispatcher("ws://"+window.location.hostname+":8082
 
 $(document).ready(function() {
   console.log("ready!");
+
+  var is_refreshing = true;
 
   var terminal_height = 400; // in pixels
 
@@ -196,7 +198,8 @@ $(document).ready(function() {
     //  dnsrecord_id // the id it should fetch to update the row
     //);
 
-    domain_dtable.ajax.reload(null, false);
+    if (is_refreshing)
+      domain_dtable.ajax.reload(null, false);
 
   });
 
@@ -209,7 +212,8 @@ $(document).ready(function() {
     //  ".host-row-"+host_id, // row selector (doesn't have to exist, creates if not)
     //  host_id // the id it should fetch to update the row
     //);
-    host_dtable.ajax.reload(null, false);
+    if (is_refreshing)
+      host_dtable.ajax.reload(null, false);
   });
 
   api_server.bind('add-dirsearch', function(data) {
@@ -222,7 +226,7 @@ $(document).ready(function() {
     //  ".domain-row-"+dnsrecord_id, // row selector (doesn't have to exist, creates if not)
     //  dnsrecord_id // the id it should fetch to update the row
     //);
-
+    if (is_refreshing)
     domain_dtable.ajax.reload(null, false);
 
     $.notify({
@@ -268,12 +272,13 @@ $(document).ready(function() {
     //  ".web-application-row-"+web_application_id, // row selector (doesn't have to exist, creates if not)
     //  web_application_id // the id it should fetch to update the row
     //);
-
+    if (is_refreshing)
     web_application_dtable.ajax.reload(null, false);
 
   });
 
   api_server.bind('new-page', function(data) {
+    if (is_refreshing)
     web_application_dtable.ajax.reload(null, false);
   });
 
@@ -371,9 +376,13 @@ $(document).ready(function() {
   });
 
   api_server.bind('refresh-tables', function(data) {
-    web_application_dtable.ajax.reload(null, false);
-    domain_dtable.ajax.reload(null, false);
-    host_dtable.ajax.reload(null, false);
+    if (is_refreshing) {
+      web_application_dtable.ajax.reload(null, false);
+      domain_dtable.ajax.reload(null, false);
+      host_dtable.ajax.reload(null, false);
+      dns_record_dtable.ajax.reload(null, false);
+
+    }
   });
 
   api_server.bind('refresh-jobs', function(data) {
@@ -692,6 +701,7 @@ $(document).ready(function() {
   function rand_str7() {
     return ""+Math.random().toString(36).substring(7)
   }
+
 
   $('body').on('click', '.send-to-autoscan', function() {
     var tool_name = $(this).attr("data-tool-name");
@@ -1438,6 +1448,24 @@ $(document).ready(function() {
               console.log(targets);
 
               $("#screenshot2-target").val(targets.trim());
+            }
+          },
+          {
+            text: 'testssl', action: function() {
+              //$('.nav-pills a[href="#tools"]').tab('show');
+              $('.nav-link[href="#tools"]').tab('show');
+              $('.nav-link[href="#tab-testssl"]').tab('show');
+              //$('.nav-tabs a[href="#tab-screenshot2"]').tab('show');
+
+              var targets = "";
+
+              $(".host.ui-selected").each(function() {
+                targets += $(this).find(".card").attr("target") + " ";
+              });
+
+              console.log(targets);
+
+              $("#testssl-target").val(targets.trim());
             }
           }
         ]
@@ -2621,4 +2649,26 @@ $(".selectable").selectable({ // make everything selectable that should be
   function current_page_no_hash() {
     return location.protocol+'//'+location.host+location.pathname
   }
+
+  $('body').on('click', '.refresh-toggle-button', function(event) {
+    is_refreshing = !is_refreshing;
+    console.log("refresh is: " + is_refreshing);
+
+    if (!is_refreshing) {
+      $('.refresh-toggle-button').removeClass("btn-success");
+      $('.refresh-toggle-button').addClass('btn-danger');
+      $('.refresh-toggle-button').html("Not Refreshing Tables");
+    } else {
+      web_application_dtable.ajax.reload(null, false);
+      domain_dtable.ajax.reload(null, false);
+      host_dtable.ajax.reload(null, false);
+      dns_record_dtable.ajax.reload(null, false);
+
+      $('.refresh-toggle-button').removeClass("btn-danger");
+      $('.refresh-toggle-button').addClass('btn-success');
+      $('.refresh-toggle-button').html("Auto Refreshing Tables")
+
+    }
+  });
+
 });

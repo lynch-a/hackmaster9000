@@ -80,6 +80,6 @@ class DnscanPlugin < Hm9kPlugin
       #send_host_refresh(db_host.id)
       #send_domain_refresh(db_dns_record.id)
     end
-    return "true"
+    return true
   end
 end

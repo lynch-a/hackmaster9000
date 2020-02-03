@@ -54,7 +54,7 @@ class ZdnsPlugin < Hm9kPlugin
         ingest_host(project_id, "zdns", ip) # maybe
       end
     end
-    "true" # just assume it worked
+    return true # just assume it worked
   end
 end
 

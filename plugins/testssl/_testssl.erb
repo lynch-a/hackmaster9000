@@ -1,0 +1,80 @@
+<div id="accordion">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">
+        <button class="btn btn-link" id="<%= tool_name%>-help-heading" data-toggle="collapse" data-target="#<%= tool_name %>-help" aria-expanded="false" aria-controls="<%= tool_name %>-help">
+          TestSSL Help
+        </button>
+      </h5>
+    </div>
+
+  <div id="<%= tool_name %>-help" class="collapse" data-toggle="collapse" aria-labelledby="<%= tool_name %>-help-heading" data-parent="#accordion">
+      <div class="card-body bg-light">
+        <pre style="margin-bottom:0;"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= erb :'partials/_send_to_autoscan', layout: false, locals: {text: "Send to AutoScan [IP's]", autoscan_replacer: "%ip%", tool_name: tool_name} %>
+  </div>
+</div>
+
+<div class="row">
+  <div class='col'>
+    <%= erb :'tools/tool_helpers/_text_input', locals: {
+              tool_name: tool_name,
+              label: "Target",
+              field_name: "target",
+              field_value: "",
+              placeholder: "Target IP or domain"
+            }
+    %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= erb :'partials/_config_saver', layout: false, locals: {tool_name: tool_name} %>
+  </div>
+</div>
+
+<hr>
+
+<form id="<%= tool_name %>-options">
+  <div class="row">
+    <div class='col'>
+      <%= erb :'tools/tool_helpers/_checkbox', locals: {
+              tool_name: tool_name,
+              label: "Parallel Scan",
+              field_name: "parallel",
+              checked: false,
+          }
+      %>
+      <%= erb :'tools/tool_helpers/_checkbox', locals: {
+              tool_name: tool_name,
+              label: "Sneaky (no user agent / referrer)",
+              field_name: "sneaky",
+              checked: false,
+          }
+      %>
+      <%= erb :'tools/tool_helpers/_checkbox', locals: {
+              tool_name: tool_name,
+              label: "IDS Friendly (Skip some checks IDS might pickup)",
+              field_name: "ids-friendly",
+              checked: false,
+          }
+      %>
+    </div>
+  </div>
+</form>
+
+<hr>
+
+<%= erb :'partials/_tool_runner', layout: false, locals: {tool_name: "testssl"} %>
+
+<script>
+  <%= File.read("plugins/testssl/testssl.js") %>
+</script>

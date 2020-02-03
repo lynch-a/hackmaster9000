@@ -3,14 +3,18 @@ require 'nmap/parser'
 class NmapPlugin < Hm9kPlugin
   
   def self.name
-    @name = "nmap" # matches plugin folder name
+    "nmap" # matches plugin folder name
   end
 
   def self.description
-    @meta = "A popular network mapping tool." # short description of underlying utility
+    "A popular network mapping tool." # short description of underlying utility
   end
 
-  # does this plugin include a html/js tool running interface?
+  def self.tags
+    ["networking", "hosts", "services", "ports", "needs to be replaced by a newer fucking tool"] # some tags that are unused for now
+  end
+
+  # will this plugin include a html/js tool running interface?
   def self.has_tool_ui?
     return true
   end
@@ -22,7 +26,8 @@ class NmapPlugin < Hm9kPlugin
 
   # what filenames should this plugin parse?
   def self.file_filter
-    "nmap-*.xml" # files
+    "nmap-*.xml" # wildcard match for any files named like nmap-something.xml.
+    # any scan files that match this filename will be sent to the parse() method below
   end
 
   # does this plugin include extra useful data that should be attached to a host?
@@ -47,6 +52,7 @@ class NmapPlugin < Hm9kPlugin
     false
   end
 
+  # make sure this returns true if there weren't any problems
   def self.parse(project_id, file_path)
     file_contents = File.read(file_path)
 
@@ -82,8 +88,8 @@ class NmapPlugin < Hm9kPlugin
         end
       end
     end
-
-    "true" # just assume it worked
+    
+    return true
   end
 end
 

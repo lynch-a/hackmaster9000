@@ -89,6 +89,11 @@ cd /usr/share
 git clone https://github.com/maurosoria/dirsearch.git
 sudo ln -s /usr/share/dirsearch/dirsearch.py /usr/bin/dirsearch
 
+# TODO: install spiderfoot
+
+# setup symlink for spiderfoot
+sudo ln -s /usr/share/spiderfoot/sf.py /usr/bin/sf
+
 # install gitgot
 cd /usr/share
 git clone https://github.com/BishopFox/GitGot.git

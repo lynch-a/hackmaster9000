@@ -368,9 +368,9 @@ begin
       require './ingesters/dns_record.rb'
       require './ingesters/nmap_service_script.rb'
       require './ingesters/nmap_host_script.rb'
+      require './ingesters/page.rb'
       require './ingesters/service.rb'
-
-
+      require './ingesters/domain.rb'
 
       def self.load_dnscan(file)
         file_contents = File.read("hm9k-projects/"+@project.uuid+"/"+file)
@@ -442,16 +442,21 @@ begin
           files_to_parse.each do |file|
             next if is_being_written_to(file)
 
+            scan_success = false
             begin
-              plugin.parse(@project.id, file)
-              parsed = parsed + 1
-              FileUtils.move("hm9k-projects/"+@project.uuid+"/"+File.basename(file), "hm9k-projects/"+@project.uuid+"/scans/parsed/"+File.basename(file))
+              scan_success = plugin.parse(@project.id, file)
+              if (scan_success)
+                parsed = parsed + 1
+                FileUtils.move("hm9k-projects/"+@project.uuid+"/"+File.basename(file), "hm9k-projects/"+@project.uuid+"/scans/parsed/"+File.basename(file))
+              end
             rescue => e
               notify_project("danger", "#{plugin.name} failed to parse: #{File.basename(file)} - #{e.message}")
               puts e.backtrace
             end
 
-            notify_project("success", "#{plugin.name} parsed file: #{File.basename(file)}")
+            if (scan_success)
+              notify_project("success", "#{plugin.name} parsed file: #{File.basename(file)}")
+            end
           end
 
           if parsed > 0

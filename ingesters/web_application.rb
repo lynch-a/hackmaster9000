@@ -12,7 +12,7 @@ def ingest_web_application(project_id, source_plugin, known_name, scheme, port)
     db_service = ingest_service(project_id, db_host.id, port, scheme, "", "", "")
   else # a domain name was provided
     cheat_ip = Resolv.getaddress(known_name) # resolve the domain ourselves
-    db_domain = ingest_dns_record(project_id, source_plugin, known_name, "A", cheat_ip)[1]
+    db_domain = ingest_domain(project_id, source_plugin, known_name)
     db_host = ingest_host(project_id, source_plugin, cheat_ip)
     db_service = ingest_service(project_id, db_host.id, port, scheme, "", "", "")
   end

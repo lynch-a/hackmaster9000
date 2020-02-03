@@ -62,5 +62,6 @@ class Screenshot2Plugin < Hm9kPlugin
 
       #send_web_application_refresh(db_web_application.id)
     end
+    return true
   end
 end
