@@ -197,7 +197,7 @@ GEM
     webrobots (0.1.2)
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.4)
+    websocket-extensions (0.1.5)
     websocket-rack (0.4.0)
       em-websocket (~> 0.3.6)
       eventmachine (~> 1.0.0.beta.4)
